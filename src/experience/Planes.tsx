@@ -1,0 +1,392 @@
+"use client";
+
+import type { ReactNode } from "react";
+import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
+import type { DiscoverableScientist } from "@/content/scientists/types";
+import type { SheetPoint } from "@/participation/sheetLayout";
+import { Actions, type ResponseHandlers } from "./Actions";
+import type { State, Step } from "./state";
+import type { Screen } from "./screen";
+import { Button, PaperStrip, TriangleMarker } from "./ui";
+
+export type Commands = {
+  dontKnow: () => void;
+  silence: () => void;
+  approach: () => void;
+  nextClue: () => void;
+  reachHumanScale: () => void;
+  continue: () => void;
+  seeAgain: () => void;
+  name: (text: string) => void;
+  seeMap: () => void;
+  anotherName: () => void;
+  confirm: (id: string) => void;
+  reject: () => void;
+  submitForReview: () => void;
+  clearResponse: () => void;
+};
+
+export type PlaneContext = {
+  discovery: DiscoverableScientist | null;
+  code: string;
+  points: SheetPoint[];
+  illustrative: boolean;
+  speech: string | null;
+};
+
+type PlaneProps = { state: State; screen: Screen; commands: Commands; reducedMotion: boolean; context: PlaneContext };
+
+const DISCOVERY_STAGES = ["território", "problema", "pesquisa"] as const;
+
+function handlersFrom(c: Commands): ResponseHandlers {
+  return {
+    onName: c.name,
+    onSilence: c.silence,
+    onConfirm: c.confirm,
+    onReject: c.reject,
+    onSubmitForReview: c.submitForReview,
+    onClear: c.clearResponse,
+  };
+}
+
+function Stage({ screen, children }: { screen: Screen; children: ReactNode }) {
+  if (screen.compact) {
+    return (
+      <div className="absolute inset-x-0 bottom-0 flex max-h-[62%] flex-col items-start gap-3 overflow-y-auto px-4 pt-4 pb-14">
+        {children}
+      </div>
+    );
+  }
+  return (
+    <div
+      className="absolute top-0 left-0 h-[900px] w-[1440px] origin-top-left"
+      style={{ transform: `translate(${screen.ox}px, ${screen.oy}px) scale(${screen.fit})` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SheetHeader({ children }: { children: ReactNode }) {
+  return (
+    <p className="absolute top-[40px] left-[64px] font-notation text-[13px] tracking-[0.06em] text-ink-soft compact:hidden">
+      <PaperStrip className="px-2 py-1">{children}</PaperStrip>
+    </p>
+  );
+}
+
+function Heading({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <h1 tabIndex={-1} className={`outline-none ${className ?? ""}`}>
+      {children}
+    </h1>
+  );
+}
+
+function SayAName({ state, screen, commands, reducedMotion, context, again }: PlaneProps & { again: boolean }) {
+  return (
+    <Stage screen={screen}>
+      <SheetHeader>
+        {again ? "FOLHA 01 — MAPA MUDO · 1 PONTO ESPERANDO NOME" : "FOLHA 01 — CIÊNCIA DELAS · MAPA MUDO · RELEVO ILUSTRATIVO"}
+      </SheetHeader>
+      <Heading className="display absolute top-[228px] left-[64px] text-[150px] leading-none compact:static compact:text-[60px]">
+        <span className="block w-fit bg-paper px-4 compact:px-2">DIGA</span>
+        <span className="block w-fit bg-paper px-4 compact:px-2">UM NOME.</span>
+      </Heading>
+      <p
+        key={again ? "knows" : "ask"}
+        className={`absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px] ${again ? "fade-in" : ""}`}
+        style={{ animationDelay: "2400ms" }}
+      >
+        <PaperStrip className="px-4 py-1.5 compact:px-2">{again ? "Agora você sabe." : "Diga o nome de uma cientista brasileira."}</PaperStrip>
+      </p>
+      <Actions
+        className="absolute top-[618px] left-[52px] compact:static"
+        speak={{ label: "Falar", accent: again }}
+        type
+        extras={again ? [{ label: "Ver de novo", onClick: commands.seeAgain }] : [{ label: "Não sei", onClick: commands.dontKnow }]}
+        speech={context.speech}
+        response={state.response}
+        reducedMotion={reducedMotion}
+        handlers={handlersFrom(commands)}
+      />
+    </Stage>
+  );
+}
+
+function NoName({ screen, commands }: PlaneProps) {
+  return (
+    <Stage screen={screen}>
+      <SheetHeader>FOLHA 01 — MAPA MUDO · 1 PONTO SELECIONADO</SheetHeader>
+      <p className="fade-in absolute top-[236px] left-[64px] text-[32px] font-medium compact:static compact:text-[20px]">
+        <PaperStrip className="px-4 py-1.5 compact:px-2">Não veio nenhum nome?</PaperStrip>
+      </p>
+      <Heading className="display fade-in absolute top-[304px] left-[64px] text-[92px] leading-[1.06] [animation-delay:250ms] compact:static compact:text-[40px]">
+        <span className="block w-fit bg-paper px-4 compact:px-2">ENTÃO VAMOS</span>
+        <span className="block w-fit bg-paper px-4 compact:px-2">DESCOBRIR UMA.</span>
+      </Heading>
+      <div className="fade-in absolute top-[540px] left-[64px] [animation-delay:900ms] compact:static">
+        <Button variant="primary" arrow onClick={commands.approach}>
+          Aproximar
+        </Button>
+      </div>
+    </Stage>
+  );
+}
+
+const CLUE_SIZES = ["text-[62px]", "text-[54px]", "text-[44px]"];
+
+function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneProps & { index: 0 | 1 | 2 }) {
+  const discovery = context.discovery;
+  if (!discovery) return null;
+  const hint = discovery.hints[index];
+  return (
+    <Stage screen={screen}>
+      <div className="absolute top-[84px] left-[64px] flex w-[600px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
+        <p className="font-primary text-[14px] font-semibold tracking-[0.18em] text-iris-blue uppercase">
+          <PaperStrip className="px-2 py-1">
+            Pista {index + 1} de 3 · {DISCOVERY_STAGES[index]}
+          </PaperStrip>
+        </p>
+        <Heading className={`${CLUE_SIZES[index]} leading-[1.16] font-semibold tracking-[-0.02em] compact:text-[28px]`}>
+          <PaperStrip className="px-3 compact:px-2">{hint.text}</PaperStrip>
+        </Heading>
+        {hint.note && (
+          <p className="font-primary text-[17px] text-ink-soft">
+            <PaperStrip className="px-2 py-1">{hint.note}</PaperStrip>
+          </p>
+        )}
+      </div>
+      {index === 2 && <CoreAnnotations research={discovery.experience.research} />}
+      <Actions
+        className="absolute top-[752px] left-[52px] compact:static"
+        speak={{ label: "Dizer o nome" }}
+        type
+        extras={[
+          index < 2
+            ? { label: "Outra pista", arrow: true, onClick: commands.nextClue }
+            : { label: "Chegar à escala 1:1", arrow: true, onClick: commands.reachHumanScale },
+        ]}
+        speech={context.speech}
+        response={state.response}
+        reducedMotion={reducedMotion}
+        handlers={handlersFrom(commands)}
+      />
+    </Stage>
+  );
+}
+
+const CORE_LAYOUT = { top: 130, height: 640, firstTick: 150, lastTick: 770 };
+
+function CoreAnnotations({ research }: { research: DiscoverableScientist["experience"]["research"] }) {
+  const depths = research.depths;
+  const spacing = (CORE_LAYOUT.lastTick - CORE_LAYOUT.firstTick) / Math.max(1, depths.length - 1);
+  const layers = research.layers.map((l) => ({ text: l.text, y: CORE_LAYOUT.top + l.at * CORE_LAYOUT.height }));
+  return (
+    <div aria-hidden="true" className="fade-in absolute inset-0 [animation-delay:2300ms] compact:hidden">
+      {depths.map((d, i) => (
+        <div
+          key={d}
+          className="absolute right-[548px] flex -translate-y-1/2 items-center gap-2 font-notation text-[12px] text-ink-soft"
+          style={{ top: CORE_LAYOUT.firstTick + i * spacing }}
+        >
+          <PaperStrip className="px-1">{d}</PaperStrip>
+          <span className="block h-0 w-[14px] border-t-[1.5px] border-ink" />
+        </div>
+      ))}
+      {layers.map((l) => (
+        <div key={l.text} className="absolute left-[1062px] flex -translate-y-1/2 items-center gap-2 font-notation text-[13px]" style={{ top: l.y }}>
+          <span className="block h-0 w-[18px] border-t border-ink" />
+          <PaperStrip className="px-1">{l.text}</PaperStrip>
+        </div>
+      ))}
+      <p className="absolute top-[792px] left-[905px] font-notation text-[12px] tracking-[0.06em] text-ink-soft">
+        <PaperStrip className="px-1">ESCALA 1:10 · {research.caption}</PaperStrip>
+      </p>
+    </div>
+  );
+}
+
+function TypedName({ name, delay }: { name: string; delay: number }) {
+  let i = 0;
+  return (
+    <>
+      {name.split(" ").map((word) => (
+        <span key={word} aria-hidden="true" className="block w-fit">
+          {[...word].map((letter) => {
+            const k = i++;
+            return (
+              <span key={k} className="fade-in inline-block" style={{ animationDelay: `${delay + k * 70}ms`, animationDuration: "180ms" }}>
+                {letter}
+              </span>
+            );
+          })}
+        </span>
+      ))}
+    </>
+  );
+}
+
+function HumanScale({ screen, commands, context }: PlaneProps) {
+  const discovery = context.discovery;
+  if (!discovery) return null;
+  const notices = [discovery.fictional ? FICTIONAL_NOTICE : null, discovery.photo ? null : "RETRATO TOPOGRÁFICO GENÉRICO"].filter(
+    (n): n is string => n !== null,
+  );
+  return (
+    <Stage screen={screen}>
+      <p className="absolute top-[40px] left-[64px] font-notation text-[14px] font-medium tracking-[0.08em] text-iris-blue compact:static">
+        <PaperStrip className="px-2 py-1">ESCALA 1:1 — ESCALA HUMANA</PaperStrip>
+      </p>
+      <div className="absolute top-[176px] left-[64px] flex w-[620px] flex-col items-start compact:static compact:w-full">
+        <p className="fade-in flex items-center gap-2.5 font-notation text-[14px] tracking-[0.06em] text-ink-soft [animation-delay:1800ms]">
+          <TriangleMarker tone="accent" />
+          PONTO {context.code} · AGORA COM NOME
+        </p>
+        <Heading className="mt-4 text-[104px] leading-[0.98] font-bold tracking-[0.01em] uppercase compact:text-[44px]">
+          <span className="sr-only">{discovery.canonicalName}</span>
+          <TypedName name={discovery.canonicalName} delay={2300} />
+        </Heading>
+        <span aria-hidden="true" className="fade-in mt-3 block h-0 w-[540px] border-b-2 border-accent [animation-delay:2000ms] compact:w-full" />
+        <p className="fade-in mt-6 font-primary text-[16px] font-semibold tracking-[0.14em] uppercase [animation-delay:3400ms]">{discovery.reveal.role}</p>
+        <p className="fade-in mt-3 text-[40px] leading-[1.1] font-medium [animation-delay:3900ms] compact:text-[24px]">Agora você conhece uma.</p>
+        {notices.length > 0 && (
+          <p className="fade-in mt-6 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
+            {notices.join(" · ")}
+          </p>
+        )}
+        <div className="fade-in mt-7 [animation-delay:4300ms] compact:mt-4">
+          <Button variant="primary" arrow onClick={commands.continue}>
+            Continuar
+          </Button>
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
+function NameSaid({ state, screen, commands, context }: PlaneProps) {
+  const said = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
+  return (
+    <Stage screen={screen}>
+      <div className="absolute top-[84px] left-[64px] flex w-[480px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
+        <p className="fade-in font-primary text-[14px] font-semibold tracking-[0.18em] text-iris-blue [animation-delay:1200ms]">
+          <PaperStrip className="px-2 py-1">DITO EM VOZ ALTA</PaperStrip>
+        </p>
+        <Heading className="fade-in text-[52px] leading-[1.14] font-semibold tracking-[-0.02em] [animation-delay:1400ms] compact:text-[30px]">
+          <PaperStrip className="px-3 compact:px-2">O ponto agora tem nome.</PaperStrip>
+        </Heading>
+        <p className="fade-in text-[23px] leading-[1.45] text-ink-soft [animation-delay:3900ms] compact:text-[17px]">
+          <PaperStrip className="px-3 py-0.5 compact:px-2">Cada vez que um nome é dito, o relevo dele sobe uma curva.</PaperStrip>
+        </p>
+        <p className="fade-in font-notation text-[12px] tracking-[0.06em] text-ink-soft [animation-delay:4300ms]">
+          <PaperStrip className="px-2 py-1">EQUIDISTÂNCIA DESTA VISTA: 1 NOME DITO</PaperStrip>
+        </p>
+      </div>
+      <div className="fade-in absolute top-[776px] left-[64px] [animation-delay:4300ms] compact:static">
+        <Button variant="primary" arrow onClick={commands.seeMap}>
+          Ver o mapa inteiro
+        </Button>
+      </div>
+      <span className="sr-only" role="status">
+        {said?.name} +1. Uma nova curva de nível surgiu no relevo.
+      </span>
+    </Stage>
+  );
+}
+
+function Collective({ state, screen, commands, context }: PlaneProps) {
+  const named = context.points.filter((p) => p.name !== null && p.mentions > 0);
+  const silentCount = context.points.length - named.length;
+  const said = named.find((p) => p.scientistId === state.saidId);
+  const notices = [named.some((p) => p.fictional) ? "NOMES FICTÍCIOS" : null, context.illustrative ? "COTAS ILUSTRATIVAS" : null].filter(
+    (n): n is string => n !== null,
+  );
+  return (
+    <Stage screen={screen}>
+      <div className="fade-in absolute top-[30px] left-[36px] flex flex-col gap-1 border-[1.5px] border-ink bg-paper px-4 pt-3 pb-3.5 compact:static">
+        <p className="font-notation text-[11px] tracking-[0.08em] text-ink-soft">FOLHA 01</p>
+        <Heading className="text-[22px] leading-[1.1] font-bold tracking-[0.04em] uppercase">Mapa dos nomes ditos</Heading>
+        <p className="font-notation text-[11px] text-ink-soft">relevo: quanto mais dito, mais alto</p>
+      </div>
+      <p className="fade-in absolute top-[74px] right-[48px] font-notation text-[11px] tracking-[0.06em] text-ink-soft compact:static">
+        <PaperStrip className="px-2 py-1">
+          {[`${named.length} NOMES DITOS`, `${silentCount} PONTOS AINDA MUDOS`, ...notices].join(" · ")}
+        </PaperStrip>
+      </p>
+      {said && (
+        <p className="sr-only" role="status">
+          {said.name} agora tem {said.mentions} menções no mapa coletivo.
+        </p>
+      )}
+      <div className="fade-in absolute bottom-[36px] left-[36px] [animation-delay:2600ms] compact:static">
+        <Button variant="primary" arrow onClick={commands.anotherName}>
+          Diga outro nome
+        </Button>
+      </div>
+    </Stage>
+  );
+}
+
+export function PlaneContent({ step, ...props }: PlaneProps & { step: Step }) {
+  switch (step) {
+    case "opening":
+      return <SayAName {...props} again={false} />;
+    case "askAgain":
+      return <SayAName {...props} again />;
+    case "noName":
+      return <NoName {...props} />;
+    case "clue1":
+      return <Clue {...props} index={0} />;
+    case "clue2":
+      return <Clue {...props} index={1} />;
+    case "clue3":
+      return <Clue {...props} index={2} />;
+    case "humanScale":
+      return <HumanScale {...props} />;
+    case "nameSaid":
+      return <NameSaid {...props} />;
+    case "collective":
+      return <Collective {...props} />;
+  }
+}
+
+export const PLANE_LABELS: Record<Step, string> = {
+  opening: "Diga um nome",
+  noName: "Sem nome",
+  clue1: "Pista 1 de 3",
+  clue2: "Pista 2 de 3",
+  clue3: "Pista 3 de 3",
+  humanScale: "Escala humana",
+  askAgain: "Diga um nome, de novo",
+  nameSaid: "Nome dito",
+  collective: "Mapa coletivo dos nomes",
+};
+
+export function mapDescription(state: State, context: PlaneContext) {
+  const name = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId)?.name ?? "";
+  const experience = context.discovery?.experience;
+  const point = `o ponto ${context.code}`;
+  switch (state.step) {
+    case "opening":
+      return "Mapa topográfico mudo: relevo com pontos marcados por triângulos, todos sem nome.";
+    case "noName":
+      return `Mapa mudo com ${point} selecionado por uma mira.`;
+    case "clue1": {
+      const places = experience?.territory.places.map((l) => l.text.toLowerCase()).join(", ");
+      return `Aproximação a ${point}, escala 1:250 000${places ? `: ${places}` : ""}.`;
+    }
+    case "clue2":
+      return `Escala 1:25 000: um transecto com ${experience?.problem.points ?? 0} pontos de coleta parte d${point}.`;
+    case "clue3":
+      return "Escala 1:10: as curvas de nível viram camadas de sedimento dentro de um testemunho.";
+    case "humanScale":
+      return "Escala 1:1: as curvas de nível desenham o busto de uma pessoa.";
+    case "askAgain":
+      return `Mapa mudo inteiro. ${point.charAt(0).toUpperCase()}${point.slice(1)} agora tem um retrato, mas ainda não tem nome.`;
+    case "nameSaid":
+      return `O relevo de ${name} sobe: uma nova curva de nível surge no topo.`;
+    case "collective":
+      return "Mapa dos nomes ditos: cada nome no topo do seu relevo; quanto mais dito, mais alto e maior.";
+  }
+}

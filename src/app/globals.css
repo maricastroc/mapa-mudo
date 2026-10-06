@@ -1,26 +1,157 @@
 @import "tailwindcss";
 
+@custom-variant compact (&:where([data-layout="compact"], [data-layout="compact"] *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --iris-blue: #1001e3;
+  --iris-orange: #ee704c;
+
+  --font-primary: var(--font-bai-jamjuree), system-ui, sans-serif;
+  --font-notation: var(--font-dm-mono), ui-monospace, monospace;
+
+  --paper: #f7f8f6;
+  --paper-grid: #e6ebed;
+  --ink: #292929;
+  --ink-soft: #4e6473;
+  --terrain-line: #a3b0b8;
+  --terrain-line-index: #6b7f8c;
+  --water: #cfe1ea;
+  --water-alpha: 0.75;
+
+  --accent: var(--iris-orange);
+  --action: var(--iris-blue);
+  --on-action: #ffffff;
+  --speak: var(--iris-blue);
+  --on-speak: #ffffff;
+  --focus-ring: var(--iris-blue);
+  --action-radius: 0px;
+
+  --display-weight: 600;
+  --display-tracking: -0.02em;
+  --grid-step: 36px;
+}
+
+[data-speak="accent"] {
+  --speak: var(--iris-orange);
+  --on-speak: var(--ink);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-accent: var(--accent);
+  --color-action: var(--action);
+  --color-on-action: var(--on-action);
+  --color-speak: var(--speak);
+  --color-on-speak: var(--on-speak);
+  --color-iris-blue: var(--iris-blue);
+  --font-primary: var(--font-primary);
+  --font-notation: var(--font-notation);
+  --radius-action: var(--action-radius);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-primary);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.graph-paper {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: var(--grid-step) var(--grid-step);
+}
+
+.display {
+  font-family: var(--font-primary);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+}
+
+:where(button, a, input, [tabindex]:not(h1)):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fade-in 700ms ease-out both;
+}
+
+.fade-out {
+  animation: fade-out 900ms ease-in both;
+}
+
+.ripple {
+  animation: ripple 1800ms cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.caret-blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+  .ripple {
+    animation: none;
+    opacity: 0.35;
+    transform: scale(1.5);
+  }
 }

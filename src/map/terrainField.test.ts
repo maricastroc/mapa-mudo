@@ -1,0 +1,74 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { CATALOG } from "../content/scientists/catalog.ts";
+import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "../participation/source.ts";
+import { sheetPoints } from "../participation/sheetLayout.ts";
+import { TerrainField } from "./terrainField.ts";
+
+const SHEET_OCTAVES = 3.8;
+
+function fixtureField() {
+  const points = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS)
+    .filter((p) => p.scientistId !== null && p.mentions > 0)
+    .map((p) => ({ id: p.scientistId as string, x: p.x, y: p.y, mentions: p.mentions }));
+  return new TerrainField(points);
+}
+
+test("the fixture sheet produces the same terrain as the validated baseline", () => {
+  const field = fixtureField();
+  assert.equal(field.peaks.length, 22);
+  let checksum = 0;
+  for (let y = 0; y < 900; y += 7) {
+    for (let x = 0; x < 1440; x += 7) checksum += field.terrain(x, y, SHEET_OCTAVES, field.peaks) * ((x * 31 + y * 17) % 13);
+  }
+  assert.ok(Math.abs(checksum - 7820505.663483) < 1e-3, `checksum ${checksum}`);
+  const helena = field.peak("p017");
+  assert.ok(helena);
+  assert.ok(Math.abs(helena.summitX - 910.932498) < 1e-5);
+  assert.ok(Math.abs(helena.summitY - 149.572523) < 1e-5);
+});
+
+test("each summit sits half a contour above its mention count", () => {
+  const field = fixtureField();
+  for (const p of field.peaks) {
+    const top = field.terrain(p.summitX, p.summitY, SHEET_OCTAVES, field.peaks);
+    assert.ok(Math.abs(top - (p.baseLevel + (INITIAL_PARTICIPATIONS[p.id] ?? 0) + 0.5)) < 0.05, p.id);
+  }
+});
+
+test("a first mention adds a peak that grows from nothing and crosses exactly one new contour", () => {
+  const field = fixtureField();
+  const point = { id: "new-known", x: 720, y: 560, mentions: 1 };
+  const predicted = field.summit(point);
+  const peak = field.addPeak(point);
+  assert.equal(peak.presence, 0);
+  assert.equal(peak.summitX, predicted.x);
+  assert.equal(peak.summitY, predicted.y);
+  const before = field.terrain(peak.summitX, peak.summitY, SHEET_OCTAVES, field.peaks);
+  field.setAmplitude(peak.id, peak.baseAmp, 1);
+  const after = field.terrain(peak.summitX, peak.summitY, SHEET_OCTAVES, field.peaks);
+  const newLevel = peak.baseLevel + 1;
+  assert.ok(before < newLevel, `before ${before}`);
+  assert.ok(after > newLevel && after < newLevel + 1, `after ${after}`);
+});
+
+test("a first mention on a steep slope still closes a ring around the new summit", () => {
+  const field = fixtureField();
+  const raimunda = field.peak("p001");
+  assert.ok(raimunda);
+  const point = { id: "on-a-slope", x: raimunda.summitX + 85, y: raimunda.summitY + 20, mentions: 1 };
+  const peak = field.addPeak(point);
+  field.setAmplitude(peak.id, peak.baseAmp, 1);
+  const newLevel = peak.baseLevel + 1;
+  const top = field.terrain(peak.summitX, peak.summitY, SHEET_OCTAVES, field.peaks);
+  assert.ok(top > newLevel, `top ${top}`);
+  const sigma = 1 / Math.sqrt(2 * peak.k);
+  for (let a = 0; a < 72; a++) {
+    const t = (a / 72) * Math.PI * 2;
+    let crossesBelow = false;
+    for (let r = 0.5; r < 1.5 * sigma && !crossesBelow; r += 0.5) {
+      crossesBelow = field.terrain(peak.summitX + Math.cos(t) * r, peak.summitY + Math.sin(t) * r, SHEET_OCTAVES, field.peaks) < newLevel;
+    }
+    assert.ok(crossesBelow, `ray ${a} never drops below the new contour`);
+  }
+});
