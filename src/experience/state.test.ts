@@ -51,18 +51,29 @@ test("scenario 2: a known-only name counts and reaches the collective map", () =
 });
 
 test("scenario 3: an ambiguous answer waits for confirmation and can be resolved or rejected", () => {
-  const asked = run([{ type: "name", text: "Ana" }]);
+  const asked = run([{ type: "name", text: "Ana Luísa" }]);
   assert.equal(asked.step, "opening");
-  assert.equal(asked.response?.kind, "confirm");
+  assert.ok(asked.response?.kind === "confirm");
+  assert.deepEqual(
+    asked.response.candidates.map((c) => c.id),
+    ["p015", "f-ana-luisa-prado"],
+  );
   assert.deepEqual(asked.participations, INITIAL_PARTICIPATIONS);
 
-  const confirmed = run([{ type: "confirm", id: "f-ana-clara-bastos" }], asked);
+  const confirmed = run([{ type: "confirm", id: "f-ana-luisa-prado" }], asked);
   assert.equal(confirmed.step, "nameSaid");
-  assert.equal(confirmed.participations["f-ana-clara-bastos"], 1);
+  assert.equal(confirmed.participations["f-ana-luisa-prado"], 1);
 
   const rejected = run([{ type: "reject" }], asked);
   assert.equal(rejected.step, "opening");
-  assert.deepEqual(rejected.response, { kind: "notFound", text: "Ana" });
+  assert.deepEqual(rejected.response, { kind: "notFound", text: "Ana Luísa" });
+});
+
+test("an excessively incomplete answer asks for the full name without counting", () => {
+  const state = run([{ type: "name", text: "Ana" }]);
+  assert.equal(state.step, "opening");
+  assert.deepEqual(state.response, { kind: "incomplete", text: "Ana", candidateCount: 3 });
+  assert.deepEqual(state.participations, INITIAL_PARTICIPATIONS);
 });
 
 test("scenario 4: an unknown name is not an error and can be submitted for review", () => {

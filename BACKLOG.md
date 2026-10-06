@@ -29,8 +29,8 @@
 
 ## Identidade
 
-- `--iris-orange-ink` (#b5553a) é um tom derivado do laranja ÍRIS, criado para texto acessível (4,56:1). Precisa de validação da marca.
-- A curva +1 em laranja ÍRIS tem contraste menor (2,79:1 sobre o papel) que o vermelho anterior; o significado é reforçado pelo rótulo de texto.
+- Cores institucionais só `#1001e3` e `#ee704c`. O laranja (2,79:1 sobre o papel) não é usado em texto: fica em curvas, anéis, bordas e fundos; textos de destaque usam ink (4,89:1 sobre o laranja) ou azul.
+- A curva +1 em laranja ÍRIS tem contraste menor que o vermelho anterior; o significado é reforçado pelo rótulo de texto.
 
 ## Plataforma
 

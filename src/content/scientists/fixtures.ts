@@ -79,6 +79,7 @@ export const KNOWN_FIXTURES: KnownScientist[] = [
   fictionalKnown("p020", "Dora Frota"),
   fictionalKnown("p022", "Clara Meneses"),
   fictionalKnown("f-ana-clara-bastos", "Ana Clara Bastos"),
+  fictionalKnown("f-ana-luisa-prado", "Ana Luísa Prado"),
   fictionalKnown("f-celina-brandao", "Celina Brandão", ["Celina Brandao Lima"]),
 ];
 

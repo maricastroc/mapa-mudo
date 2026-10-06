@@ -3,6 +3,7 @@ import type { Catalog, FeaturedScientist, KnownScientist, ScientistMatch } from 
 const NAME_PARTICLES = new Set(["de", "da", "do", "das", "dos", "e", "d"]);
 const MAX_CANDIDATES = 3;
 const MIN_PARTIAL_TOKEN_LENGTH = 3;
+const PARTIAL_WEIGHT = 10;
 
 export function normalizeName(text: string) {
   return text
@@ -77,6 +78,7 @@ export function createMatcher(catalog: Catalog) {
     if (exact.length > 1) return { status: "ambiguous", submittedName, candidates: exact.map((e) => e.scientist) };
 
     const tokens = query.split(" ");
+    const specific = tokens.length >= 2;
     const tolerance = typoTolerance(query.length);
     const candidates: { entry: IndexedScientist; weight: number }[] = [];
     for (const entry of entries) {
@@ -94,14 +96,16 @@ export function createMatcher(catalog: Catalog) {
           const parts = form.split(" ");
           return parts.length > tokens.length && tokens.every((t) => parts.includes(t));
         });
-      if (partial) candidates.push({ entry, weight: 10 });
+      if (partial) candidates.push({ entry, weight: PARTIAL_WEIGHT });
     }
 
     if (candidates.length === 0) return { status: "unknown", submittedName };
-    if (candidates.length > MAX_CANDIDATES) {
+    const onlyPartial = candidates.every((c) => c.weight === PARTIAL_WEIGHT);
+    if ((!specific && onlyPartial) || candidates.length > MAX_CANDIDATES) {
       return { status: "incomplete", submittedName, candidateCount: candidates.length };
     }
     candidates.sort((a, b) => a.weight - b.weight || a.entry.order - b.entry.order);
+    if (candidates.length === 1) return { status: "suggestion", submittedName, candidate: candidates[0].entry.scientist };
     return { status: "ambiguous", submittedName, candidates: candidates.map((c) => c.entry.scientist) };
   };
 }

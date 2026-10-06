@@ -116,7 +116,9 @@ function ResponsePanel({ response, handlers }: { response: Response; handlers: R
     case "incomplete":
       return (
         <p role="status" className={sentence}>
-          Há mais de uma cientista com esse nome no mapa. Diga o nome completo.
+          {response.candidateCount > 1
+            ? "Há várias cientistas com esse nome no mapa. Pode dizer o nome completo?"
+            : "Pode dizer o nome completo?"}
         </p>
       );
     case "notFound":

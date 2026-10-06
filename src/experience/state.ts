@@ -20,7 +20,7 @@ export type Candidate = { id: string; name: string };
 
 export type Response =
   | { kind: "confirm"; text: string; candidates: Candidate[] }
-  | { kind: "incomplete"; text: string }
+  | { kind: "incomplete"; text: string; candidateCount: number }
   | { kind: "notFound"; text: string }
   | { kind: "submitted"; text: string }
   | { kind: "otherPoint"; text: string }
@@ -85,15 +85,20 @@ export function decide(
       if (mode === "question") return { kind: "count", id: match.scientist.id };
       if (match.scientist.id === discoveryId) return { kind: "reveal" };
       return { kind: "respond", response: { kind: "otherPoint", text: match.scientist.canonicalName } };
+    case "suggestion":
     case "ambiguous": {
-      const candidates = match.candidates.map((c) => ({ id: c.id, name: nameOf(c.id) }));
+      const found = match.status === "suggestion" ? [match.candidate] : match.candidates;
+      const candidates = found.map((c) => ({ id: c.id, name: nameOf(c.id) }));
       if (mode === "discovery" && !candidates.some((c) => c.id === discoveryId)) {
         return { kind: "respond", response: { kind: "otherPoint", text: match.submittedName } };
       }
       return { kind: "respond", response: { kind: "confirm", text: match.submittedName, candidates } };
     }
     case "incomplete":
-      return { kind: "respond", response: { kind: "incomplete", text: match.submittedName } };
+      return {
+        kind: "respond",
+        response: { kind: "incomplete", text: match.submittedName, candidateCount: match.candidateCount },
+      };
     case "unknown":
       if (mode === "discovery") return { kind: "respond", response: { kind: "otherPoint", text: match.submittedName } };
       return { kind: "respond", response: { kind: "notFound", text: match.submittedName } };

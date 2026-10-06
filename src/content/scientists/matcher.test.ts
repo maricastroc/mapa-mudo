@@ -19,6 +19,7 @@ const catalog: Catalog = {
     known("k-iracema", "Iracema Leitão"),
     known("k-ana-luisa", "Ana Luísa Braga"),
     known("k-ana-clara", "Ana Clara Bastos"),
+    known("k-ana-luisa-prado", "Ana Luísa Prado"),
     known("k-juliana", "Juliana Rocha"),
     known("k-marta", "Marta Pires"),
     known("k-marta-neto", "Marta Pires Neto"),
@@ -69,15 +70,20 @@ test("names that are not in the catalog return unknown with the submitted text",
   assert.deepEqual(result, { status: "unknown", submittedName: "Marie Curie" });
 });
 
-test("two plausible candidates are never chosen silently", () => {
-  const result = match("Ana");
+test("a specific input with two plausible candidates is ambiguous and never chosen silently", () => {
+  const result = match("Ana Luísa");
   assert.equal(result.status, "ambiguous");
   assert.ok(result.status === "ambiguous");
   assert.deepEqual(
     result.candidates.map((c) => c.id),
-    ["k-ana-luisa", "k-ana-clara"],
+    ["k-ana-luisa", "k-ana-luisa-prado"],
   );
   assert.equal(isValidAnswer(result), false);
+});
+
+test("an excessively incomplete input is incomplete, not ambiguous", () => {
+  assert.deepEqual(match("Ana"), { status: "incomplete", submittedName: "Ana", candidateCount: 3 });
+  assert.deepEqual(match("Helena"), { status: "incomplete", submittedName: "Helena", candidateCount: 1 });
 });
 
 test("the same alias registered for two people is ambiguous", () => {
@@ -96,10 +102,10 @@ test("empty input is not recognized", () => {
 });
 
 test("a short common substring is never an automatic match", () => {
-  const ana = match("Ana");
-  assert.equal(isValidAnswer(ana), false);
-  assert.ok(ana.status === "ambiguous" && !ana.candidates.some((c) => c.id === "k-juliana"));
+  assert.equal(isValidAnswer(match("Ana")), false);
   assert.equal(match("an").status, "unknown");
+  const specific = match("Ana Rocha");
+  assert.equal(specific.status, "unknown");
 });
 
 test("too many partial candidates asks for the full name instead of listing everyone", () => {
@@ -112,12 +118,16 @@ test("too many partial candidates asks for the full name instead of listing ever
 
 test("a close typo becomes a suggestion that needs confirmation, not a match", () => {
   const result = match("Helena Alencr");
-  assert.equal(result.status, "ambiguous");
-  assert.ok(result.status === "ambiguous");
-  assert.deepEqual(
-    result.candidates.map((c) => c.id),
-    [helena.id],
-  );
+  assert.equal(result.status, "suggestion");
+  assert.ok(result.status === "suggestion");
+  assert.equal(result.candidate.id, helena.id);
+  assert.equal(isValidAnswer(result), false);
+});
+
+test("a specific partial name with a single candidate is a suggestion", () => {
+  const result = match("Ana Clara");
+  assert.ok(result.status === "suggestion");
+  assert.equal(result.candidate.id, "k-ana-clara");
 });
 
 test("a distant typo is not turned into a match", () => {

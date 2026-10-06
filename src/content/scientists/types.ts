@@ -74,6 +74,7 @@ export type Catalog = {
 export type ScientistMatch =
   | { status: "featured"; scientist: FeaturedScientist }
   | { status: "known"; scientist: KnownScientist }
+  | { status: "suggestion"; submittedName: string; candidate: KnownScientist }
   | { status: "ambiguous"; submittedName: string; candidates: KnownScientist[] }
   | { status: "incomplete"; submittedName: string; candidateCount: number }
   | { status: "unknown"; submittedName: string }
