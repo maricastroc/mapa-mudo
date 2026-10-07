@@ -1,13 +1,20 @@
 "use client";
 
-import { useEffect, useEffectEvent, useMemo, useReducer, useState, type CSSProperties } from "react";
-import { CATALOG, findFeatured } from "@/content/scientists/catalog";
+import { useEffect, useEffectEvent, useMemo, useReducer, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { CATALOG, findFeatured, findScientist } from "@/content/scientists/catalog";
 import type { Participations } from "@/content/scientists/types";
 import { MapCanvas, ZoomPlane } from "@/map/MapCanvas";
 import { TerrainField } from "@/map/terrainField";
 import { chooseDiscovery } from "@/participation/participations";
 import { sheetPoints } from "@/participation/sheetLayout";
 import { INITIAL_PARTICIPATIONS, PARTICIPATIONS_ARE_ILLUSTRATIVE, SHEET_LAYOUT } from "@/participation/source";
+import {
+  browserStore,
+  contributionsSince,
+  loadContributions,
+  saveContributions,
+  withContributions,
+} from "@/participation/storedContributions";
 import {
   LensRing,
   PlaceNames,
@@ -41,10 +48,30 @@ function initialFieldPoints(participations: Participations) {
     .map(toFieldPoint);
 }
 
+function stayOnClient() {
+  return () => {};
+}
+
+function restoredState() {
+  const contributions = loadContributions(browserStore());
+  const participations = withContributions(INITIAL_PARTICIPATIONS, contributions, (id) => findScientist(CATALOG, id) !== undefined);
+  return { ...EXPERIENCE.initialState(), participations };
+}
+
 export function Experience() {
+  const onClient = useSyncExternalStore(
+    stayOnClient,
+    () => true,
+    () => false,
+  );
+  if (!onClient) return <main className="fixed inset-0 bg-paper" />;
+  return <LiveExperience />;
+}
+
+function LiveExperience() {
   const screen = useScreen();
   const reducedMotion = useReducedMotion();
-  const [state, dispatch] = useReducer(EXPERIENCE.reduce, undefined, EXPERIENCE.initialState);
+  const [state, dispatch] = useReducer(EXPERIENCE.reduce, undefined, restoredState);
   const [field] = useState(() => new TerrainField(initialFieldPoints(INITIAL_PARTICIPATIONS)));
   const points = useMemo(() => sheetPoints(CATALOG, SHEET_LAYOUT, state.participations), [state.participations]);
   const discovery = useMemo(
@@ -62,6 +89,10 @@ export function Experience() {
     () => (state.previous ? restCameraFor(state.previous, state, screen, field, geometry, points) : null),
     [state, screen, field, geometry, points],
   );
+
+  useEffect(() => {
+    saveContributions(browserStore(), contributionsSince(INITIAL_PARTICIPATIONS, state.participations));
+  }, [state.participations]);
 
   useEffect(() => {
     if (!state.previous) return;

@@ -213,6 +213,7 @@ export class MapRenderer {
     };
     this.currentView = { W: 1, H: 1, fit: 1, camera: this.scene.camera, lens: this.scene.lens, newContour: null };
     this.readColors();
+    this.setTarget(initial, true);
   }
 
   readColors() {

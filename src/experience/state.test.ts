@@ -214,3 +214,11 @@ test("the profile can also be opened from the waiting point on the map and retur
   assert.equal(back.profileReturn, null);
   assert.deepEqual(back.participations, INITIAL_PARTICIPATIONS);
 });
+
+test("restart brings the participations back to the initial counts, dropping what visitors added", () => {
+  const visited = { ...experience.initialState(), participations: { ...INITIAL_PARTICIPATIONS, [FEATURED[0].id]: 5 } };
+  const said = run([{ type: "name", text: FEATURED[1].canonicalName }], visited);
+  assert.ok((said.participations[FEATURED[1].id] ?? 0) > (INITIAL_PARTICIPATIONS[FEATURED[1].id] ?? 0));
+  const restarted = run([{ type: "restart" }], said);
+  assert.deepEqual(restarted.participations, INITIAL_PARTICIPATIONS);
+});
