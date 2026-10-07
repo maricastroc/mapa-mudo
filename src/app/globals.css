@@ -139,6 +139,34 @@ body {
   animation: blink 1s steps(1) infinite;
 }
 
+@layer components {
+  .react-tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: max-content;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 150ms ease-in;
+  }
+
+  .react-tooltip.react-tooltip__show {
+    opacity: 1;
+    transition: opacity 150ms ease-out;
+  }
+
+  .react-tooltip-content-wrapper {
+    position: relative;
+    z-index: 1;
+  }
+
+  .react-tooltip-arrow {
+    position: absolute;
+    z-index: 0;
+    background: inherit;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -22,6 +22,9 @@ import {
 import { PLANE_LABELS, PlaneContent, mapDescription, type Commands, type PlaneContext } from "./Planes";
 import { discoveryGeometry, restCameraFor, sceneFor, toFieldPoint } from "./scenes";
 import { useReducedMotion, useScreen } from "./screen";
+import { Credits } from "./Credits";
+import { PortraitPhoto } from "./PortraitPhoto";
+import { sceneryFor } from "./scenery";
 import { simulatedSpeech } from "./speechSimulation";
 import { createExperience, type Step } from "./state";
 import { Button } from "./ui";
@@ -45,8 +48,8 @@ export function Experience() {
   const discovery = useMemo(
     () =>
       EXPERIENCE.discoverable.find((f) => f.id === state.discoveryId) ??
-      chooseDiscovery(EXPERIENCE.discoverable, state.participations),
-    [state.discoveryId, state.participations],
+      chooseDiscovery(EXPERIENCE.discoverable, state.participations, state.discoveryCursor),
+    [state.discoveryId, state.participations, state.discoveryCursor],
   );
   const geometry = useMemo(() => discoveryGeometry(field, discovery, points), [field, discovery, points]);
   const { target, rest } = useMemo(
@@ -123,10 +126,17 @@ export function Experience() {
       >
         <SheetMarkers step={state.step} field={field} points={points} discoveryId={discovery?.id ?? null} saidId={state.saidId} />
         <PlaceNames step={state.step} geometry={geometry} />
-        <Transect step={state.step} geometry={geometry} prefix={discovery?.experience.problem.prefix ?? ""} />
+        <Transect step={state.step} geometry={geometry} prefix={discovery ? (sceneryFor(discovery).transect?.prefix ?? "") : ""} />
+        <PortraitPhoto step={state.step} photo={discovery?.photo ?? null} />
         <LensRing variant={lensVariantFor(state.step)} />
         <PointLabel step={state.step} geometry={geometry} />
-        <PortraitMedallion step={state.step} field={field} geometry={geometry} />
+        <PortraitMedallion
+          step={state.step}
+          field={field}
+          geometry={geometry}
+          name={discovery?.canonicalName ?? ""}
+          photo={discovery?.photo ?? null}
+        />
         <SaidNameLabel
           step={state.step}
           field={field}
@@ -158,6 +168,7 @@ export function Experience() {
           <span className="font-bold text-iris-blue">Íris</span> · Laboratório de Inovação e Dados · Governo do Ceará
         </p>
         <nav aria-label="Controles do protótipo" className="pointer-events-auto flex items-center gap-1 font-notation tracking-[0.08em]">
+          <Credits illustrative={PARTICIPATIONS_ARE_ILLUSTRATIVE} />
           <span className="px-1 uppercase">Protótipo</span>
           {state.reviewQueue.length > 0 && <span className="px-1 uppercase">Para conferência: {state.reviewQueue.length}</span>}
           <Button variant="subtle" onClick={() => dispatch({ type: "restart" })}>

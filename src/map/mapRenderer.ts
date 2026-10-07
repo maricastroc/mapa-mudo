@@ -34,6 +34,7 @@ export type View = {
   newContour: { x: number; y: number; r: number } | null;
 };
 
+type Frame = Scene["portraitFrame"];
 type RGB = [number, number, number];
 type Transition<T> = { from: T; to: T; start: number; duration: number };
 type ScalarChannel = "strata" | "portrait" | "lensInk" | "intervalLock" | "lockedInterval" | "density";
@@ -81,6 +82,10 @@ function interpolateLens(a: Lens, b: Lens, t: number): Lens {
     r: a.r + (b.r - a.r) * t,
     o: a.o + (b.o - a.o) * t,
   };
+}
+
+function interpolateFrame(a: Frame, b: Frame, t: number): Frame {
+  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, r: a.r + (b.r - a.r) * t };
 }
 
 function readRGB(value: string, fallback: RGB): RGB {
@@ -142,6 +147,7 @@ export class MapRenderer {
   private scene: Scene;
   private cameraTransition: Transition<Camera>;
   private lensTransition: Transition<Lens>;
+  private frameTransition: Transition<Frame>;
   private scalars: Record<ScalarChannel, Transition<number>>;
   private peakTransitions = new Map<string, { amp: Transition<number>; presence: Transition<number> }>();
   private targetMentions: Record<string, number> = {};
@@ -173,11 +179,17 @@ export class MapRenderer {
     this.canvas = canvas;
     this.field = field;
     this.waterCanvas = document.createElement("canvas");
-    this.scene = { ...initial.scene, camera: { ...initial.scene.camera }, lens: { ...initial.scene.lens } };
+    this.scene = {
+      ...initial.scene,
+      camera: { ...initial.scene.camera },
+      lens: { ...initial.scene.lens },
+      portraitFrame: { ...initial.scene.portraitFrame },
+    };
     this.targetMentions = Object.fromEntries(initial.relief.map((r) => [r.id, r.mentions]));
     const now = 0;
     this.cameraTransition = { from: this.scene.camera, to: this.scene.camera, start: now, duration: 0 };
     this.lensTransition = { from: this.scene.lens, to: this.scene.lens, start: now, duration: 0 };
+    this.frameTransition = { from: this.scene.portraitFrame, to: this.scene.portraitFrame, start: now, duration: 0 };
     const still = (v: number): Transition<number> => ({ from: v, to: v, start: now, duration: 0 });
     this.scalars = {
       strata: still(this.scene.strata),
@@ -240,6 +252,7 @@ export class MapRenderer {
     };
     this.cameraTransition = transition({ ...this.scene.camera }, { ...target.scene.camera }, "camera");
     this.lensTransition = transition({ ...this.scene.lens }, { ...target.scene.lens }, "lens");
+    this.frameTransition = transition({ ...this.scene.portraitFrame }, { ...target.scene.portraitFrame }, "lens");
     this.scalars = {
       strata: transition(this.scene.strata, target.scene.strata, "strata"),
       portrait: transition(this.scene.portrait, target.scene.portrait, "portrait"),
@@ -261,7 +274,6 @@ export class MapRenderer {
     this.targetMentions = Object.fromEntries(target.relief.map((r) => [r.id, r.mentions]));
     this.scene.highlight = target.scene.highlight;
     this.scene.newContour = target.scene.newContour;
-    this.scene.portraitFrame = target.scene.portraitFrame;
     if (instant) this.smoothedLevelExp = null;
     this.wake();
   }
@@ -314,6 +326,7 @@ export class MapRenderer {
       this.fit,
     );
     this.scene.lens = interpolateLens(this.lensTransition.from, this.lensTransition.to, track(this.lensTransition));
+    this.scene.portraitFrame = interpolateFrame(this.frameTransition.from, this.frameTransition.to, track(this.frameTransition));
     for (const k of Object.keys(this.scalars) as ScalarChannel[]) {
       const tr = this.scalars[k];
       this.scene[k] = tr.from + (tr.to - tr.from) * track(tr);

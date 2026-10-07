@@ -1,0 +1,2410 @@
+{
+  "version": 1,
+  "theme": "Ciência Delas",
+  "status": "fact-checked-core",
+  "reviewPolicy": {
+    "meaning": "Core scientific claims, hints and reveals were checked against institutional, academic or primary/peer-reviewed sources. This is not the same as final institutional editorial approval.",
+    "institutionalApprovalRequired": true
+  },
+  "featuredScientists": [
+    {
+      "id": "nise-da-silveira",
+      "canonicalName": "Nise da Silveira",
+      "aliases": [
+        "Nise Silveira"
+      ],
+      "field": "Psiquiatria",
+      "identity": {
+        "birthYear": 1905,
+        "deathYear": 1999,
+        "nationalityContext": "brasileira; nascida em Maceió (AL)"
+      },
+      "science": {
+        "researchAreas": [
+          "psiquiatria",
+          "terapia ocupacional",
+          "expressão artística"
+        ],
+        "facts": [
+          {
+            "id": "nise-f1",
+            "statement": "Em 1946, Nise propôs a criação de uma seção de terapia ocupacional no Centro Psiquiátrico Pedro II.",
+            "sourceRefs": [
+              "nise-s1"
+            ]
+          },
+          {
+            "id": "nise-f2",
+            "statement": "Seu trabalho pioneiro investigou o tratamento da doença mental por meio de atividades expressivas e arte.",
+            "sourceRefs": [
+              "nise-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Em um hospital psiquiátrico, ela recusou a ideia de que tratar significava apenas conter sintomas.",
+            "factIds": [
+              "nise-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Em 1946, criou espaço para que pacientes trabalhassem com atividades e expressão em vez de serem reduzidos ao diagnóstico.",
+            "factIds": [
+              "nise-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Imagens, pinturas e modelagens tornaram-se parte de uma pesquisa pioneira sobre a vida psíquica.",
+            "factIds": [
+              "nise-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Nise da Silveira",
+          "summary": "Psiquiatra brasileira que transformou a terapia ocupacional e investigou a expressão artística como caminho para compreender e cuidar de pessoas em sofrimento psíquico.",
+          "whyItMatters": "Seu trabalho tornou-se referência internacional em práticas mais humanas de cuidado em saúde mental.",
+          "sourceRefs": [
+            "nise-s1"
+          ]
+        },
+        "visualMotifs": [
+          "ateliê",
+          "pintura",
+          "formas orgânicas",
+          "arquivos de imagens"
+        ],
+        "recognitionLevel": "high",
+        "difficulty": 1,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "nise-f1",
+          "statement": "Em 1946, Nise propôs a criação de uma seção de terapia ocupacional no Centro Psiquiátrico Pedro II.",
+          "sourceRefs": [
+            "nise-s1"
+          ]
+        },
+        {
+          "id": "nise-f2",
+          "statement": "Seu trabalho pioneiro investigou o tratamento da doença mental por meio de atividades expressivas e arte.",
+          "sourceRefs": [
+            "nise-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "nise-s1",
+          "label": "CNPq — Pioneiras da Ciência no Brasil, 1ª edição",
+          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-1a-edicao",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/nise-da-silveira.jpg",
+        "alt": "Retrato de Nise da Silveira",
+        "credit": "Nise da Silveira — fotógrafo desconhecido; domínio público.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nise_da_Silveira_(cropped).jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "bertha-lutz",
+      "canonicalName": "Bertha Lutz",
+      "aliases": [
+        "Bertha Maria Júlia Lutz"
+      ],
+      "field": "Biologia e zoologia",
+      "identity": {
+        "birthYear": 1894,
+        "deathYear": 1976,
+        "nationalityContext": "brasileira; nascida em São Paulo (SP)"
+      },
+      "science": {
+        "researchAreas": [
+          "zoologia",
+          "anfíbios",
+          "botânica"
+        ],
+        "facts": [
+          {
+            "id": "bertha-f1",
+            "statement": "Bertha trabalhou por décadas como bióloga, docente e pesquisadora do Museu Nacional.",
+            "sourceRefs": [
+              "bertha-s1"
+            ]
+          },
+          {
+            "id": "bertha-f2",
+            "statement": "Sua pesquisa zoológica incluiu estudos de espécies de anfíbios brasileiros.",
+            "sourceRefs": [
+              "bertha-s1"
+            ]
+          },
+          {
+            "id": "bertha-f3",
+            "statement": "Ela também teve papel central na campanha brasileira pelos direitos políticos das mulheres.",
+            "sourceRefs": [
+              "bertha-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Antes de ser lembrada pela política, ela entrou no Museu Nacional como bióloga.",
+            "factIds": [
+              "bertha-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ali, passou décadas estudando zoologia — especialmente anfíbios brasileiros.",
+            "factIds": [
+              "bertha-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "A mesma cientista também se tornou uma das figuras centrais da luta pelo voto feminino no Brasil.",
+            "factIds": [
+              "bertha-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Bertha Lutz",
+          "summary": "Bióloga do Museu Nacional, pesquisadora de anfíbios e uma das principais lideranças brasileiras pelos direitos das mulheres.",
+          "whyItMatters": "Sua trajetória une produção científica e transformação institucional e política.",
+          "sourceRefs": [
+            "bertha-s1"
+          ]
+        },
+        "visualMotifs": [
+          "anfíbios",
+          "coleção científica",
+          "herbário",
+          "museu"
+        ],
+        "recognitionLevel": "high",
+        "difficulty": 1,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "bertha-f1",
+          "statement": "Bertha trabalhou por décadas como bióloga, docente e pesquisadora do Museu Nacional.",
+          "sourceRefs": [
+            "bertha-s1"
+          ]
+        },
+        {
+          "id": "bertha-f2",
+          "statement": "Sua pesquisa zoológica incluiu estudos de espécies de anfíbios brasileiros.",
+          "sourceRefs": [
+            "bertha-s1"
+          ]
+        },
+        {
+          "id": "bertha-f3",
+          "statement": "Ela também teve papel central na campanha brasileira pelos direitos políticos das mulheres.",
+          "sourceRefs": [
+            "bertha-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "bertha-s1",
+          "label": "CNPq — Pioneiras da Ciência no Brasil, 1ª edição",
+          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-1a-edicao",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Bertha Lutz",
+        "credit": null,
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Bertha_Lutz",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "niede-guidon",
+      "canonicalName": "Niède Guidon",
+      "aliases": [
+        "Niede Guidon"
+      ],
+      "field": "Arqueologia",
+      "identity": {
+        "birthYear": 1933,
+        "deathYear": 2025,
+        "nationalityContext": "brasileira; arqueóloga e historiadora"
+      },
+      "science": {
+        "researchAreas": [
+          "arqueologia pré-histórica",
+          "Serra da Capivara",
+          "ocupação humana das Américas"
+        ],
+        "facts": [
+          {
+            "id": "niede-f1",
+            "statement": "Niède dedicou décadas à pesquisa e preservação do patrimônio arqueológico da Serra da Capivara.",
+            "sourceRefs": [
+              "niede-s1"
+            ]
+          },
+          {
+            "id": "niede-f2",
+            "statement": "Foi diretora-presidente da Fundação Museu do Homem Americano entre 1986 e 2019.",
+            "sourceRefs": [
+              "niede-s1"
+            ]
+          },
+          {
+            "id": "niede-f3",
+            "statement": "Seu trabalho na região alimentou debates científicos sobre a antiguidade da presença humana nas Américas.",
+            "sourceRefs": [
+              "niede-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "As primeiras pistas estão desenhadas e enterradas na pedra.",
+            "factIds": [
+              "niede-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Na Serra da Capivara, décadas de escavação e preservação revelaram um arquivo extraordinário da presença humana.",
+            "factIds": [
+              "niede-f1",
+              "niede-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Essas evidências ajudaram a manter aberta uma grande pergunta científica: há quanto tempo seres humanos vivem nas Américas?",
+            "factIds": [
+              "niede-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Niède Guidon",
+          "summary": "Arqueóloga brasileira cuja vida científica ficou ligada à pesquisa e preservação da Serra da Capivara.",
+          "whyItMatters": "Seu trabalho colocou o patrimônio arqueológico do Piauí no centro de debates internacionais sobre a pré-história americana.",
+          "sourceRefs": [
+            "niede-s1"
+          ]
+        },
+        "visualMotifs": [
+          "rocha",
+          "pinturas rupestres",
+          "escavação",
+          "estratos",
+          "tempo"
+        ],
+        "recognitionLevel": "high",
+        "difficulty": 1,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "niede-f1",
+          "statement": "Niède dedicou décadas à pesquisa e preservação do patrimônio arqueológico da Serra da Capivara.",
+          "sourceRefs": [
+            "niede-s1"
+          ]
+        },
+        {
+          "id": "niede-f2",
+          "statement": "Foi diretora-presidente da Fundação Museu do Homem Americano entre 1986 e 2019.",
+          "sourceRefs": [
+            "niede-s1"
+          ]
+        },
+        {
+          "id": "niede-f3",
+          "statement": "Seu trabalho na região alimentou debates científicos sobre a antiguidade da presença humana nas Américas.",
+          "sourceRefs": [
+            "niede-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "niede-s1",
+          "label": "CNPq — homenagem a Niède Guidon",
+          "url": "https://www.gov.br/cnpq/pt-br/assuntos/noticias/atualidades/cnpq-se-despede-da-arqueologa-niede-guidon/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/niede-guidon.jpg",
+        "alt": "Retrato de Niède Guidon",
+        "credit": "Foto: Elisabete Alves — CC BY 2.0.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Niede_Guidon_e_o_deputado_Paes_Landim_cropped.jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Evitar transformar cronologias controversas de povoamento das Américas em fato fechado."
+    },
+    {
+      "id": "mayana-zatz",
+      "canonicalName": "Mayana Zatz",
+      "aliases": [],
+      "field": "Genética humana",
+      "identity": {
+        "birthYear": 1947,
+        "deathYear": null,
+        "nationalityContext": "naturalizada brasileira; nasceu em Tel Aviv e fez carreira científica no Brasil"
+      },
+      "science": {
+        "researchAreas": [
+          "genética humana",
+          "doenças neuromusculares",
+          "células-tronco"
+        ],
+        "facts": [
+          {
+            "id": "mayana-f1",
+            "statement": "Mayana é pioneira no Brasil em genética de doenças neuromusculares.",
+            "sourceRefs": [
+              "mayana-s1"
+            ]
+          },
+          {
+            "id": "mayana-f2",
+            "statement": "Coordena o Centro de Estudos do Genoma Humano e Células-Tronco da USP.",
+            "sourceRefs": [
+              "mayana-s1",
+              "mayana-s2"
+            ]
+          },
+          {
+            "id": "mayana-f3",
+            "statement": "Seu trabalho começou com forte foco na distrofia muscular de Duchenne e outras doenças neuromusculares.",
+            "sourceRefs": [
+              "mayana-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Algumas doenças aparecem em famílias como uma mensagem escrita no DNA.",
+            "factIds": [
+              "mayana-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela ajudou a construir no Brasil uma linha de pesquisa dedicada a doenças neuromusculares hereditárias.",
+            "factIds": [
+              "mayana-f1",
+              "mayana-f3"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Na USP, seu trabalho passou do rastreamento de genes ao estudo de células-tronco e novas estratégias para doenças genéticas.",
+            "factIds": [
+              "mayana-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Mayana Zatz",
+          "summary": "Geneticista brasileira, pioneira no estudo de doenças neuromusculares e referência em genoma humano e células-tronco.",
+          "whyItMatters": "Seu trabalho conecta pesquisa genética, diagnóstico, famílias afetadas e novas possibilidades terapêuticas.",
+          "sourceRefs": [
+            "mayana-s1",
+            "mayana-s2"
+          ]
+        },
+        "visualMotifs": [
+          "DNA",
+          "cromossomos",
+          "hereditariedade",
+          "células"
+        ],
+        "recognitionLevel": "high",
+        "difficulty": 1,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "mayana-f1",
+          "statement": "Mayana é pioneira no Brasil em genética de doenças neuromusculares.",
+          "sourceRefs": [
+            "mayana-s1"
+          ]
+        },
+        {
+          "id": "mayana-f2",
+          "statement": "Coordena o Centro de Estudos do Genoma Humano e Células-Tronco da USP.",
+          "sourceRefs": [
+            "mayana-s1",
+            "mayana-s2"
+          ]
+        },
+        {
+          "id": "mayana-f3",
+          "statement": "Seu trabalho começou com forte foco na distrofia muscular de Duchenne e outras doenças neuromusculares.",
+          "sourceRefs": [
+            "mayana-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "mayana-s1",
+          "label": "Centro de Estudos do Genoma Humano e Células-Tronco — USP",
+          "url": "https://www.mayanazatz.ib.usp.br/",
+          "type": "institutional"
+        },
+        {
+          "id": "mayana-s2",
+          "label": "Instituto de Estudos Avançados — USP",
+          "url": "https://www.iea.usp.br/pessoas/pasta-pessoam/mayana-zatz",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/mayana-zatz.jpg",
+        "alt": "Retrato de Mayana Zatz",
+        "credit": "Foto: Cecília Bastos/USP Imagens.",
+        "sourceUrl": "https://imagens.usp.br/editorias/pessoas-categorias/premio-mulheres-que-movem-a-historia-em-2026/",
+        "usageStatus": "approved-with-credit"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "jaqueline-goes-de-jesus",
+      "canonicalName": "Jaqueline Goes de Jesus",
+      "aliases": [
+        "Jaqueline Goes"
+      ],
+      "field": "Biomedicina e genômica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira; nascida em Salvador (BA)"
+      },
+      "science": {
+        "researchAreas": [
+          "genômica de vírus",
+          "vigilância genômica",
+          "arbovírus"
+        ],
+        "facts": [
+          {
+            "id": "jaq-f1",
+            "statement": "Jaqueline integrou a liderança/equipe que sequenciou o genoma do SARS-CoV-2 dos primeiros casos brasileiros em cerca de 48 horas.",
+            "sourceRefs": [
+              "jaq-s1",
+              "jaq-s2"
+            ]
+          },
+          {
+            "id": "jaq-f2",
+            "statement": "Antes da COVID-19, já trabalhava com protocolos de sequenciamento genômico de vírus, incluindo zika.",
+            "sourceRefs": [
+              "jaq-s1"
+            ]
+          },
+          {
+            "id": "jaq-f3",
+            "statement": "O trabalho foi colaborativo, envolvendo USP, Instituto Adolfo Lutz e parceiros internacionais.",
+            "sourceRefs": [
+              "jaq-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Um vírus chega ao país. A primeira pergunta não é só 'qual vírus?', mas 'qual versão dele chegou aqui?'.",
+            "factIds": [
+              "jaq-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela já dominava protocolos rápidos de leitura de genomas virais antes da pandemia.",
+            "factIds": [
+              "jaq-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Em 2020, fez parte da liderança da equipe que obteve a sequência do SARS-CoV-2 no Brasil em cerca de 48 horas.",
+            "factIds": [
+              "jaq-f1",
+              "jaq-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Jaqueline Goes de Jesus",
+          "summary": "Biomédica brasileira especialista em genômica de vírus e uma das cientistas à frente do sequenciamento inicial do SARS-CoV-2 no Brasil.",
+          "whyItMatters": "Sequências genômicas permitem acompanhar origem, dispersão e mudanças de vírus durante epidemias.",
+          "sourceRefs": [
+            "jaq-s1",
+            "jaq-s2"
+          ]
+        },
+        "visualMotifs": [
+          "sequência genética",
+          "nanoporos",
+          "vírus",
+          "linhagens"
+        ],
+        "recognitionLevel": "high",
+        "difficulty": 1,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "jaq-f1",
+          "statement": "Jaqueline integrou a liderança/equipe que sequenciou o genoma do SARS-CoV-2 dos primeiros casos brasileiros em cerca de 48 horas.",
+          "sourceRefs": [
+            "jaq-s1",
+            "jaq-s2"
+          ]
+        },
+        {
+          "id": "jaq-f2",
+          "statement": "Antes da COVID-19, já trabalhava com protocolos de sequenciamento genômico de vírus, incluindo zika.",
+          "sourceRefs": [
+            "jaq-s1"
+          ]
+        },
+        {
+          "id": "jaq-f3",
+          "statement": "O trabalho foi colaborativo, envolvendo USP, Instituto Adolfo Lutz e parceiros internacionais.",
+          "sourceRefs": [
+            "jaq-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "jaq-s1",
+          "label": "Jornal da USP — Prêmio Ester Sabino",
+          "url": "https://jornal.usp.br/institucional/secretaria-de-desenvolvimento-cria-premio-em-homenagem-a-professora-ester-sabino/",
+          "type": "institutional"
+        },
+        {
+          "id": "jaq-s2",
+          "label": "MAST — Mulheres negras na ciência",
+          "url": "https://www.gov.br/mast/pt-br/assuntos/noticias/2026/marco/21-de-marco-dia-internacional-de-luta-pela-eliminacao-da-discriminacao-racial",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/jaqueline-goes-de-jesus.jpg",
+        "alt": "Retrato de Jaqueline Goes de Jesus",
+        "credit": "Foto: Rodrigo Cabral/ASCOM-MCTI — CC BY 2.0.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:18_08_2023_-_Z%C3%A9_Gotinha_e_cientista_Jaqueline_Goes_de_Jesus_visitam_MCTI_(53124595267).jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Manter crédito coletivo; não escrever como se o sequenciamento tivesse sido feito por uma única pessoa."
+    },
+    {
+      "id": "johanna-dobereiner",
+      "canonicalName": "Johanna Döbereiner",
+      "aliases": [
+        "Johanna Dobereiner",
+        "Johanna Liesbeth Döbereiner",
+        "Johanna Liesbeth Dobereiner"
+      ],
+      "field": "Agronomia e microbiologia do solo",
+      "identity": {
+        "birthYear": 1924,
+        "deathYear": 2000,
+        "nationalityContext": "naturalizada brasileira em 1956; nasceu na então Tchecoslováquia"
+      },
+      "science": {
+        "researchAreas": [
+          "microbiologia do solo",
+          "fixação biológica de nitrogênio",
+          "agricultura tropical"
+        ],
+        "facts": [
+          {
+            "id": "joh-f1",
+            "statement": "Johanna liderou pesquisas sobre fixação biológica de nitrogênio em plantas tropicais.",
+            "sourceRefs": [
+              "joh-s1",
+              "joh-s2"
+            ]
+          },
+          {
+            "id": "joh-f2",
+            "statement": "Naturalizou-se brasileira em 1956 e dedicou décadas à pesquisa em microbiologia do solo no Brasil.",
+            "sourceRefs": [
+              "joh-s1"
+            ]
+          },
+          {
+            "id": "joh-f3",
+            "statement": "Seu programa de pesquisa mostrou o potencial agrícola de associações entre plantas e microrganismos fixadores de nitrogênio.",
+            "sourceRefs": [
+              "joh-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "O ar está cheio de nitrogênio. Para uma planta, isso não significa que ele esteja disponível.",
+            "factIds": [
+              "joh-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Algumas bactérias conseguem transformar esse nitrogênio em formas que entram no ciclo das plantas.",
+            "factIds": [
+              "joh-f1",
+              "joh-f3"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela ajudou a transformar essa relação invisível entre raízes e microrganismos em uma tecnologia central da agricultura tropical brasileira.",
+            "factIds": [
+              "joh-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Johanna Döbereiner",
+          "summary": "Agrônoma brasileira pioneira em microbiologia do solo e fixação biológica de nitrogênio.",
+          "whyItMatters": "Seu trabalho ajudou a demonstrar que microrganismos poderiam reduzir a dependência de fertilizantes nitrogenados em sistemas agrícolas.",
+          "sourceRefs": [
+            "joh-s1",
+            "joh-s2"
+          ]
+        },
+        "visualMotifs": [
+          "raízes",
+          "bactérias",
+          "nódulos",
+          "solo",
+          "nitrogênio"
+        ],
+        "recognitionLevel": "medium",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "joh-f1",
+          "statement": "Johanna liderou pesquisas sobre fixação biológica de nitrogênio em plantas tropicais.",
+          "sourceRefs": [
+            "joh-s1",
+            "joh-s2"
+          ]
+        },
+        {
+          "id": "joh-f2",
+          "statement": "Naturalizou-se brasileira em 1956 e dedicou décadas à pesquisa em microbiologia do solo no Brasil.",
+          "sourceRefs": [
+            "joh-s1"
+          ]
+        },
+        {
+          "id": "joh-f3",
+          "statement": "Seu programa de pesquisa mostrou o potencial agrícola de associações entre plantas e microrganismos fixadores de nitrogênio.",
+          "sourceRefs": [
+            "joh-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "joh-s1",
+          "label": "Embrapa Memória — Johanna Döbereiner",
+          "url": "https://www.embrapa.br/en/memoria-embrapa/personagens/johanna-dobereiner",
+          "type": "institutional"
+        },
+        {
+          "id": "joh-s2",
+          "label": "Cadernos de Ciência & Tecnologia — Embrapa",
+          "url": "https://apct.sede.embrapa.br/cct/pt_BR/article/view/8875",
+          "type": "academic"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/johanna-dobereiner.jpg",
+        "alt": "Retrato de Johanna Döbereiner",
+        "credit": "Pontifical Academy of Sciences — CC BY-SA 4.0.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Johanna-D%C3%B6bereiner.jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "sonia-guimaraes",
+      "canonicalName": "Sônia Guimarães",
+      "aliases": [
+        "Sonia Guimaraes"
+      ],
+      "field": "Física",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "física da matéria condensada",
+          "semicondutores",
+          "sensores"
+        ],
+        "facts": [
+          {
+            "id": "sonia-f1",
+            "statement": "Sônia é apresentada pelo Governo do Ceará como a primeira mulher negra doutora em Física do Brasil e a primeira mulher negra a lecionar no ITA.",
+            "sourceRefs": [
+              "sonia-s1"
+            ]
+          },
+          {
+            "id": "sonia-f2",
+            "statement": "Foi palestrante da Feira do Conhecimento do Ceará em 2018.",
+            "sourceRefs": [
+              "sonia-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Há materiais que ficam entre dois mundos: não conduzem eletricidade como metais, nem bloqueiam completamente como isolantes.",
+            "factIds": [
+              "sonia-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "É nesse território dos semicondutores e materiais para sensores que sua pesquisa se move.",
+            "factIds": [
+              "sonia-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua trajetória também abriu uma fronteira institucional: tornou-se referência da presença de mulheres negras na Física e no ITA.",
+            "factIds": [
+              "sonia-f1"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Sônia Guimarães",
+          "summary": "Física brasileira, pesquisadora de materiais e referência na ampliação da presença de mulheres negras nas ciências exatas.",
+          "whyItMatters": "Sua trajetória combina pesquisa em Física com uma mudança concreta de quem ocupa espaços historicamente excludentes da ciência brasileira.",
+          "sourceRefs": [
+            "sonia-s1"
+          ]
+        },
+        "visualMotifs": [
+          "semicondutor",
+          "camadas de material",
+          "sensor",
+          "circuito abstrato"
+        ],
+        "recognitionLevel": "medium",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "sonia-f1",
+          "statement": "Sônia é apresentada pelo Governo do Ceará como a primeira mulher negra doutora em Física do Brasil e a primeira mulher negra a lecionar no ITA.",
+          "sourceRefs": [
+            "sonia-s1"
+          ]
+        },
+        {
+          "id": "sonia-f2",
+          "statement": "Foi palestrante da Feira do Conhecimento do Ceará em 2018.",
+          "sourceRefs": [
+            "sonia-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "sonia-s1",
+          "label": "Governo do Ceará — Feira do Conhecimento 2018",
+          "url": "https://www.ce.gov.br/2018/11/21/grandes-nomes-na-programacao-da-feira-do-conhecimento/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/sonia-guimaraes.jpg",
+        "alt": "Retrato de Sônia Guimarães",
+        "credit": "Use creator attribution exactly as listed on the Commons file page — CC BY-SA 2.0.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Prof_Sonia_Guimar%C3%A3es_(cropped).jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Antes da publicação final, convém obter uma fonte do ITA ou currículo institucional para os detalhes técnicos da linha de pesquisa; o claim histórico está apoiado na fonte do Governo do Ceará."
+    },
+    {
+      "id": "duilia-de-mello",
+      "canonicalName": "Duília de Mello",
+      "aliases": [
+        "Duilia de Mello"
+      ],
+      "field": "Astronomia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "astronomia extragaláctica",
+          "evolução de galáxias",
+          "supernovas"
+        ],
+        "facts": [
+          {
+            "id": "duilia-f1",
+            "statement": "Duília descobriu a supernova 1997D durante observações no ESO, em La Silla, Chile.",
+            "sourceRefs": [
+              "duilia-s1"
+            ]
+          },
+          {
+            "id": "duilia-f2",
+            "statement": "A identificação começou pelo espectro, cujas linhas largas indicavam uma estrela em explosão e não apenas a galáxia observada.",
+            "sourceRefs": [
+              "duilia-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "O céu parecia o mesmo — até surgir uma estrela onde antes não havia nenhuma.",
+            "factIds": [
+              "duilia-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "O instrumento não produzia uma fotografia: separava a luz em um espectro.",
+            "factIds": [
+              "duilia-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Linhas muito largas denunciaram a explosão de uma estrela. O objeto seria registrado como Supernova 1997D.",
+            "factIds": [
+              "duilia-f1",
+              "duilia-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Duília de Mello",
+          "summary": "Astrônoma brasileira que descobriu a Supernova 1997D durante observações no Chile.",
+          "whyItMatters": "O episódio mostra como cientistas conseguem reconhecer eventos cósmicos não apenas por imagens, mas pela assinatura física contida na luz.",
+          "sourceRefs": [
+            "duilia-s1"
+          ]
+        },
+        "visualMotifs": [
+          "céu",
+          "estrela nova",
+          "espectro",
+          "linhas espectrais",
+          "galáxia"
+        ],
+        "recognitionLevel": "medium",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "duilia-f1",
+          "statement": "Duília descobriu a supernova 1997D durante observações no ESO, em La Silla, Chile.",
+          "sourceRefs": [
+            "duilia-s1"
+          ]
+        },
+        {
+          "id": "duilia-f2",
+          "statement": "A identificação começou pelo espectro, cujas linhas largas indicavam uma estrela em explosão e não apenas a galáxia observada.",
+          "sourceRefs": [
+            "duilia-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "duilia-s1",
+          "label": "Observatório Nacional — 25 anos da descoberta da Supernova 1997D",
+          "url": "https://www.gov.br/observatorio/pt-br/assuntos/noticias/25-anos-da-descoberta-da-supernova-1997d-pela-astronoma-brasileira-duilia-de-mello",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Duília de Mello",
+        "credit": "Foto: João Pedro de Mello Domingues/Wikimedia Commons.",
+        "sourceUrl": "https://agencia.fapesp.br/a-ciencia-precisa-chegar-as-padarias-e-botequins-avalia-astronoma-brasileira-colaboradora-da-nasa/50190",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "marcia-barbosa",
+      "canonicalName": "Márcia Barbosa",
+      "aliases": [
+        "Marcia Barbosa",
+        "Márcia Cristina Bernardes Barbosa",
+        "Marcia Cristina Bernardes Barbosa"
+      ],
+      "field": "Física",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "física estatística",
+          "anomalias da água",
+          "matéria condensada"
+        ],
+        "facts": [
+          {
+            "id": "marcia-f1",
+            "statement": "Márcia é física e professora/pesquisadora da UFRGS, reconhecida por contribuições científicas e liderança na ciência.",
+            "sourceRefs": [
+              "marcia-s1"
+            ]
+          },
+          {
+            "id": "marcia-f2",
+            "statement": "Sua pesquisa é amplamente associada ao estudo das propriedades anômalas da água e de líquidos complexos.",
+            "sourceRefs": [
+              "marcia-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "O gelo flutua. Parece banal — mas esse comportamento já mostra que a água foge de padrões comuns dos materiais.",
+            "factIds": [
+              "marcia-f2"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ao mudar temperatura e pressão, a água exibe uma coleção incomum de comportamentos físicos.",
+            "factIds": [
+              "marcia-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela construiu modelos para entender essas anomalias e o que elas revelam sobre líquidos complexos.",
+            "factIds": [
+              "marcia-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Márcia Barbosa",
+          "summary": "Física brasileira conhecida por pesquisas sobre as propriedades anômalas da água e outros líquidos complexos.",
+          "whyItMatters": "Entender essas anomalias ajuda a explicar fenômenos fundamentais e inspira aplicações em materiais e processos de separação.",
+          "sourceRefs": [
+            "marcia-s1"
+          ]
+        },
+        "visualMotifs": [
+          "água",
+          "gelo",
+          "moléculas",
+          "rede de ligações",
+          "diagrama de fases"
+        ],
+        "recognitionLevel": "medium",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "marcia-f1",
+          "statement": "Márcia é física e professora/pesquisadora da UFRGS, reconhecida por contribuições científicas e liderança na ciência.",
+          "sourceRefs": [
+            "marcia-s1"
+          ]
+        },
+        {
+          "id": "marcia-f2",
+          "statement": "Sua pesquisa é amplamente associada ao estudo das propriedades anômalas da água e de líquidos complexos.",
+          "sourceRefs": [
+            "marcia-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "marcia-s1",
+          "label": "Instituto de Física da UFRGS — trajetória e reconhecimento",
+          "url": "https://www.if.ufrgs.br/if/informativo-spin/quingentesima-quinquagesima-quarta-edicao-2021/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Márcia Barbosa",
+        "credit": null,
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:M%C3%A1rcia_Barbosa",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "O núcleo temático 'anomalias da água' deve receber uma segunda fonte científica/institucional específica antes da aprovação editorial final."
+    },
+    {
+      "id": "yvonne-mascarenhas",
+      "canonicalName": "Yvonne Mascarenhas",
+      "aliases": [
+        "Yvonne Primerano Mascarenhas"
+      ],
+      "field": "Física e cristalografia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "cristalografia",
+          "difração de raios X",
+          "estrutura molecular"
+        ],
+        "facts": [
+          {
+            "id": "yvonne-f1",
+            "statement": "Yvonne trabalha com determinação de estruturas moleculares e cristalinas por difração de raios X.",
+            "sourceRefs": [
+              "yvonne-s1",
+              "yvonne-s2"
+            ]
+          },
+          {
+            "id": "yvonne-f2",
+            "statement": "Teve papel pioneiro na consolidação da cristalografia estrutural em São Carlos e na formação de pesquisadores.",
+            "sourceRefs": [
+              "yvonne-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Um cristal parece imóvel. Por dentro, seus átomos obedecem a uma arquitetura precisa.",
+            "factIds": [
+              "yvonne-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Raios X atravessam essa estrutura e produzem padrões de difração.",
+            "factIds": [
+              "yvonne-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela ajudou a consolidar no Brasil o uso desses padrões para determinar estruturas moleculares e cristalinas.",
+            "factIds": [
+              "yvonne-f1",
+              "yvonne-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Yvonne Mascarenhas",
+          "summary": "Física e cristalógrafa brasileira, pioneira na determinação de estruturas por difração de raios X e na formação da cristalografia em São Carlos.",
+          "whyItMatters": "A cristalografia permite inferir estruturas invisíveis a partir da forma como a matéria espalha raios X.",
+          "sourceRefs": [
+            "yvonne-s1",
+            "yvonne-s2"
+          ]
+        },
+        "visualMotifs": [
+          "cristal",
+          "rede",
+          "difração",
+          "raios X",
+          "geometria"
+        ],
+        "recognitionLevel": "medium",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "yvonne-f1",
+          "statement": "Yvonne trabalha com determinação de estruturas moleculares e cristalinas por difração de raios X.",
+          "sourceRefs": [
+            "yvonne-s1",
+            "yvonne-s2"
+          ]
+        },
+        {
+          "id": "yvonne-f2",
+          "statement": "Teve papel pioneiro na consolidação da cristalografia estrutural em São Carlos e na formação de pesquisadores.",
+          "sourceRefs": [
+            "yvonne-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "yvonne-s1",
+          "label": "IEA-USP — Yvonne Primerano Mascarenhas",
+          "url": "https://www.iea.usp.br/polos/sao-carlos/pesquisa/pessoas/pasta-pessoay/yvonne-primerano-mascarenhas",
+          "type": "institutional"
+        },
+        {
+          "id": "yvonne-s2",
+          "label": "IFSC-USP — Memórias de Yvonne Mascarenhas",
+          "url": "https://www2.ifsc.usp.br/portal-ifsc/diretor-prof-dr-yvonne-primerano-mascarenhas/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/yvonne-mascarenhas.jpg",
+        "alt": "Retrato de Yvonne Mascarenhas",
+        "credit": "Foto: Maria Leonor de Calasans/IEA.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Yvonne_Mascarenhas_2.jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "ester-sabino",
+      "canonicalName": "Ester Sabino",
+      "aliases": [
+        "Ester Cerdeira Sabino"
+      ],
+      "field": "Imunologia, infectologia e genômica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "doenças infecciosas",
+          "genômica de vírus",
+          "epidemiologia molecular"
+        ],
+        "facts": [
+          {
+            "id": "ester-f1",
+            "statement": "Ester coordenou a equipe que, com Jaqueline Goes e outros pesquisadores, sequenciou o SARS-CoV-2 dos primeiros casos brasileiros em cerca de 48 horas.",
+            "sourceRefs": [
+              "ester-s1",
+              "ester-s2"
+            ]
+          },
+          {
+            "id": "ester-f2",
+            "statement": "É professora da FMUSP e atuou na coordenação de centros de pesquisa em arbovírus, genômica e epidemiologia.",
+            "sourceRefs": [
+              "ester-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Antes de o novo coronavírus chegar ao Brasil, uma equipe já se preparava para ler rapidamente seu genoma.",
+            "factIds": [
+              "ester-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "A estratégia vinha de anos de trabalho com vigilância genômica de vírus e epidemias.",
+            "factIds": [
+              "ester-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Quando o primeiro caso foi confirmado, a equipe que ela coordenava publicou a sequência completa em cerca de 48 horas.",
+            "factIds": [
+              "ester-f1"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Ester Sabino",
+          "summary": "Médica e pesquisadora brasileira em doenças infecciosas, genômica e epidemiologia molecular.",
+          "whyItMatters": "Sua liderança ajudou a transformar sequenciamento rápido em ferramenta de vigilância de epidemias no Brasil.",
+          "sourceRefs": [
+            "ester-s1",
+            "ester-s2"
+          ]
+        },
+        "visualMotifs": [
+          "rede epidemiológica",
+          "genoma",
+          "linhagens",
+          "amostras",
+          "tempo"
+        ],
+        "recognitionLevel": "medium",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "ester-f1",
+          "statement": "Ester coordenou a equipe que, com Jaqueline Goes e outros pesquisadores, sequenciou o SARS-CoV-2 dos primeiros casos brasileiros em cerca de 48 horas.",
+          "sourceRefs": [
+            "ester-s1",
+            "ester-s2"
+          ]
+        },
+        {
+          "id": "ester-f2",
+          "statement": "É professora da FMUSP e atuou na coordenação de centros de pesquisa em arbovírus, genômica e epidemiologia.",
+          "sourceRefs": [
+            "ester-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "ester-s1",
+          "label": "Jornal da USP — Prêmio Ester Sabino",
+          "url": "https://jornal.usp.br/institucional/secretaria-de-desenvolvimento-cria-premio-em-homenagem-a-professora-ester-sabino/",
+          "type": "institutional"
+        },
+        {
+          "id": "ester-s2",
+          "label": "Revista de Medicina — FMUSP",
+          "url": "https://revistas.usp.br/revistadc/pt_BR/article/view/169003",
+          "type": "academic"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/ester-sabino.jpg",
+        "alt": "Retrato de Ester Sabino",
+        "credit": "Foto: Governo do Estado de São Paulo — CC BY 2.0.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:ENTREGA_DO_PR%C3%8AMIO_ESTER_SABINO_2022_(51875382473)_(cropped).jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Diferenciar visualmente de Jaqueline: Ester = rede/preparação/coordenação epidemiológica; Jaqueline = protocolo/leitura genômica."
+    },
+    {
+      "id": "ruth-nussenzweig",
+      "canonicalName": "Ruth Sonntag Nussenzweig",
+      "aliases": [
+        "Ruth Nussenzweig",
+        "Ruth Sonntag"
+      ],
+      "field": "Imunologia e parasitologia",
+      "identity": {
+        "birthYear": 1928,
+        "deathYear": 2018,
+        "nationalityContext": "brasileira; nasceu em Viena, chegou ao Brasil em 1939 e formou-se em Medicina na USP"
+      },
+      "science": {
+        "researchAreas": [
+          "malária",
+          "imunologia",
+          "vacinas"
+        ],
+        "facts": [
+          {
+            "id": "ruth-f1",
+            "statement": "Ruth demonstrou proteção contra malária em modelos animais usando esporozoítos atenuados por radiação.",
+            "sourceRefs": [
+              "ruth-s1",
+              "ruth-s2"
+            ]
+          },
+          {
+            "id": "ruth-f2",
+            "statement": "Seu trabalho foi fundamental para o desenvolvimento posterior de estratégias de vacina contra malária.",
+            "sourceRefs": [
+              "ruth-s1",
+              "ruth-s2"
+            ]
+          },
+          {
+            "id": "ruth-f3",
+            "statement": "A Academia Brasileira de Ciências registra sua nacionalidade como brasileira.",
+            "sourceRefs": [
+              "ruth-s3"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "E se fosse possível ensinar o sistema imune usando o próprio parasita — enfraquecido antes de causar a doença?",
+            "factIds": [
+              "ruth-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela irradiou a forma do parasita que entra no organismo pela picada do mosquito e mostrou proteção em animais.",
+            "factIds": [
+              "ruth-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Esse experimento abriu um dos caminhos fundamentais para a busca de vacinas contra a malária.",
+            "factIds": [
+              "ruth-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Ruth Sonntag Nussenzweig",
+          "summary": "Imunologista brasileira cujo trabalho pioneiro com esporozoítos atenuados abriu caminho para estratégias de vacinação contra a malária.",
+          "whyItMatters": "Ela ajudou a demonstrar experimentalmente que era possível induzir imunidade protetora contra um parasita que muitos consideravam um alvo inviável para vacinas.",
+          "sourceRefs": [
+            "ruth-s1",
+            "ruth-s2"
+          ]
+        },
+        "visualMotifs": [
+          "mosquito",
+          "esporozoíto",
+          "radiação",
+          "fígado",
+          "imunidade"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "ruth-f1",
+          "statement": "Ruth demonstrou proteção contra malária em modelos animais usando esporozoítos atenuados por radiação.",
+          "sourceRefs": [
+            "ruth-s1",
+            "ruth-s2"
+          ]
+        },
+        {
+          "id": "ruth-f2",
+          "statement": "Seu trabalho foi fundamental para o desenvolvimento posterior de estratégias de vacina contra malária.",
+          "sourceRefs": [
+            "ruth-s1",
+            "ruth-s2"
+          ]
+        },
+        {
+          "id": "ruth-f3",
+          "statement": "A Academia Brasileira de Ciências registra sua nacionalidade como brasileira.",
+          "sourceRefs": [
+            "ruth-s3"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "ruth-s1",
+          "label": "Nature — Ruth S. Nussenzweig (1928–2018)",
+          "url": "https://www.nature.com/articles/d41586-018-05102-3",
+          "type": "peer-reviewed/editorial"
+        },
+        {
+          "id": "ruth-s2",
+          "label": "PubMed — Breakthroughs towards a malaria vaccine",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/21779699/",
+          "type": "peer-reviewed"
+        },
+        {
+          "id": "ruth-s3",
+          "label": "Academia Brasileira de Ciências — Ruth Sonntag Nussenzweig",
+          "url": "https://www.abc.org.br/membro/ruth-sonntag-nussenzweig/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Ruth Sonntag Nussenzweig",
+        "credit": null,
+        "sourceUrl": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-1a-edicao",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "elisa-frota-pessoa",
+      "canonicalName": "Elisa Frota-Pessôa",
+      "aliases": [
+        "Elisa Frota-Pessoa",
+        "Elisa Frota Pessoa",
+        "Elisa Esther Habbema de Maia"
+      ],
+      "field": "Física experimental",
+      "identity": {
+        "birthYear": 1921,
+        "deathYear": 2018,
+        "nationalityContext": "brasileira; nascida no Rio de Janeiro (RJ)"
+      },
+      "science": {
+        "researchAreas": [
+          "física experimental",
+          "física nuclear",
+          "partículas"
+        ],
+        "facts": [
+          {
+            "id": "elisa-f1",
+            "statement": "Elisa esteve entre as primeiras mulheres formadas em Física no Brasil.",
+            "sourceRefs": [
+              "elisa-s1"
+            ]
+          },
+          {
+            "id": "elisa-f2",
+            "statement": "Foi fundadora e pesquisadora emérita do Centro Brasileiro de Pesquisas Físicas.",
+            "sourceRefs": [
+              "elisa-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Quando quase não havia mulheres formadas em Física no país, ela escolheu justamente essa carreira.",
+            "factIds": [
+              "elisa-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Sua trajetória se confundiu com a criação de uma das instituições centrais da Física brasileira.",
+            "factIds": [
+              "elisa-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela foi uma das fundadoras do Centro Brasileiro de Pesquisas Físicas e construiu carreira em física experimental.",
+            "factIds": [
+              "elisa-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Elisa Frota-Pessôa",
+          "summary": "Pioneira da física experimental brasileira e uma das fundadoras do Centro Brasileiro de Pesquisas Físicas.",
+          "whyItMatters": "Sua trajetória ajuda a contar simultaneamente a história das mulheres na Física e a formação da infraestrutura científica brasileira no século XX.",
+          "sourceRefs": [
+            "elisa-s1"
+          ]
+        },
+        "visualMotifs": [
+          "câmara de detecção",
+          "trajetórias",
+          "partículas",
+          "laboratório"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "elisa-f1",
+          "statement": "Elisa esteve entre as primeiras mulheres formadas em Física no Brasil.",
+          "sourceRefs": [
+            "elisa-s1"
+          ]
+        },
+        {
+          "id": "elisa-f2",
+          "statement": "Foi fundadora e pesquisadora emérita do Centro Brasileiro de Pesquisas Físicas.",
+          "sourceRefs": [
+            "elisa-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "elisa-s1",
+          "label": "CBPF — homenagem a Elisa Frota-Pessôa",
+          "url": "https://www.gov.br/cbpf/pt-br/assuntos/noticias/falece-pioneira-da-fisica-no-brasil-e-fundadora-do-cbpf-elisa-frota-pessoa",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Elisa Frota-Pessôa",
+        "credit": null,
+        "sourceUrl": "https://www.gov.br/cbpf/pt-br/assuntos/noticias/falece-pioneira-da-fisica-no-brasil-e-fundadora-do-cbpf-elisa-frota-pessoa",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "vanderlan-bolzani",
+      "canonicalName": "Vanderlan Bolzani",
+      "aliases": [
+        "Vanderlan da Silva Bolzani"
+      ],
+      "field": "Química",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "química de produtos naturais",
+          "bioprospecção",
+          "química medicinal"
+        ],
+        "facts": [
+          {
+            "id": "vanderlan-f1",
+            "statement": "Vanderlan pesquisa química de produtos naturais com foco na biodiversidade brasileira.",
+            "sourceRefs": [
+              "vanderlan-s1"
+            ]
+          },
+          {
+            "id": "vanderlan-f2",
+            "statement": "Sua linha inclui bioprospecção, peptídeos de plantas e produtos naturais bioativos.",
+            "sourceRefs": [
+              "vanderlan-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma floresta também pode ser lida como uma biblioteca de moléculas.",
+            "factIds": [
+              "vanderlan-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Plantas produzem compostos que podem funcionar como sinais, defesas — e pistas para novas moléculas bioativas.",
+            "factIds": [
+              "vanderlan-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela investiga a biodiversidade brasileira por meio da química de produtos naturais e da bioprospecção.",
+            "factIds": [
+              "vanderlan-f1",
+              "vanderlan-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Vanderlan Bolzani",
+          "summary": "Química brasileira que pesquisa produtos naturais e bioprospecção da biodiversidade brasileira.",
+          "whyItMatters": "Seu trabalho conecta diversidade biológica a diversidade química e à busca por moléculas de interesse científico e medicinal.",
+          "sourceRefs": [
+            "vanderlan-s1"
+          ]
+        },
+        "visualMotifs": [
+          "folhas",
+          "moléculas",
+          "biodiversidade",
+          "estrutura química"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "vanderlan-f1",
+          "statement": "Vanderlan pesquisa química de produtos naturais com foco na biodiversidade brasileira.",
+          "sourceRefs": [
+            "vanderlan-s1"
+          ]
+        },
+        {
+          "id": "vanderlan-f2",
+          "statement": "Sua linha inclui bioprospecção, peptídeos de plantas e produtos naturais bioativos.",
+          "sourceRefs": [
+            "vanderlan-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "vanderlan-s1",
+          "label": "INCT BioNat / UNESP — Vanderlan da Silva Bolzani",
+          "url": "https://inct-bionat.iq.unesp.br/en/participantes/coordenacao/vanderlan-da-silva-bolzani/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Vanderlan Bolzani",
+        "credit": null,
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vanderlan_da_Silva_Bolzani,_PGQu_da_UFRJ.jpg",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "mariangela-hungria",
+      "canonicalName": "Mariangela Hungria",
+      "aliases": [
+        "Mariângela Hungria",
+        "Mariangela Hungria da Cunha"
+      ],
+      "field": "Agronomia e microbiologia do solo",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "fixação biológica de nitrogênio",
+          "microbiologia do solo",
+          "inoculantes"
+        ],
+        "facts": [
+          {
+            "id": "mari-f1",
+            "statement": "Mariangela é pesquisadora da Embrapa Soja com atuação em fixação biológica de nitrogênio, biodiversidade microbiana e inoculantes.",
+            "sourceRefs": [
+              "mari-s1"
+            ]
+          },
+          {
+            "id": "mari-f2",
+            "statement": "A fixação biológica de nitrogênio é uma tecnologia central para reduzir uso de fertilizantes nitrogenados em culturas como soja e feijão.",
+            "sourceRefs": [
+              "mari-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Dentro de uma raiz pode existir uma pequena fábrica biológica de fertilidade.",
+            "factIds": [
+              "mari-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Bactérias selecionadas e inoculadas nas plantas ajudam a trazer nitrogênio atmosférico para o ciclo agrícola.",
+            "factIds": [
+              "mari-f1",
+              "mari-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela pesquisa e desenvolve tecnologias microbianas que tornaram a fixação biológica de nitrogênio estratégica para a agricultura brasileira.",
+            "factIds": [
+              "mari-f1",
+              "mari-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Mariangela Hungria",
+          "summary": "Agrônoma e microbiologista brasileira da Embrapa, referência em fixação biológica de nitrogênio e inoculantes.",
+          "whyItMatters": "A tecnologia permite produzir com menor dependência de fertilizantes nitrogenados, reduzindo custos e impactos ambientais.",
+          "sourceRefs": [
+            "mari-s1",
+            "mari-s2"
+          ]
+        },
+        "visualMotifs": [
+          "raízes",
+          "nódulos",
+          "inoculante",
+          "bactérias",
+          "solo"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "mari-f1",
+          "statement": "Mariangela é pesquisadora da Embrapa Soja com atuação em fixação biológica de nitrogênio, biodiversidade microbiana e inoculantes.",
+          "sourceRefs": [
+            "mari-s1"
+          ]
+        },
+        {
+          "id": "mari-f2",
+          "statement": "A fixação biológica de nitrogênio é uma tecnologia central para reduzir uso de fertilizantes nitrogenados em culturas como soja e feijão.",
+          "sourceRefs": [
+            "mari-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "mari-s1",
+          "label": "Embrapa — Mariangela Hungria da Cunha",
+          "url": "https://www.embrapa.br/pt/web/portal/equipe/-/empregado/208789/mariangela-hungria-da-cunha%22",
+          "type": "institutional"
+        },
+        {
+          "id": "mari-s2",
+          "label": "Embrapa — Fixação biológica do nitrogênio como tecnologia de baixa emissão de carbono",
+          "url": "https://www.infoteca.cnptia.embrapa.br/infoteca/handle/doc/964424",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Mariangela Hungria",
+        "credit": "Photo courtesy of Lucas Friederich, Wikimedia Commons.",
+        "sourceUrl": "https://foodtank.com/news/2025/07/dr-mariangela-hungria-is-driving-an-agricultural-revolution-for-people-and-planet/",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "beatriz-barbuy",
+      "canonicalName": "Beatriz Barbuy",
+      "aliases": [
+        "Beatriz Leonor Silveira Barbuy"
+      ],
+      "field": "Astrofísica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "populações estelares",
+          "arqueologia galáctica",
+          "abundâncias químicas"
+        ],
+        "facts": [
+          {
+            "id": "beatriz-f1",
+            "statement": "Beatriz coordena pesquisas sobre populações estelares e estrutura da Via Láctea no IAG-USP.",
+            "sourceRefs": [
+              "beatriz-s1"
+            ]
+          },
+          {
+            "id": "beatriz-f2",
+            "statement": "Pesquisas coordenadas no instituto identificaram estrelas da Via Láctea com cerca de 12,5 bilhões de anos.",
+            "sourceRefs": [
+              "beatriz-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Algumas estrelas funcionam como fósseis: guardam na luz pistas químicas do início da Galáxia.",
+            "factIds": [
+              "beatriz-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Sua pesquisa compara populações do bojo, halo e disco da Via Láctea para reconstruir como ela se formou.",
+            "factIds": [
+              "beatriz-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "No IAG-USP, estudos de estrelas muito pobres em metais ajudam a investigar algumas das populações mais antigas da nossa Galáxia.",
+            "factIds": [
+              "beatriz-f1",
+              "beatriz-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Beatriz Barbuy",
+          "summary": "Astrofísica brasileira que estuda estrelas antigas e populações estelares para reconstruir a formação e evolução da Via Láctea.",
+          "whyItMatters": "A composição química de estrelas antigas preserva informação sobre etapas remotas da história galáctica.",
+          "sourceRefs": [
+            "beatriz-s1",
+            "beatriz-s2"
+          ]
+        },
+        "visualMotifs": [
+          "Via Láctea",
+          "estrelas antigas",
+          "espectro",
+          "elementos químicos",
+          "linha do tempo"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "beatriz-f1",
+          "statement": "Beatriz coordena pesquisas sobre populações estelares e estrutura da Via Láctea no IAG-USP.",
+          "sourceRefs": [
+            "beatriz-s1"
+          ]
+        },
+        {
+          "id": "beatriz-f2",
+          "statement": "Pesquisas coordenadas no instituto identificaram estrelas da Via Láctea com cerca de 12,5 bilhões de anos.",
+          "sourceRefs": [
+            "beatriz-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "beatriz-s1",
+          "label": "IAG-USP — Populações estelares na Via Láctea",
+          "url": "https://www.iag.usp.br/pesquisa/projeto/stellarpops",
+          "type": "institutional"
+        },
+        {
+          "id": "beatriz-s2",
+          "label": "Jornal da USP — estrelas antigas da Via Láctea",
+          "url": "https://jornal.usp.br/institucional/pesquisa-do-instituto-de-astronomia-e-geofisica-que-identificou-algumas-das-mais-antigas-estrelas-da-via-lactea-e-pauta-da-serie-a-usp-faz-o-brasil-melhor/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/beatriz-barbuy.jpg",
+        "alt": "Retrato de Beatriz Barbuy",
+        "credit": "USP Imagens — include photographer name shown on the selected asset page.",
+        "sourceUrl": "https://imagens.usp.br/escolas-faculdades-e-institutos-categorias/instituto-de-astronomia-geofisica-e-ciencias-atmosfericas-institutos-faculdades-e-escolas/coloquio-no-iag/attachment/professora-beatriz-barbuy-003/",
+        "usageStatus": "approved-with-credit"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "debora-foguel",
+      "canonicalName": "Débora Foguel",
+      "aliases": [
+        "Debora Foguel"
+      ],
+      "field": "Bioquímica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "proteínas",
+          "agregação proteica",
+          "doenças amiloidogênicas"
+        ],
+        "facts": [
+          {
+            "id": "debora-f1",
+            "statement": "Débora pesquisa enovelamento e agregação de proteínas e doenças amiloidogênicas.",
+            "sourceRefs": [
+              "debora-s1"
+            ]
+          },
+          {
+            "id": "debora-f2",
+            "statement": "É professora titular da UFRJ e atua no Laboratório de Agregação de Proteínas e Amiloidoses.",
+            "sourceRefs": [
+              "debora-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma proteína não é apenas uma sequência: ela precisa dobrar-se na forma certa.",
+            "factIds": [
+              "debora-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Quando proteínas se dobram ou se agrupam de maneira inadequada, podem formar agregados associados a doenças.",
+            "factIds": [
+              "debora-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela investiga justamente como proteínas se enovelam, agregam e formam amiloides.",
+            "factIds": [
+              "debora-f1",
+              "debora-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Débora Foguel",
+          "summary": "Bioquímica brasileira que estuda enovelamento, agregação de proteínas e doenças amiloidogênicas.",
+          "whyItMatters": "Compreender como proteínas mudam de forma e se agregam ajuda a investigar mecanismos moleculares de diversas doenças.",
+          "sourceRefs": [
+            "debora-s1"
+          ]
+        },
+        "visualMotifs": [
+          "fita proteica",
+          "dobramento",
+          "agregados",
+          "amiloides"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "debora-f1",
+          "statement": "Débora pesquisa enovelamento e agregação de proteínas e doenças amiloidogênicas.",
+          "sourceRefs": [
+            "debora-s1"
+          ]
+        },
+        {
+          "id": "debora-f2",
+          "statement": "É professora titular da UFRJ e atua no Laboratório de Agregação de Proteínas e Amiloidoses.",
+          "sourceRefs": [
+            "debora-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "debora-s1",
+          "label": "UFRJ — Débora Foguel",
+          "url": "https://ppgbiofisica.biof.ufrj.br/institucional/equipe/docentes/debora-foguel",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Débora Foguel",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "bertha-becker",
+      "canonicalName": "Bertha Becker",
+      "aliases": [
+        "Bertha Koiffmann Becker",
+        "Bertha Koifmann Becker"
+      ],
+      "field": "Geografia",
+      "identity": {
+        "birthYear": 1930,
+        "deathYear": 2013,
+        "nationalityContext": "brasileira; nascida no Rio de Janeiro (RJ)"
+      },
+      "science": {
+        "researchAreas": [
+          "geopolítica",
+          "Amazônia",
+          "gestão do território"
+        ],
+        "facts": [
+          {
+            "id": "becker-f1",
+            "statement": "Bertha dedicou grande parte de sua carreira ao estudo das transformações territoriais e geopolíticas da Amazônia.",
+            "sourceRefs": [
+              "becker-s1"
+            ]
+          },
+          {
+            "id": "becker-f2",
+            "statement": "Foi professora emérita da UFRJ e coordenou o Laboratório de Gestão do Território.",
+            "sourceRefs": [
+              "becker-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Para entender uma floresta continental, não basta olhar árvores: é preciso olhar estradas, cidades, fronteiras e fluxos.",
+            "factIds": [
+              "becker-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela tratou a Amazônia como território em transformação, conectando espaço, política, economia e ambiente.",
+            "factIds": [
+              "becker-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua obra tornou-se referência para pensar a geopolítica e a gestão territorial da Amazônia.",
+            "factIds": [
+              "becker-f1",
+              "becker-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Bertha Becker",
+          "summary": "Geógrafa brasileira cuja obra transformou a compreensão da geopolítica e das dinâmicas territoriais da Amazônia.",
+          "whyItMatters": "Seu trabalho mostra que território é uma construção simultaneamente ambiental, social, econômica e política.",
+          "sourceRefs": [
+            "becker-s1"
+          ]
+        },
+        "visualMotifs": [
+          "mapa amazônico",
+          "rios",
+          "fronteiras",
+          "fluxos",
+          "rede urbana"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "becker-f1",
+          "statement": "Bertha dedicou grande parte de sua carreira ao estudo das transformações territoriais e geopolíticas da Amazônia.",
+          "sourceRefs": [
+            "becker-s1"
+          ]
+        },
+        {
+          "id": "becker-f2",
+          "statement": "Foi professora emérita da UFRJ e coordenou o Laboratório de Gestão do Território.",
+          "sourceRefs": [
+            "becker-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "becker-s1",
+          "label": "CNPq — Pioneiras da Ciência no Brasil, 2ª edição",
+          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-2a-edicao",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/bertha-becker.jpg",
+        "alt": "Retrato de Bertha Becker",
+        "credit": "Archives de la Ville de Saint-Dié-des-Vosges — CC BY-SA 4.0.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bertha_Becker-FIG_1998.jpg",
+        "usageStatus": "approved"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "carolina-bori",
+      "canonicalName": "Carolina Bori",
+      "aliases": [
+        "Carolina Martuscelli Bori"
+      ],
+      "field": "Psicologia",
+      "identity": {
+        "birthYear": 1924,
+        "deathYear": 2004,
+        "nationalityContext": "brasileira; nascida em São Paulo (SP)"
+      },
+      "science": {
+        "researchAreas": [
+          "psicologia experimental",
+          "análise do comportamento",
+          "ensino de psicologia"
+        ],
+        "facts": [
+          {
+            "id": "bori-f1",
+            "statement": "Carolina teve papel fundamental no estabelecimento do estudo científico da Psicologia no Brasil.",
+            "sourceRefs": [
+              "bori-s1"
+            ]
+          },
+          {
+            "id": "bori-f2",
+            "statement": "Foi pioneira brasileira em investigação experimental em Psicologia.",
+            "sourceRefs": [
+              "bori-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Como transformar comportamento — algo que muda a cada instante — em objeto de investigação científica?",
+            "factIds": [
+              "bori-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela ajudou a consolidar no Brasil uma Psicologia baseada em observação, experimento e formação rigorosa de pesquisadores.",
+            "factIds": [
+              "bori-f1",
+              "bori-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Seu nome tornou-se central para a psicologia experimental e para a própria organização da ciência brasileira.",
+            "factIds": [
+              "bori-f1"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Carolina Bori",
+          "summary": "Psicóloga brasileira pioneira da investigação experimental e figura central na consolidação científica da Psicologia no país.",
+          "whyItMatters": "Seu trabalho ajudou a transformar práticas de pesquisa e formação que estruturaram gerações de psicólogos e cientistas.",
+          "sourceRefs": [
+            "bori-s1"
+          ]
+        },
+        "visualMotifs": [
+          "experimento",
+          "comportamento",
+          "observação",
+          "sequência de respostas"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 3
+      },
+      "facts": [
+        {
+          "id": "bori-f1",
+          "statement": "Carolina teve papel fundamental no estabelecimento do estudo científico da Psicologia no Brasil.",
+          "sourceRefs": [
+            "bori-s1"
+          ]
+        },
+        {
+          "id": "bori-f2",
+          "statement": "Foi pioneira brasileira em investigação experimental em Psicologia.",
+          "sourceRefs": [
+            "bori-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "bori-s1",
+          "label": "CNPq — Pioneiras da Ciência no Brasil, 1ª edição",
+          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-1a-edicao",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Carolina Bori",
+        "credit": "Acervo SBPC.",
+        "sourceUrl": "https://abori.com.br/blog/quem-foi-carolina-bori/",
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "ana-maria-primavesi",
+      "canonicalName": "Ana Maria Primavesi",
+      "aliases": [
+        "Ana Primavesi"
+      ],
+      "field": "Agronomia e ciência do solo",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "nascida na Áustria; construiu carreira no Brasil e é tratada pelo CNPq entre as Pioneiras da Ciência no Brasil"
+      },
+      "science": {
+        "researchAreas": [
+          "agroecologia",
+          "manejo ecológico do solo",
+          "agricultura orgânica"
+        ],
+        "facts": [
+          {
+            "id": "prim-f1",
+            "statement": "Ana Maria Primavesi dedicou sua carreira ao estudo do solo e tornou-se referência em agroecologia e agricultura orgânica.",
+            "sourceRefs": [
+              "prim-s1"
+            ]
+          },
+          {
+            "id": "prim-f2",
+            "statement": "Uma de suas contribuições centrais foi tratar o solo como sistema vivo, com múltiplas interações com as plantas.",
+            "sourceRefs": [
+              "prim-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Solo não é apenas suporte para uma planta. É um sistema vivo.",
+            "factIds": [
+              "prim-f1",
+              "prim-f2"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Raízes, microrganismos, matéria orgânica, água e estrutura física interagem o tempo todo.",
+            "factIds": [
+              "prim-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela fez dessa visão integrada do solo uma base para o manejo ecológico e para a agroecologia no Brasil.",
+            "factIds": [
+              "prim-f1",
+              "prim-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Ana Maria Primavesi",
+          "summary": "Agrônoma cuja obra no Brasil tornou-se referência em manejo ecológico do solo e agroecologia.",
+          "whyItMatters": "Sua abordagem deslocou o foco do simples fornecimento de insumos para o funcionamento biológico e ecológico do solo.",
+          "sourceRefs": [
+            "prim-s1"
+          ]
+        },
+        "visualMotifs": [
+          "perfil do solo",
+          "raízes",
+          "microrganismos",
+          "matéria orgânica",
+          "água"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 3,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "prim-f1",
+          "statement": "Ana Maria Primavesi dedicou sua carreira ao estudo do solo e tornou-se referência em agroecologia e agricultura orgânica.",
+          "sourceRefs": [
+            "prim-s1"
+          ]
+        },
+        {
+          "id": "prim-f2",
+          "statement": "Uma de suas contribuições centrais foi tratar o solo como sistema vivo, com múltiplas interações com as plantas.",
+          "sourceRefs": [
+            "prim-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "prim-s1",
+          "label": "CNPq — Pioneiras da Ciência no Brasil, 6ª edição",
+          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-6a-edicao",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Ana Maria Primavesi",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "A regra editorial de 'cientista brasileira' precisa definir se inclui cientistas nascidas fora do país cuja carreira e reconhecimento científico se consolidaram no Brasil."
+    }
+  ]
+}

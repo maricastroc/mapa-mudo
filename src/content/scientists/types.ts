@@ -1,14 +1,24 @@
 export type ScientistSource = {
+  id: string;
   label: string;
   url: string;
+  type?: string;
 };
 
+export type ScientistFact = {
+  id: string;
+  statement: string;
+  sourceRefs: string[];
+};
+
+export type PhotoUsageStatus = "approved" | "approved-with-credit" | "rights-review";
+
 export type ScientistPhoto = {
-  src: string;
+  src: string | null;
   alt: string;
-  credit?: string;
-  sourceUrl?: string;
-  usageStatus: "prototype-only" | "permission-pending" | "authorized";
+  credit: string | null;
+  sourceUrl: string | null;
+  usageStatus: PhotoUsageStatus;
 };
 
 export type KnownScientist = {
@@ -20,8 +30,26 @@ export type KnownScientist = {
 };
 
 export type DiscoveryHint = {
+  level: 1 | 2 | 3;
   text: string;
+  factIds: string[];
   note?: string;
+};
+
+export type ScientistReveal = {
+  headline: string;
+  summary: string;
+  whyItMatters?: string;
+  sourceRefs: string[];
+};
+
+export type EditorialExperience = {
+  hints: [DiscoveryHint, DiscoveryHint, DiscoveryHint];
+  reveal: ScientistReveal;
+  visualMotifs: string[];
+  recognitionLevel?: string;
+  difficulty?: number;
+  experiencePotential?: number;
 };
 
 export type MapPlace = {
@@ -31,40 +59,55 @@ export type MapPlace = {
   rotation: number;
 };
 
-export type ScientistExperience = {
-  map: { x: number; y: number; code?: string };
-  territory: { places: MapPlace[] };
-  problem: {
-    kind: "transect";
+export type DiscoveryScenery = {
+  map?: { x: number; y: number; code?: string };
+  places: MapPlace[];
+  transect?: {
     direction: { x: number; y: number };
     step: number;
     points: number;
     prefix: string;
     sample: number;
   };
-  research: {
-    kind: "core";
+  core?: {
     depths: string[];
     layers: { text: string; at: number }[];
     caption: string;
   };
-  portrait: { kind: "generic-contour" };
 };
 
 export type FeaturedScientist = KnownScientist & {
-  institution?: string;
-  hints: [DiscoveryHint, DiscoveryHint, DiscoveryHint];
-  reveal: {
-    role: string;
-    contribution: string;
-    whyItMatters?: string;
-  };
-  photo?: ScientistPhoto;
+  identity?: { birthYear?: number | null; deathYear?: number | null; nationalityContext?: string };
+  science: { researchAreas: string[]; facts: ScientistFact[] };
+  experience: EditorialExperience;
+  facts: ScientistFact[];
   sources: ScientistSource[];
-  experience?: ScientistExperience;
+  photo: ScientistPhoto | null;
+  reviewStatus?: string;
+  editorialNotes?: string;
+  scenery?: DiscoveryScenery;
 };
 
-export type DiscoverableScientist = FeaturedScientist & { experience: ScientistExperience };
+export type ImageManifestEntry = {
+  id: string;
+  fileName: string;
+  source: string;
+  sourcePage: string | null;
+  creator: string | null;
+  license: string | null;
+  licenseUrl: string | null;
+  usageStatus: PhotoUsageStatus;
+  creditLine: string | null;
+  resolution: string | null;
+  notes: string | null;
+};
+
+export type CurationInfo = {
+  version: number;
+  theme: string;
+  status: string;
+  reviewPolicy: { meaning: string; institutionalApprovalRequired: boolean };
+};
 
 export type Catalog = {
   featured: FeaturedScientist[];

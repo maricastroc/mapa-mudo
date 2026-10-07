@@ -1,13 +1,15 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { shownSources } from "@/content/scientists/catalog";
 import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
-import type { DiscoverableScientist } from "@/content/scientists/types";
+import type { DiscoveryScenery, FeaturedScientist } from "@/content/scientists/types";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import { Actions, type ResponseHandlers } from "./Actions";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
-import { Button, PaperStrip, TriangleMarker } from "./ui";
+import { sceneryFor } from "./scenery";
+import { ArrowIcon, Button, PaperStrip, TriangleMarker } from "./ui";
 
 export type Commands = {
   dontKnow: () => void;
@@ -27,7 +29,7 @@ export type Commands = {
 };
 
 export type PlaneContext = {
-  discovery: DiscoverableScientist | null;
+  discovery: FeaturedScientist | null;
   code: string;
   points: SheetPoint[];
   illustrative: boolean;
@@ -75,9 +77,9 @@ function SheetHeader({ children }: { children: ReactNode }) {
   );
 }
 
-function Heading({ children, className }: { children: ReactNode; className?: string }) {
+function Heading({ children, className, style }: { children: ReactNode; className?: string; style?: CSSProperties }) {
   return (
-    <h1 tabIndex={-1} className={`outline-none ${className ?? ""}`}>
+    <h1 tabIndex={-1} className={`outline-none ${className ?? ""}`} style={style}>
       {children}
     </h1>
   );
@@ -134,12 +136,26 @@ function NoName({ screen, commands }: PlaneProps) {
   );
 }
 
-const CLUE_SIZES = ["text-[62px]", "text-[54px]", "text-[44px]"];
+const CLUE_MAX_SIZES = [62, 54, 44];
+
+function clueSize(index: number, length: number) {
+  return Math.min(CLUE_MAX_SIZES[index], Math.max(34, Math.floor(Math.sqrt(334000 / Math.max(length, 1)))));
+}
+
+function wordWidthInEm(word: string) {
+  return [...word.toUpperCase()].reduce((sum, letter) => sum + 0.01 + (letter === "I" ? 0.32 : "MW".includes(letter) ? 0.86 : 0.7), 0);
+}
+
+function nameSize(name: string) {
+  const widest = Math.max(...name.split(" ").map(wordWidthInEm));
+  return Math.min(104, Math.floor(620 / widest), Math.floor(104 * Math.sqrt(16 / Math.max(name.length, 16))));
+}
 
 function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneProps & { index: 0 | 1 | 2 }) {
   const discovery = context.discovery;
   if (!discovery) return null;
-  const hint = discovery.hints[index];
+  const hint = discovery.experience.hints[index];
+  const core = sceneryFor(discovery).core;
   return (
     <Stage screen={screen}>
       <div className="absolute top-[84px] left-[64px] flex w-[600px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
@@ -148,7 +164,10 @@ function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneP
             Pista {index + 1} de 3 · {DISCOVERY_STAGES[index]}
           </PaperStrip>
         </p>
-        <Heading className={`${CLUE_SIZES[index]} leading-[1.16] font-semibold tracking-[-0.02em] compact:text-[28px]`}>
+        <Heading
+          className="leading-[1.16] font-semibold tracking-[-0.02em] compact:text-[28px]"
+          style={screen.compact ? undefined : { fontSize: clueSize(index, hint.text.length) }}
+        >
           <PaperStrip className="px-3 compact:px-2">{hint.text}</PaperStrip>
         </Heading>
         {hint.note && (
@@ -157,7 +176,7 @@ function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneP
           </p>
         )}
       </div>
-      {index === 2 && <CoreAnnotations research={discovery.experience.research} />}
+      {index === 2 && core && <CoreAnnotations research={core} />}
       <Actions
         className="absolute top-[752px] left-[52px] compact:static"
         speak={{ label: "Dizer o nome" }}
@@ -178,7 +197,7 @@ function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneP
 
 const CORE_LAYOUT = { top: 130, height: 640, firstTick: 150, lastTick: 770 };
 
-function CoreAnnotations({ research }: { research: DiscoverableScientist["experience"]["research"] }) {
+function CoreAnnotations({ research }: { research: NonNullable<DiscoveryScenery["core"]> }) {
   const depths = research.depths;
   const spacing = (CORE_LAYOUT.lastTick - CORE_LAYOUT.firstTick) / Math.max(1, depths.length - 1);
   const layers = research.layers.map((l) => ({ text: l.text, y: CORE_LAYOUT.top + l.at * CORE_LAYOUT.height }));
@@ -210,29 +229,30 @@ function CoreAnnotations({ research }: { research: DiscoverableScientist["experi
 function TypedName({ name, delay }: { name: string; delay: number }) {
   let i = 0;
   return (
-    <>
-      {name.split(" ").map((word) => (
-        <span key={word} aria-hidden="true" className="block w-fit">
-          {[...word].map((letter) => {
-            const k = i++;
-            return (
-              <span key={k} className="fade-in inline-block" style={{ animationDelay: `${delay + k * 70}ms`, animationDuration: "180ms" }}>
-                {letter}
-              </span>
-            );
-          })}
+    <span aria-hidden="true">
+      {name.split(" ").map((word, w) => (
+        <span key={`${word}-${w}`}>
+          {w > 0 && " "}
+          <span className="inline-block whitespace-nowrap">
+            {[...word].map((letter) => {
+              const k = i++;
+              return (
+                <span key={k} className="fade-in inline-block" style={{ animationDelay: `${delay + k * 70}ms`, animationDuration: "180ms" }}>
+                  {letter}
+                </span>
+              );
+            })}
+          </span>
         </span>
       ))}
-    </>
+    </span>
   );
 }
 
 function HumanScale({ screen, commands, context }: PlaneProps) {
   const discovery = context.discovery;
   if (!discovery) return null;
-  const notices = [discovery.fictional ? FICTIONAL_NOTICE : null, discovery.photo ? null : "RETRATO TOPOGRÁFICO GENÉRICO"].filter(
-    (n): n is string => n !== null,
-  );
+  const sources = shownSources(discovery);
   return (
     <Stage screen={screen}>
       <p className="absolute top-[40px] left-[64px] font-notation text-[14px] font-medium tracking-[0.08em] text-iris-blue compact:static">
@@ -243,17 +263,42 @@ function HumanScale({ screen, commands, context }: PlaneProps) {
           <TriangleMarker tone="accent" />
           PONTO {context.code} · AGORA COM NOME
         </p>
-        <Heading className="mt-4 text-[104px] leading-[0.98] font-bold tracking-[0.01em] uppercase compact:text-[44px]">
+        <Heading
+          className="mt-4 leading-[0.98] font-bold tracking-[0.01em] uppercase compact:text-[44px]"
+          style={screen.compact ? undefined : { fontSize: nameSize(discovery.canonicalName) }}
+        >
           <span className="sr-only">{discovery.canonicalName}</span>
           <TypedName name={discovery.canonicalName} delay={2300} />
         </Heading>
         <span aria-hidden="true" className="fade-in mt-3 block h-0 w-[540px] border-b-2 border-accent [animation-delay:2000ms] compact:w-full" />
-        <p className="fade-in mt-6 font-primary text-[16px] font-semibold tracking-[0.14em] uppercase [animation-delay:3400ms]">{discovery.reveal.role}</p>
+        <p className="fade-in mt-6 font-primary text-[16px] font-semibold tracking-[0.14em] uppercase [animation-delay:3400ms]">{discovery.field}</p>
         <p className="fade-in mt-3 text-[40px] leading-[1.1] font-medium [animation-delay:3900ms] compact:text-[24px]">Agora você conhece uma.</p>
-        {notices.length > 0 && (
+        {discovery.fictional ? (
           <p className="fade-in mt-6 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
-            {notices.join(" · ")}
+            {FICTIONAL_NOTICE}
           </p>
+        ) : (
+          sources.length > 0 && (
+            <div className="fade-in mt-6 flex items-baseline gap-3 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
+              <span className="text-ink-soft">{sources.length > 1 ? "FONTES" : "FONTE"}</span>
+              <ul className="flex flex-col gap-1">
+                {sources.map((source) => (
+                  <li key={source.id}>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pointer-events-auto inline-flex items-center gap-1.5 underline decoration-accent decoration-[1.5px] underline-offset-[3px] hover:bg-accent/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris-blue"
+                    >
+                      {source.label}
+                      <ArrowIcon className="size-3 shrink-0 -rotate-45" />
+                      <span className="sr-only">(abre em nova aba)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
         )}
         <div className="fade-in mt-7 [animation-delay:4300ms] compact:mt-4">
           <Button variant="primary" arrow onClick={commands.continue}>
@@ -365,25 +410,31 @@ export const PLANE_LABELS: Record<Step, string> = {
 
 export function mapDescription(state: State, context: PlaneContext) {
   const name = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId)?.name ?? "";
-  const experience = context.discovery?.experience;
-  const point = `o ponto ${context.code}`;
+  const scenery = context.discovery ? sceneryFor(context.discovery) : null;
+  const point = `ponto ${context.code}`;
   switch (state.step) {
     case "opening":
       return "Mapa topográfico mudo: relevo com pontos marcados por triângulos, todos sem nome.";
     case "noName":
-      return `Mapa mudo com ${point} selecionado por uma mira.`;
+      return `Mapa mudo com o ${point} selecionado por uma mira.`;
     case "clue1": {
-      const places = experience?.territory.places.map((l) => l.text.toLowerCase()).join(", ");
-      return `Aproximação a ${point}, escala 1:250 000${places ? `: ${places}` : ""}.`;
+      const places = scenery?.places.map((l) => l.text.toLowerCase()).join(", ");
+      return `Aproximação ao ${point}, escala 1:250 000${places ? `: ${places}` : ""}.`;
     }
     case "clue2":
-      return `Escala 1:25 000: um transecto com ${experience?.problem.points ?? 0} pontos de coleta parte d${point}.`;
+      return scenery?.transect
+        ? `Escala 1:25 000: um transecto com ${scenery.transect.points} pontos de coleta parte do ${point}.`
+        : `Escala 1:25 000: aproximação ao ${point}.`;
     case "clue3":
-      return "Escala 1:10: as curvas de nível viram camadas de sedimento dentro de um testemunho.";
+      return scenery?.core
+        ? "Escala 1:10: as curvas de nível viram camadas de sedimento."
+        : "Escala 1:10: dentro do círculo, as curvas de nível desenham a silhueta de uma pessoa.";
     case "humanScale":
-      return "Escala 1:1: as curvas de nível desenham o busto de uma pessoa.";
+      return context.discovery?.photo?.src
+        ? `Escala 1:1: dentro do círculo, a fotografia de ${context.discovery.canonicalName}, cercada pelas curvas de nível do seu retrato.`
+        : "Escala 1:1: as curvas de nível desenham o busto de uma pessoa.";
     case "askAgain":
-      return `Mapa mudo inteiro. ${point.charAt(0).toUpperCase()}${point.slice(1)} agora tem um retrato, mas ainda não tem nome.`;
+      return `Mapa mudo inteiro. O ${point} agora mostra o retrato de ${context.discovery?.canonicalName ?? "uma cientista"}, esperando que o nome seja dito.`;
     case "nameSaid":
       return `O relevo de ${name} sobe: uma nova curva de nível surge no topo.`;
     case "collective":

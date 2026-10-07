@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { CATALOG } from "../content/scientists/catalog.ts";
+import { FEATURED } from "../content/scientists/featured.ts";
 import { createMatcher, isValidAnswer } from "../content/scientists/matcher.ts";
 import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "../participation/source.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
@@ -8,11 +9,19 @@ import { simulatedSpeech } from "./speechSimulation.ts";
 import { createExperience, type Action, type State } from "./state.ts";
 
 const experience = createExperience(CATALOG, INITIAL_PARTICIPATIONS);
-const helena = experience.discoverable[0];
 
 function run(actions: Action[], from: State = experience.initialState()) {
   return actions.reduce(experience.reduce, from);
 }
+
+const DISCOVERY_PATH: Action[] = [
+  { type: "dontKnow" },
+  { type: "approach" },
+  { type: "nextClue" },
+  { type: "nextClue" },
+  { type: "reachHumanScale" },
+  { type: "continue" },
+];
 
 test("contract: featured is not the universe of valid answers", () => {
   const knownOnly = CATALOG.known.find((k) => k.canonicalName === "Celina Brandão");
@@ -36,12 +45,31 @@ test("contract: featured is not the universe of valid answers", () => {
   assert.equal(onMap.featured, false);
 });
 
+test("the discoverable set is the whole curated featured set", () => {
+  assert.equal(experience.discoverable.length, FEATURED.length);
+});
+
+test("'não sei' rotates across all featured scientists", () => {
+  let state = experience.initialState();
+  const seen = new Set<string>();
+  for (let i = 0; i < FEATURED.length; i++) {
+    state = run([{ type: "dontKnow" }], state);
+    assert.equal(state.step, "noName");
+    assert.ok(state.discoveryId);
+    seen.add(state.discoveryId);
+    state = run([{ type: "restart" }], state);
+  }
+  assert.equal(seen.size, FEATURED.length);
+});
+
 test("scenario 1: a featured name said spontaneously counts without forcing the clues", () => {
-  const state = run([{ type: "name", text: "helena alencar" }]);
-  assert.equal(state.step, "nameSaid");
-  assert.equal(state.saidId, helena.id);
-  assert.equal(state.participations[helena.id], INITIAL_PARTICIPATIONS[helena.id] + 1);
-  assert.equal(state.discoveryId, null);
+  for (const s of FEATURED) {
+    const state = run([{ type: "name", text: s.canonicalName.toLowerCase() }]);
+    assert.equal(state.step, "nameSaid", s.id);
+    assert.equal(state.saidId, s.id);
+    assert.equal(state.participations[s.id], (INITIAL_PARTICIPATIONS[s.id] ?? 0) + 1);
+    assert.equal(state.discoveryId, null);
+  }
 });
 
 test("scenario 2: a known-only name counts and reaches the collective map", () => {
@@ -54,15 +82,13 @@ test("scenario 3: an ambiguous answer waits for confirmation and can be resolved
   const asked = run([{ type: "name", text: "Ana Luísa" }]);
   assert.equal(asked.step, "opening");
   assert.ok(asked.response?.kind === "confirm");
-  assert.deepEqual(
-    asked.response.candidates.map((c) => c.id),
-    ["p015", "f-ana-luisa-prado"],
-  );
+  assert.ok(asked.response.candidates.length >= 2);
   assert.deepEqual(asked.participations, INITIAL_PARTICIPATIONS);
 
-  const confirmed = run([{ type: "confirm", id: "f-ana-luisa-prado" }], asked);
+  const target = asked.response.candidates[1].id;
+  const confirmed = run([{ type: "confirm", id: target }], asked);
   assert.equal(confirmed.step, "nameSaid");
-  assert.equal(confirmed.participations["f-ana-luisa-prado"], 1);
+  assert.equal(confirmed.participations[target], (INITIAL_PARTICIPATIONS[target] ?? 0) + 1);
 
   const rejected = run([{ type: "reject" }], asked);
   assert.equal(rejected.step, "opening");
@@ -72,7 +98,7 @@ test("scenario 3: an ambiguous answer waits for confirmation and can be resolved
 test("an excessively incomplete answer asks for the full name without counting", () => {
   const state = run([{ type: "name", text: "Ana" }]);
   assert.equal(state.step, "opening");
-  assert.deepEqual(state.response, { kind: "incomplete", text: "Ana", candidateCount: 3 });
+  assert.equal(state.response?.kind, "incomplete");
   assert.deepEqual(state.participations, INITIAL_PARTICIPATIONS);
 });
 
@@ -87,33 +113,33 @@ test("scenario 4: an unknown name is not an error and can be submitted for revie
   assert.deepEqual(submitted.participations, INITIAL_PARTICIPATIONS);
 });
 
-test("scenario 5: don't know → discover → know → say it → +1", () => {
-  const asking = run([
-    { type: "dontKnow" },
-    { type: "approach" },
-    { type: "nextClue" },
-    { type: "nextClue" },
-    { type: "reachHumanScale" },
-    { type: "continue" },
-  ]);
-  assert.equal(asking.step, "askAgain");
-  assert.equal(asking.discoveryId, helena.id);
-
-  const spoken = simulatedSpeech(asking.step, helena);
-  assert.equal(spoken, helena.canonicalName);
-  const said = run([{ type: "name", text: spoken ?? "" }, { type: "seeMap" }], asking);
-  assert.equal(said.step, "collective");
-  assert.equal(said.saidId, helena.id);
-  assert.equal(said.participations[helena.id], INITIAL_PARTICIPATIONS[helena.id] + 1);
+test("scenario 5: for every featured scientist, don't know → discover → know → say it → +1", () => {
+  let state = experience.initialState();
+  for (let i = 0; i < FEATURED.length; i++) {
+    const asking = run(DISCOVERY_PATH, state);
+    assert.equal(asking.step, "askAgain");
+    const discovery = FEATURED.find((s) => s.id === asking.discoveryId);
+    assert.ok(discovery);
+    const spoken = simulatedSpeech(asking.step, discovery);
+    assert.equal(spoken, discovery.canonicalName);
+    const said = run([{ type: "name", text: spoken ?? "" }, { type: "seeMap" }], asking);
+    assert.equal(said.step, "collective");
+    assert.equal(said.saidId, discovery.id);
+    assert.equal(said.participations[discovery.id], (state.participations[discovery.id] ?? 0) + 1);
+    state = run([{ type: "anotherName" }], said);
+  }
 });
 
 test("recognizing the discovery during the clues reveals her and counts once", () => {
-  const revealed = run([{ type: "dontKnow" }, { type: "approach" }, { type: "name", text: "Helena Alencar" }]);
+  const started = run([{ type: "dontKnow" }, { type: "approach" }]);
+  const discovery = FEATURED.find((s) => s.id === started.discoveryId);
+  assert.ok(discovery);
+  const revealed = run([{ type: "name", text: discovery.canonicalName }], started);
   assert.equal(revealed.step, "humanScale");
   assert.equal(revealed.alreadySaid, true);
   const counted = run([{ type: "continue" }], revealed);
   assert.equal(counted.step, "nameSaid");
-  assert.equal(counted.participations[helena.id], INITIAL_PARTICIPATIONS[helena.id] + 1);
+  assert.equal(counted.participations[discovery.id], (INITIAL_PARTICIPATIONS[discovery.id] ?? 0) + 1);
 });
 
 test("during the clues another valid name does not count and keeps the discovery going", () => {
@@ -124,13 +150,25 @@ test("during the clues another valid name does not count and keeps the discovery
 });
 
 test("speech simulation is scripted outside the interface and stays silent at the opening", () => {
-  assert.equal(simulatedSpeech("opening", helena), null);
-  assert.equal(simulatedSpeech("clue2", helena), helena.canonicalName);
+  const discovery = FEATURED[0];
+  assert.equal(simulatedSpeech("opening", discovery), null);
+  assert.equal(simulatedSpeech("clue2", discovery), discovery.canonicalName);
   assert.equal(simulatedSpeech("askAgain", null), null);
 });
 
 test("silence at the opening starts a discovery", () => {
   const state = run([{ type: "silence" }]);
   assert.equal(state.step, "noName");
-  assert.equal(state.discoveryId, helena.id);
+  assert.ok(FEATURED.some((s) => s.id === state.discoveryId));
+});
+
+test("the collective map accepts every featured scientist once mentioned", () => {
+  const participations = Object.fromEntries(FEATURED.map((s, i) => [s.id, i + 1]));
+  const points = sheetPoints(CATALOG, SHEET_LAYOUT, { ...INITIAL_PARTICIPATIONS, ...participations });
+  for (const s of FEATURED) {
+    const point = points.find((p) => p.scientistId === s.id);
+    assert.ok(point, s.id);
+    assert.equal(point.mentions, participations[s.id]);
+    assert.equal(point.name, s.canonicalName);
+  }
 });

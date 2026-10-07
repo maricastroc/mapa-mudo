@@ -36,6 +36,7 @@ const RIVER: [number, number][] = [
 ];
 
 const RIVER_WIDTH = 5.5;
+export const NEW_RING_GAUSS = 0.75;
 const SHEET_OCTAVES = 3.8;
 
 function hash(text: string) {
@@ -142,8 +143,8 @@ export class TerrainField {
     const fresh = this.createPeak({ ...point, mentions: 1 });
     fresh.flattens = true;
     fresh.plateau = this.terrain(fresh.cx, fresh.cy, SHEET_OCTAVES, this.peaks);
-    fresh.baseLevel = Math.max(0, Math.round(fresh.plateau));
-    fresh.amp = fresh.baseLevel + 1.5 - fresh.plateau;
+    fresh.baseLevel = Math.max(0, Math.floor(fresh.plateau));
+    fresh.amp = (fresh.baseLevel + 1 - fresh.plateau) / NEW_RING_GAUSS;
     fresh.baseAmp = fresh.amp;
     fresh.baseMentions = 1;
     this.peaks.push(fresh);
@@ -158,7 +159,7 @@ export class TerrainField {
 
   summit(point: FieldPoint) {
     const p = this.byId.get(point.id) ?? this.predict(point);
-    return { x: p.summitX, y: p.summitY, sigma: 1 / Math.sqrt(2 * p.k) };
+    return { x: p.summitX, y: p.summitY, sigma: 1 / Math.sqrt(2 * p.k), fresh: p.flattens };
   }
 
   addPeak(point: FieldPoint) {

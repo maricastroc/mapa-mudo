@@ -37,6 +37,7 @@ export type State = {
   alreadySaid: boolean;
   response: Response | null;
   reviewQueue: PendingScientistSubmission[];
+  discoveryCursor: number;
 };
 
 export type Action =
@@ -120,6 +121,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
     alreadySaid: false,
     response: null,
     reviewQueue: [],
+    discoveryCursor: 0,
   });
 
   const goTo = (state: State, step: Step, extra: Partial<State> = {}): State => ({
@@ -148,9 +150,9 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
   };
 
   const startDiscovery = (state: State): State => {
-    const chosen = chooseDiscovery(discoverable, state.participations);
+    const chosen = chooseDiscovery(discoverable, state.participations, state.discoveryCursor);
     if (!chosen) return { ...state, response: { kind: "noCuration" } };
-    return goTo(state, "noName", { discoveryId: chosen.id });
+    return goTo(state, "noName", { discoveryId: chosen.id, discoveryCursor: state.discoveryCursor + 1 });
   };
 
   const reduce = (state: State, action: Action): State => {
@@ -205,7 +207,13 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
       case "anotherName":
         return goTo(state, "opening", { saidId: null, alreadySaid: false, discoveryId: null });
       case "restart":
-        return { ...initialState(), reviewQueue: state.reviewQueue, previous: state.step, stepCount: state.stepCount + 1 };
+        return {
+          ...initialState(),
+          reviewQueue: state.reviewQueue,
+          discoveryCursor: state.discoveryCursor,
+          previous: state.step,
+          stepCount: state.stepCount + 1,
+        };
       case "clearPrevious":
         return action.stepCount === state.stepCount ? { ...state, previous: null } : state;
       case "clearResponse":

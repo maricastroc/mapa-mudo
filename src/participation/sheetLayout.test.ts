@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { Catalog } from "../content/scientists/types.ts";
+import { CATALOG } from "../content/scientists/catalog.ts";
+import { FEATURED } from "../content/scientists/featured.ts";
 import { FEATURED_FIXTURES } from "../content/scientists/fixtures.ts";
+import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "./source.ts";
 import { chooseDiscovery, recordMention } from "./participations.ts";
 import { autoPosition, sheetPoints, type SheetLayout } from "./sheetLayout.ts";
 
@@ -61,8 +64,24 @@ test("participations are independent from the editorial catalog", () => {
   assert.equal("hints" in catalog.known[0], false);
 });
 
-test("the discovery chosen for 'não sei' is the least mentioned discoverable scientist", () => {
-  const discoverable = FEATURED_FIXTURES.flatMap((f) => (f.experience ? [{ ...f, experience: f.experience }] : []));
-  assert.equal(chooseDiscovery(discoverable, {})?.id, FEATURED_FIXTURES[0].id);
+test("the discovery chosen for 'não sei' is the least mentioned, rotating among ties", () => {
+  assert.equal(chooseDiscovery(FEATURED_FIXTURES, {})?.id, FEATURED_FIXTURES[0].id);
   assert.equal(chooseDiscovery([], {}), null);
+  const [a, b, c] = FEATURED.slice(0, 3);
+  assert.equal(chooseDiscovery([a, b, c], {}, 1)?.id, b.id);
+  assert.equal(chooseDiscovery([a, b, c], { [b.id]: 2 }, 1)?.id, c.id);
+});
+
+test("curated featured scientists get stable, non-overlapping sheet positions", () => {
+  const first = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS);
+  const second = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS);
+  assert.deepEqual(first, second);
+  const featured = first.filter((p) => p.featured);
+  assert.equal(featured.length, FEATURED.length);
+  for (let i = 0; i < featured.length; i++) {
+    for (let j = i + 1; j < featured.length; j++) {
+      const d = Math.hypot(featured[i].x - featured[j].x, featured[i].y - featured[j].y);
+      assert.ok(d >= 40, `${featured[i].key} and ${featured[j].key} are ${d.toFixed(0)}px apart`);
+    }
+  }
 });

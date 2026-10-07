@@ -62,14 +62,22 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, participation
   ];
   const fixed = [
     ...Object.values(layout.points),
-    ...catalog.featured.flatMap((f) => (f.experience ? [f.experience.map] : [])),
+    ...catalog.featured.flatMap((f) => (f.scenery?.map ? [f.scenery.map] : [])),
     ...layout.vacancies,
   ];
+  const occupied = [...fixed];
+  const featuredPositions = new Map<string, { x: number; y: number }>();
+  for (const f of catalog.featured) {
+    if (layout.points[f.id] || f.scenery?.map) continue;
+    const position = autoPosition(f.id, occupied);
+    featuredPositions.set(f.id, position);
+    occupied.push(position);
+  }
 
   const points: SheetPoint[] = sorted.map((s) => {
     const explicit = layout.points[s.id];
-    const editorial = featuredById.get(s.id)?.experience?.map;
-    const position = explicit ?? editorial ?? autoPosition(s.id, fixed);
+    const editorial = featuredById.get(s.id)?.scenery?.map;
+    const position = explicit ?? editorial ?? featuredPositions.get(s.id) ?? autoPosition(s.id, occupied);
     const code = explicit?.code ?? editorial?.code ?? String(100 + (catalogIndex.get(s.id) ?? 0)).padStart(3, "0");
     return {
       key: s.id,

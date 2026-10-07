@@ -1,16 +1,21 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useRef } from "react";
+import { Tooltip } from "react-tooltip";
+import type { ScientistPhoto } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
 import { cellExtremes, traceContours } from "@/map/contours";
 import { MapAnchor, useMapView } from "@/map/MapCanvas";
 import { toScreen } from "@/map/mapRenderer";
 import type { SheetPoint } from "@/participation/sheetLayout";
+import { PHOTO_CLASS } from "./PortraitPhoto";
 import { SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { TriangleMarker } from "./ui";
 
 const SHEET_STEPS: Step[] = ["opening", "noName", "askAgain", "collective"];
+const PORTRAIT_TOOLTIP = "portrait-name";
 
 export function mapPosition(field: TerrainField, p: SheetPoint) {
   if (!p.scientistId || p.mentions <= 0) return { x: p.x, y: p.y };
@@ -99,7 +104,7 @@ export function PlaceNames({ step, geometry }: { step: Step; geometry: Discovery
       {geometry.places.map((l) => (
         <MapAnchor key={l.text} x={l.x} y={l.y}>
           <span
-            className="block -translate-x-1/2 -translate-y-1/2 font-notation text-[calc(var(--u)*15px)] tracking-[0.6em] whitespace-nowrap text-ink-soft"
+            className={`block -translate-x-1/2 -translate-y-1/2 font-notation text-[calc(var(--u)*15px)] whitespace-nowrap text-ink-soft uppercase ${l.text.length > 10 ? "tracking-[0.3em]" : "tracking-[0.6em]"}`}
             style={{ rotate: `${l.rotation}deg` }}
           >
             {l.text}
@@ -304,34 +309,56 @@ export function usePortraitContourPaths(field: TerrainField, n = 72, levelCount 
   }, [field, n, levelCount]);
 }
 
-export function PortraitMedallion({ step, field, geometry }: { step: Step; field: TerrainField; geometry: DiscoveryGeometry }) {
+export function PortraitMedallion({
+  step,
+  field,
+  geometry,
+  name,
+  photo,
+}: {
+  step: Step;
+  field: TerrainField;
+  geometry: DiscoveryGeometry;
+  name: string;
+  photo: ScientistPhoto | null;
+}) {
   const paths = usePortraitContourPaths(field);
   const active = step === "askAgain";
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={geometry.summit.x} y={geometry.summit.y}>
-        <div className="absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)]">
-          <svg viewBox="0 0 100 100" className="block size-[calc(var(--u)*84px)] rounded-full border-2 border-accent bg-paper">
-            <g fill="none" stroke="var(--ink)" strokeWidth={1.1}>
-              {paths.map((d, i) => (
-                <path key={i} d={d} />
-              ))}
-            </g>
-          </svg>
+        <div
+          data-tooltip-id={active ? PORTRAIT_TOOLTIP : undefined}
+          data-tooltip-content={name}
+          className={`absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] cursor-default rounded-full ${active ? "pointer-events-auto" : ""}`}
+        >
+          {photo?.src ? (
+            <div className="relative size-[calc(var(--u)*84px)] overflow-hidden rounded-full border-2 border-accent bg-paper">
+              <Image src={photo.src} alt="" fill sizes="96px" className={PHOTO_CLASS} />
+            </div>
+          ) : (
+            <svg viewBox="0 0 100 100" className="block size-[calc(var(--u)*84px)] rounded-full border-2 border-accent bg-paper">
+              <g fill="none" stroke="var(--ink)" strokeWidth={1.1}>
+                {paths.map((d, i) => (
+                  <path key={i} d={d} />
+                ))}
+              </g>
+            </svg>
+          )}
         </div>
         <div className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[11px]">
           <TriangleMarker tone="accent" />
         </div>
-        <div className="absolute top-[calc(var(--u)*-32px)] left-[calc(var(--u)*22px)] flex flex-col items-start gap-[calc(var(--u)*6px)]">
-          <span className="bg-paper px-1.5 py-0.5 font-notation text-[calc(var(--u)*13px)] font-medium tracking-[0.06em] whitespace-nowrap text-ink">
-            PONTO {geometry.code} — FALTA DIZER O NOME
-          </span>
-          <span className="flex items-end gap-1.5">
-            <span className="block h-[calc(var(--u)*24px)] w-[2px] bg-accent" />
-            <span className="block h-0 w-[calc(var(--u)*170px)] border-b-2 border-accent" />
-          </span>
-        </div>
       </MapAnchor>
+      <Tooltip
+        id={PORTRAIT_TOOLTIP}
+        place="top"
+        offset={10}
+        opacity={1}
+        disableStyleInjection
+        className="z-20 bg-ink px-2.5 py-1.5 font-primary text-[14px] font-semibold tracking-[0.06em] whitespace-nowrap text-paper uppercase"
+        classNameArrow="size-2 rotate-45"
+      />
     </div>
   );
 }

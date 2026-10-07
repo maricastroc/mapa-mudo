@@ -1,13 +1,13 @@
 import { FEATURED } from "./featured.ts";
-import { FEATURED_FIXTURES, KNOWN_FIXTURES } from "./fixtures.ts";
+import { KNOWN_FIXTURES } from "./fixtures.ts";
 import { KNOWN } from "./known.ts";
-import type { Catalog, DiscoverableScientist, FeaturedScientist, KnownScientist } from "./types.ts";
+import type { Catalog, FeaturedScientist, KnownScientist, ScientistSource } from "./types.ts";
 
-export const USE_FIXTURES = true;
+export const USE_ILLUSTRATIVE_FIXTURES = true;
 
 export const CATALOG: Catalog = {
-  featured: [...FEATURED, ...(USE_FIXTURES ? FEATURED_FIXTURES : [])],
-  known: [...KNOWN, ...(USE_FIXTURES ? KNOWN_FIXTURES : [])],
+  featured: FEATURED,
+  known: [...KNOWN, ...(USE_ILLUSTRATIVE_FIXTURES ? KNOWN_FIXTURES : [])],
 };
 
 export function findScientist(catalog: Catalog, id: string): KnownScientist | undefined {
@@ -18,6 +18,15 @@ export function findFeatured(catalog: Catalog, id: string): FeaturedScientist | 
   return catalog.featured.find((s) => s.id === id);
 }
 
-export function discoverableScientists(catalog: Catalog): DiscoverableScientist[] {
-  return catalog.featured.filter((s): s is DiscoverableScientist => s.experience !== undefined);
+export function discoverableScientists(catalog: Catalog): FeaturedScientist[] {
+  return catalog.featured.filter((s) => s.experience.hints.length === 3);
+}
+
+export function shownSources(scientist: FeaturedScientist): ScientistSource[] {
+  const facts = new Map(scientist.facts.map((f) => [f.id, f]));
+  const ids = [
+    ...scientist.experience.hints.flatMap((h) => h.factIds.flatMap((id) => facts.get(id)?.sourceRefs ?? [])),
+    ...scientist.experience.reveal.sourceRefs,
+  ];
+  return [...new Set(ids)].flatMap((id) => scientist.sources.filter((s) => s.id === id));
 }

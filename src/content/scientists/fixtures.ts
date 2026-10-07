@@ -10,32 +10,38 @@ export const FEATURED_FIXTURES: FeaturedScientist[] = [
     canonicalName: "Helena Alencar",
     aliases: ["Lena Alencar"],
     field: "Ciência ambiental",
-    hints: [
-      { text: "Ela trabalha de botas, na lama do mangue.", note: "manguezal — onde o rio encontra o mar" },
-      { text: "Mede quanto carbono o mangue guarda.", note: "transecto T — cinco pontos de coleta" },
-      {
-        text: "A amostra: um cilindro de lama antiga, com carbono de séculos.",
-        note: "testemunho T-03 — um metro de sedimento",
-      },
-    ],
-    reveal: {
-      role: "Pesquisadora em ciência ambiental",
-      contribution: "Personagem fictícia: mede o carbono guardado no sedimento de manguezais.",
-    },
-    sources: [],
+    science: { researchAreas: [], facts: [] },
     experience: {
-      map: { x: 912, y: 152, code: "017" },
-      territory: {
-        places: [
-          { text: "MANGUE", dx: -22, dy: -34, rotation: -8 },
-          { text: "ESTUÁRIO", dx: 73.07, dy: -27.57, rotation: -70 },
-          { text: "OCEANO", dx: -40, dy: -87.57, rotation: 0 },
-          { text: "RIO", dx: 83.07, dy: 80.43, rotation: -76 },
-        ],
+      hints: [
+        { level: 1, text: "Ela trabalha de botas, na lama do mangue.", factIds: [], note: "manguezal — onde o rio encontra o mar" },
+        { level: 2, text: "Mede quanto carbono o mangue guarda.", factIds: [], note: "transecto T — cinco pontos de coleta" },
+        {
+          level: 3,
+          text: "A amostra: um cilindro de lama antiga, com carbono de séculos.",
+          factIds: [],
+          note: "testemunho T-03 — um metro de sedimento",
+        },
+      ],
+      reveal: {
+        headline: "Helena Alencar",
+        summary: "Personagem fictícia: mede o carbono guardado no sedimento de manguezais.",
+        sourceRefs: [],
       },
-      problem: { kind: "transect", direction: { x: 0.5, y: -0.866 }, step: 1.8, points: 5, prefix: "T", sample: 2 },
-      research: {
-        kind: "core",
+      visualMotifs: [],
+    },
+    facts: [],
+    sources: [],
+    photo: null,
+    scenery: {
+      map: { x: 912, y: 152, code: "017" },
+      places: [
+        { text: "MANGUE", dx: -22, dy: -34, rotation: -8 },
+        { text: "ESTUÁRIO", dx: 73.07, dy: -27.57, rotation: -70 },
+        { text: "OCEANO", dx: -40, dy: -87.57, rotation: 0 },
+        { text: "RIO", dx: 83.07, dy: 80.43, rotation: -76 },
+      ],
+      transect: { direction: { x: 0.5, y: -0.866 }, step: 1.8, points: 5, prefix: "T", sample: 2 },
+      core: {
         depths: ["0 cm", "25", "50", "75", "100 cm"],
         layers: [
           { text: "raízes", at: 0.103125 },
@@ -44,10 +50,11 @@ export const FEATURED_FIXTURES: FeaturedScientist[] = [
         ],
         caption: "CORTE DO TESTEMUNHO T-03",
       },
-      portrait: { kind: "generic-contour" },
     },
   },
 ];
+
+export const HELENA_PARTICIPATION: Participations = { p017: 41 };
 
 const fictionalKnown = (id: string, canonicalName: string, aliases: string[] = []): KnownScientist => ({
   id,
@@ -123,7 +130,6 @@ export const LAYOUT_FIXTURE: SheetLayout = {
 
 export const PARTICIPATIONS_FIXTURE: Participations = {
   p001: 341,
-  p017: 41,
   p004: 188,
   p008: 164,
   p011: 139,

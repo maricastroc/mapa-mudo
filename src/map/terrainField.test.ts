@@ -1,14 +1,22 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CATALOG } from "../content/scientists/catalog.ts";
-import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "../participation/source.ts";
+import {
+  FEATURED_FIXTURES,
+  HELENA_PARTICIPATION,
+  KNOWN_FIXTURES,
+  LAYOUT_FIXTURE,
+  PARTICIPATIONS_FIXTURE,
+} from "../content/scientists/fixtures.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
 import { TerrainField } from "./terrainField.ts";
 
 const SHEET_OCTAVES = 3.8;
 
+const FIXTURE_CATALOG = { featured: FEATURED_FIXTURES, known: KNOWN_FIXTURES };
+const FIXTURE_PARTICIPATIONS = { ...PARTICIPATIONS_FIXTURE, ...HELENA_PARTICIPATION };
+
 function fixtureField() {
-  const points = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS)
+  const points = sheetPoints(FIXTURE_CATALOG, LAYOUT_FIXTURE, FIXTURE_PARTICIPATIONS)
     .filter((p) => p.scientistId !== null && p.mentions > 0)
     .map((p) => ({ id: p.scientistId as string, x: p.x, y: p.y, mentions: p.mentions }));
   return new TerrainField(points);
@@ -32,7 +40,7 @@ test("each summit sits half a contour above its mention count", () => {
   const field = fixtureField();
   for (const p of field.peaks) {
     const top = field.terrain(p.summitX, p.summitY, SHEET_OCTAVES, field.peaks);
-    assert.ok(Math.abs(top - (p.baseLevel + (INITIAL_PARTICIPATIONS[p.id] ?? 0) + 0.5)) < 0.05, p.id);
+    assert.ok(Math.abs(top - (p.baseLevel + (FIXTURE_PARTICIPATIONS[p.id] ?? 0) + 0.5)) < 0.05, p.id);
   }
 });
 

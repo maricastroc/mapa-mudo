@@ -1,4 +1,4 @@
-import type { DiscoverableScientist, Participations } from "../content/scientists/types.ts";
+import type { FeaturedScientist, Participations } from "../content/scientists/types.ts";
 
 export function mentionsOf(participations: Participations, id: string) {
   return participations[id] ?? 0;
@@ -9,12 +9,12 @@ export function recordMention(participations: Participations, id: string): Parti
 }
 
 export function chooseDiscovery(
-  candidates: DiscoverableScientist[],
+  candidates: FeaturedScientist[],
   participations: Participations,
-): DiscoverableScientist | null {
-  let chosen: DiscoverableScientist | null = null;
-  for (const c of candidates) {
-    if (!chosen || mentionsOf(participations, c.id) < mentionsOf(participations, chosen.id)) chosen = c;
-  }
-  return chosen;
+  cursor = 0,
+): FeaturedScientist | null {
+  if (candidates.length === 0) return null;
+  const fewest = Math.min(...candidates.map((c) => mentionsOf(participations, c.id)));
+  const pool = candidates.filter((c) => mentionsOf(participations, c.id) === fewest);
+  return pool[((cursor % pool.length) + pool.length) % pool.length];
 }

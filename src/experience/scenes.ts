@@ -1,9 +1,10 @@
-import type { DiscoverableScientist } from "@/content/scientists/types";
-import type { TerrainField } from "@/map/terrainField";
+import type { FeaturedScientist } from "@/content/scientists/types";
+import { NEW_RING_GAUSS, type TerrainField } from "@/map/terrainField";
 import { SHEET, type Camera, type Channel, type Lens, type Scene, type SceneTarget, type Timing } from "@/map/mapRenderer";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
+import { sceneryFor } from "./scenery";
 
 export type Point = { x: number; y: number };
 
@@ -13,6 +14,7 @@ export type DiscoveryGeometry = {
   transect: Point[];
   sample: Point;
   places: { text: string; x: number; y: number; rotation: number }[];
+  hasCore: boolean;
 };
 
 export const SCALE_STOPS = [
@@ -29,26 +31,30 @@ export function toFieldPoint(p: SheetPoint) {
 
 export function discoveryGeometry(
   field: TerrainField,
-  discovery: DiscoverableScientist | null,
+  discovery: FeaturedScientist | null,
   points: SheetPoint[],
 ): DiscoveryGeometry {
   const point = discovery ? points.find((p) => p.scientistId === discovery.id) : undefined;
   if (!discovery || !point) {
     const center = { x: SHEET.w / 2, y: SHEET.h / 2 };
-    return { code: "", summit: center, transect: [center], sample: center, places: [] };
+    return { code: "", summit: center, transect: [center], sample: center, places: [], hasCore: false };
   }
-  const { problem, territory } = discovery.experience;
+  const scenery = sceneryFor(discovery);
   const summit = field.summit(toFieldPoint(point));
-  const transect = Array.from({ length: problem.points }, (_, k) => ({
-    x: summit.x + problem.direction.x * problem.step * k,
-    y: summit.y + problem.direction.y * problem.step * k,
-  }));
+  const plan = scenery.transect;
+  const transect = plan
+    ? Array.from({ length: plan.points }, (_, k) => ({
+        x: summit.x + plan.direction.x * plan.step * k,
+        y: summit.y + plan.direction.y * plan.step * k,
+      }))
+    : [];
   return {
     code: point.code,
     summit: { x: summit.x, y: summit.y },
     transect,
-    sample: transect[Math.min(problem.sample, transect.length - 1)],
-    places: territory.places.map((l) => ({ text: l.text, x: summit.x + l.dx, y: summit.y + l.dy, rotation: l.rotation })),
+    sample: plan && transect.length > 0 ? transect[Math.min(plan.sample, transect.length - 1)] : { x: summit.x, y: summit.y },
+    places: scenery.places.map((l) => ({ text: l.text, x: summit.x + l.dx, y: summit.y + l.dy, rotation: l.rotation })),
+    hasCore: scenery.core !== undefined,
   };
 }
 
@@ -68,7 +74,18 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
   };
 }
 
-export function nameSaidZoom(sigma: number, mentions: number) {
+const FRAME_TICK = 30;
+const RULER_GAP = 24;
+
+function scaleRulerBottom(u: number) {
+  return 36 * u + 88;
+}
+
+const NEW_RING_SCREEN_RADIUS = 210;
+const NEW_RING_RADIUS_IN_SIGMAS = Math.sqrt(2 * Math.log(1 / NEW_RING_GAUSS));
+
+export function nameSaidZoom(sigma: number, mentions: number, fresh: boolean) {
+  if (fresh) return NEW_RING_SCREEN_RADIUS / (NEW_RING_RADIUS_IN_SIGMAS * sigma);
   const radius = sigma * Math.sqrt((2 * 22) / Math.max(mentions, 23));
   return Math.min(60, Math.max(3, 640 / radius));
 }
@@ -106,9 +123,17 @@ export function sceneFor(
     const e = sheet.z * fit;
     return [sheet.ax * W + (geometry.summit.x - sheet.x) * e, sheet.ay * H + (geometry.summit.y - sheet.y) * e];
   };
-  const portraitAt = at(980, 450, 0.5, 0.3);
-  const portraitFrame = { x: portraitAt[0], y: portraitAt[1], r: (compact ? 250 : 310) * u * 0.97 };
-  const fixed = { portraitFrame };
+  const frame = (center: [number, number], d: number) => ({ x: center[0], y: center[1], r: ((d * u) / 2) * 0.97 });
+  const humanDiameter = compact ? 460 : 560;
+  const silhouetteDiameter = compact ? 300 : 380;
+  const portraitAt = ((): [number, number] => {
+    const [x, y] = at(980, 470, 0.5, 0.3);
+    if (compact) return [x, y];
+    const top = y - (humanDiameter / 2 + FRAME_TICK) * u;
+    return [x, y + Math.max(0, scaleRulerBottom(u) + RULER_GAP - top)];
+  })();
+  const fixed = { portraitFrame: frame(portraitAt, humanDiameter) };
+  const approaching = { portraitFrame: frame(portraitAt, silhouetteDiameter) };
   const t = (delay: number, duration: number): Timing => ({ delay, duration });
   let scene: Scene;
   let timings: Partial<Record<Channel, Timing>> = {};
@@ -125,7 +150,7 @@ export function sceneFor(
       break;
     case "clue1": {
       const a = at(900, 540, 0.5, 0.3);
-      scene = withDefaults({ ...fixed, camera: camera(geometry.summit, 6, a), lens: circle(a, 150, 1), lensInk: 0.9 });
+      scene = withDefaults({ ...approaching, camera: camera(geometry.summit, 6, a), lens: circle(a, 150, 1), lensInk: 0.9 });
       timings = { camera: t(0, 2700), lens: t(500, 1500), lensInk: t(900, 900) };
       break;
     }
@@ -136,31 +161,43 @@ export function sceneFor(
         a[0] + (geometry.summit.x - geometry.sample.x) * e,
         a[1] + (geometry.summit.y - geometry.sample.y) * e,
       ];
-      scene = withDefaults({ ...fixed, camera: camera(geometry.sample, 40, a), lens: circle(summitAt, 92, 1), lensInk: 0.9 });
+      scene = withDefaults({ ...approaching, camera: camera(geometry.sample, 40, a), lens: circle(summitAt, 92, 1), lensInk: 0.9 });
       timings = { camera: t(0, 2500), lens: t(400, 1600) };
       break;
     }
     case "clue3": {
-      const a = at(980, 450, 0.5, 0.3);
+      const a = portraitAt;
+      if (geometry.hasCore) {
+        scene = withDefaults({
+          ...approaching,
+          camera: camera(geometry.sample, 512, a),
+          lens: { x: a[0], y: a[1], w: 150 * u, h: compact ? 0.4 * H : 640 * u, r: 75 * u, o: 1 },
+          lensInk: 1,
+          strata: 1,
+          density: 34,
+        });
+        timings = { camera: t(0, 2700), strata: t(800, 2000), density: t(800, 2000), lens: t(1100, 1500) };
+        break;
+      }
       scene = withDefaults({
-        ...fixed,
+        ...approaching,
         camera: camera(geometry.sample, 512, a),
-        lens: { x: a[0], y: a[1], w: 150 * u, h: compact ? 0.4 * H : 640 * u, r: 75 * u, o: 1 },
+        lens: circle(a, silhouetteDiameter, 1),
         lensInk: 1,
-        strata: 1,
-        density: 34,
+        portrait: 1,
+        density: 26,
       });
-      timings = { camera: t(0, 2700), strata: t(800, 2000), density: t(800, 2000), lens: t(1100, 1500) };
+      timings = { camera: t(0, 2700), portrait: t(900, 2200), density: t(900, 2200), lens: t(700, 1500) };
       break;
     }
     case "humanScale": {
-      const a = at(980, 450, 0.5, 0.3);
+      const a = portraitAt;
       scene = withDefaults({
         ...fixed,
         camera: camera(geometry.sample, 4096, a),
-        lens: circle(a, compact ? 500 : 620, 1),
+        lens: circle(a, humanDiameter, 1),
         lensInk: 1,
-        strata: 1,
+        strata: geometry.hasCore ? 1 : 0,
         portrait: 1,
         density: 30,
       });
@@ -181,11 +218,11 @@ export function sceneFor(
     case "nameSaid": {
       const point = points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
       const id = point?.scientistId ?? null;
-      const summit = point ? field.summit(toFieldPoint(point)) : { ...geometry.summit, sigma: 40 };
+      const summit = point ? field.summit(toFieldPoint(point)) : { ...geometry.summit, sigma: 40, fresh: false };
       const a = at(880, 470, 0.5, 0.3);
       scene = withDefaults({
         ...fixed,
-        camera: camera(summit, nameSaidZoom(summit.sigma, point?.mentions ?? 1), a),
+        camera: camera(summit, nameSaidZoom(summit.sigma, point?.mentions ?? 1, summit.fresh), a),
         lens: circle(a, compact ? 420 : 620, 1),
         lensInk: 0.55,
         intervalLock: 1,
