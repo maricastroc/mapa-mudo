@@ -49,7 +49,7 @@ export type Action =
   | { type: "nextClue" }
   | { type: "reachHumanScale" }
   | { type: "continue" }
-  | { type: "openProfile" }
+  | { type: "openProfile"; id?: string }
   | { type: "closeProfile" }
   | { type: "seeAgain" }
   | { type: "name"; text: string }
@@ -176,12 +176,22 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
         return CLUE_STEPS.includes(state.step) ? goTo(state, "humanScale") : state;
       case "continue":
         if ((state.step !== "humanScale" && state.step !== "profile") || !state.discoveryId) return state;
+        if (state.step === "profile" && state.profileReturn !== "humanScale") return state;
         return state.alreadySaid ? say(state, state.discoveryId) : goTo(state, "askAgain");
-      case "openProfile":
+      case "openProfile": {
+        if (action.id !== undefined) {
+          if (state.step !== "nameSaid" && state.step !== "collective") return state;
+          if (!discoverable.some((s) => s.id === action.id)) return state;
+          return goTo(state, "profile", { discoveryId: action.id, profileReturn: state.step });
+        }
         if ((state.step !== "humanScale" && state.step !== "askAgain") || !state.discoveryId) return state;
         return goTo(state, "profile", { profileReturn: state.step });
-      case "closeProfile":
-        return state.step === "profile" ? goTo(state, state.profileReturn ?? "humanScale", { profileReturn: null }) : state;
+      }
+      case "closeProfile": {
+        if (state.step !== "profile") return state;
+        const back = state.profileReturn === "nameSaid" ? "collective" : (state.profileReturn ?? "humanScale");
+        return goTo(state, back, { profileReturn: null });
+      }
       case "seeAgain":
         return state.step === "askAgain" && state.discoveryId ? goTo(state, "humanScale") : state;
       case "name": {

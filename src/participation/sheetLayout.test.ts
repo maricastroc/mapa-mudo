@@ -6,7 +6,7 @@ import { FEATURED } from "../content/scientists/featured.ts";
 import { FEATURED_FIXTURES } from "../content/scientists/fixtures.ts";
 import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "./source.ts";
 import { chooseDiscovery, recordMention } from "./participations.ts";
-import { autoPosition, MIN_SPACING, sheetPoints, wasOnMapBeforeMention, type SheetLayout } from "./sheetLayout.ts";
+import { autoPosition, MIN_SPACING, sheetPoints, wasSaidBeforeMention, type SheetLayout } from "./sheetLayout.ts";
 
 const catalog: Catalog = {
   featured: FEATURED_FIXTURES,
@@ -86,21 +86,21 @@ test("curated featured scientists get stable, non-overlapping sheet positions", 
   }
 });
 
-test("a point counts as already on the map unless this mention is what created it", () => {
+test("a name counts as already mapped only when it had been said before this mention", () => {
   const featuredId = FEATURED_FIXTURES[0].id;
-  const once = recordMention({}, featuredId);
-  const featured = sheetPoints(catalog, layout, once).find((p) => p.scientistId === featuredId);
-  assert.ok(featured);
-  assert.equal(wasOnMapBeforeMention(featured), true);
+  const once = sheetPoints(catalog, layout, recordMention({}, featuredId)).find((p) => p.scientistId === featuredId);
+  assert.ok(once);
+  assert.equal(wasSaidBeforeMention(once), false);
+
+  const twice = sheetPoints(catalog, layout, recordMention(recordMention({}, featuredId), featuredId)).find((p) => p.scientistId === featuredId);
+  assert.ok(twice);
+  assert.equal(wasSaidBeforeMention(twice), true);
 
   const created = sheetPoints(catalog, layout, recordMention({}, "k2")).find((p) => p.scientistId === "k2");
   assert.ok(created);
-  assert.equal(wasOnMapBeforeMention(created), false);
-
-  const again = sheetPoints(catalog, layout, recordMention(recordMention({}, "k2"), "k2")).find((p) => p.scientistId === "k2");
-  assert.ok(again);
-  assert.equal(wasOnMapBeforeMention(again), true);
+  assert.equal(wasSaidBeforeMention(created), false);
 });
+
 
 const EMPTY_SHEET: SheetLayout = { points: {}, order: [], vacancies: [] };
 

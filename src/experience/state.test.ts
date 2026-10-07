@@ -249,3 +249,36 @@ test("the installation map only names scientists from the curated package", () =
   assert.ok(points.every((p) => p.scientistId === null || curated.has(p.scientistId)));
   assert.ok(points.filter((p) => p.mentions > 0).every((p) => p.name !== null && curated.has(p.scientistId ?? "")));
 });
+
+test("a scientist said for the first time leads to her profile, and from it to the full map", () => {
+  const target = FEATURED.find((s) => !INITIAL_PARTICIPATIONS[s.id]);
+  assert.ok(target);
+  const said = run([{ type: "name", text: target.canonicalName }]);
+  assert.equal(said.step, "nameSaid");
+  assert.equal(said.participations[target.id], 1);
+
+  const profile = run([{ type: "openProfile", id: target.id }], said);
+  assert.equal(profile.step, "profile");
+  assert.equal(profile.discoveryId, target.id);
+  assert.equal(profile.profileReturn, "nameSaid");
+  assert.deepEqual(profile.participations, said.participations);
+  assert.equal(run([{ type: "continue" }], profile).step, "profile");
+
+  const map = run([{ type: "closeProfile" }], profile);
+  assert.equal(map.step, "collective");
+  assert.equal(map.saidId, target.id);
+  assert.equal(map.participations[target.id], 1);
+});
+
+test("any named scientist on the collective map opens her profile and returns to the map", () => {
+  const [a, b] = FEATURED;
+  const map = run([{ type: "name", text: a.canonicalName }, { type: "seeMap" }]);
+  const profile = run([{ type: "openProfile", id: b.id }], map);
+  assert.equal(profile.step, "profile");
+  assert.equal(profile.discoveryId, b.id);
+  const back = run([{ type: "closeProfile" }], profile);
+  assert.equal(back.step, "collective");
+  assert.deepEqual(back.participations, map.participations);
+  assert.equal(run([{ type: "openProfile", id: "not-a-scientist" }], map).step, "collective");
+  assert.equal(run([{ type: "openProfile", id: b.id }]).step, "opening");
+});

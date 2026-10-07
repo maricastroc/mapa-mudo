@@ -105,8 +105,15 @@ function LiveExperience() {
 
   const focusCurrentPlane = useEffectEvent(() => {
     const returning = state.previous === "profile";
-    const target = !returning ? "[data-current-plane] h1" : state.step === "askAgain" ? "[data-medallion-button]" : "[data-portrait-button]";
-    document.querySelector<HTMLElement>(target)?.focus({ preventScroll: true });
+    const target = !returning
+      ? "[data-current-plane] h1"
+      : state.step === "askAgain"
+        ? "[data-medallion-button]"
+        : state.step === "collective"
+          ? `[data-profile-link="${state.discoveryId ?? ""}"]`
+          : "[data-portrait-button]";
+    const element = document.querySelector<HTMLElement>(target) ?? document.querySelector<HTMLElement>("[data-current-plane] h1");
+    element?.focus({ preventScroll: true });
   });
 
   useEffect(() => {
@@ -124,6 +131,7 @@ function LiveExperience() {
       reachHumanScale: () => dispatch({ type: "reachHumanScale" }),
       continue: () => dispatch({ type: "continue" }),
       openProfile: () => dispatch({ type: "openProfile" }),
+      openProfileOf: (id: string) => dispatch({ type: "openProfile", id }),
       closeProfile: () => dispatch({ type: "closeProfile" }),
       seeAgain: () => dispatch({ type: "seeAgain" }),
       name: (text: string) => dispatch({ type: "name", text }),
@@ -174,6 +182,8 @@ function LiveExperience() {
           view={labelView}
           unit={unit}
           obstacles={obstacles}
+          returning={state.previous === "profile"}
+          onOpenProfile={commands.openProfileOf}
         />
         <PlaceNames step={state.step} geometry={geometry} />
         <Transect step={state.step} geometry={geometry} prefix={discovery ? (sceneryFor(discovery).transect?.prefix ?? "") : ""} />

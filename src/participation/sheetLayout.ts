@@ -29,8 +29,8 @@ function reserved(x: number, y: number) {
   return MARGIN_RESERVES.some((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
 }
 
-export function wasOnMapBeforeMention(point: SheetPoint) {
-  return point.featured || point.mentions > 1;
+export function wasSaidBeforeMention(point: SheetPoint) {
+  return point.mentions > 1;
 }
 export const MIN_SPACING = 80;
 const CANDIDATES = 512;

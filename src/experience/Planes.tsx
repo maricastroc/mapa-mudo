@@ -5,7 +5,7 @@ import { shownSources } from "@/content/scientists/catalog";
 import { scientistProfile } from "@/content/scientists/profile";
 import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
 import type { DiscoveryScenery, FeaturedScientist } from "@/content/scientists/types";
-import { wasOnMapBeforeMention, type SheetPoint } from "@/participation/sheetLayout";
+import { wasSaidBeforeMention, type SheetPoint } from "@/participation/sheetLayout";
 import { Actions, type ResponseHandlers } from "./Actions";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
@@ -24,6 +24,7 @@ export type Commands = {
   reachHumanScale: () => void;
   continue: () => void;
   openProfile: () => void;
+  openProfileOf: (id: string) => void;
   closeProfile: () => void;
   seeAgain: () => void;
   name: (text: string) => void;
@@ -356,34 +357,56 @@ function HumanScale({ state, screen, commands, context }: PlaneProps) {
 
 function NameSaid({ state, screen, commands, context }: PlaneProps) {
   const said = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
-  const first = said ? !wasOnMapBeforeMention(said) : true;
+  const first = said ? !wasSaidBeforeMention(said) : true;
+  const profileId = said?.featured && said.scientistId ? said.scientistId : null;
   const ready = CONTRIBUTION_TIMING.settle + CONTRIBUTION_TIMING.settleFor - 400;
+  const seeMap = (
+    <Button variant={first && profileId ? "outline" : "primary"} arrow onClick={commands.seeMap}>
+      Ver o mapa inteiro
+    </Button>
+  );
+  const seeProfile = profileId && (
+    <Button variant={first ? "primary" : "outline"} arrow onClick={() => commands.openProfileOf(profileId)}>
+      {first ? "Conhecer a cientista" : "Ver perfil"}
+    </Button>
+  );
   return (
     <Stage screen={screen}>
-      <div className="absolute top-[84px] left-[64px] flex w-[480px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
+      <div className="absolute top-[84px] left-[64px] flex w-[500px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
         <p className="fade-in font-primary text-[14px] font-semibold tracking-[0.18em] text-iris-blue [animation-delay:1200ms]">
-          <PaperStrip className="px-2 py-1">DITO EM VOZ ALTA</PaperStrip>
+          <PaperStrip className="px-2 py-1">{first ? "PARABÉNS · DITO EM VOZ ALTA" : "DITO EM VOZ ALTA"}</PaperStrip>
         </p>
         <Heading className="fade-in text-[52px] leading-[1.14] font-semibold tracking-[-0.02em] [animation-delay:1400ms] compact:text-[30px]">
           <PaperStrip className="px-3 compact:px-2">{first ? "O ponto agora tem nome." : "Este nome já estava no mapa."}</PaperStrip>
         </Heading>
         <p className="fade-in text-[23px] leading-[1.45] text-ink-soft [animation-delay:3900ms] compact:text-[17px]">
           <PaperStrip className="px-3 py-0.5 compact:px-2">
-            {first ? "Cada vez que um nome é dito, o relevo dele sobe uma curva." : "Agora seu relevo cresce."}
+            {first ? "Você foi a primeira pessoa a dizer este nome nesta feira." : "Agora seu relevo cresce."}
           </PaperStrip>
         </p>
         <p className="fade-in font-notation text-[12px] tracking-[0.06em] text-ink-soft [animation-delay:4300ms]">
           <PaperStrip className="px-2 py-1">EQUIDISTÂNCIA DESTA VISTA: 1 NOME DITO</PaperStrip>
         </p>
       </div>
-      <div className="fade-in absolute top-[776px] left-[64px] compact:static" style={{ animationDelay: `${ready}ms` }}>
-        <Button variant="primary" arrow onClick={commands.seeMap}>
-          Ver o mapa inteiro
-        </Button>
+      <div
+        className="fade-in absolute top-[776px] left-[64px] flex flex-wrap items-center gap-4 compact:static compact:gap-2.5"
+        style={{ animationDelay: `${ready}ms` }}
+      >
+        {first ? (
+          <>
+            {seeProfile}
+            {seeMap}
+          </>
+        ) : (
+          <>
+            {seeMap}
+            {seeProfile}
+          </>
+        )}
       </div>
       <span className="sr-only" role="status">
         {first
-          ? `${said?.name ?? ""} +1. O ponto agora tem nome: a primeira curva de nível surgiu no relevo.`
+          ? `Parabéns. ${said?.name ?? ""} +1. O ponto agora tem nome: a primeira curva de nível surgiu no relevo.`
           : `${said?.name ?? ""} +1. Este nome já estava no mapa: uma nova curva de nível surgiu no topo do relevo.`}
       </span>
     </Stage>
@@ -415,6 +438,7 @@ function LegendMark({ kind }: { kind: "named" | "silent" | "relief" }) {
 }
 
 function Collective({ state, screen, commands, context }: PlaneProps) {
+  const [celebrate] = useState(() => state.previous !== "profile");
   const named = context.points.filter((p) => p.name !== null && p.mentions > 0);
   const silentCount = context.points.length - named.length;
   const said = named.find((p) => p.scientistId === state.saidId);
@@ -457,7 +481,7 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
           <p className="mt-3 font-notation text-[13px] tracking-[0.03em] text-ink-soft compact:text-[11px]">{notices.join(" · ")}</p>
         )}
       </div>
-      {said && (
+      {said && celebrate && (
         <p className="sr-only" role="status">
           {said.name} agora tem {said.mentions} {said.mentions === 1 ? "menção" : "menções"} no mapa coletivo.
         </p>
@@ -496,7 +520,7 @@ export function PlaneContent({ step, ...props }: PlaneProps & { step: Step }) {
           profile={scientistProfile(props.context.discovery)}
           code={props.context.code}
           screen={props.screen}
-          returnTo={props.state.profileReturn === "askAgain" ? "map" : "portrait"}
+          returnTo={props.state.profileReturn === "humanScale" ? "portrait" : "map"}
           onBack={props.commands.closeProfile}
           onContinue={props.commands.continue}
         />

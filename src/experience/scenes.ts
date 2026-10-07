@@ -285,7 +285,8 @@ export function sceneFor(
       };
       break;
     }
-    case "collective":
+    case "collective": {
+      const returning = state.previous === "profile";
       scene = withDefaults({
         ...fixed,
         camera: sheet,
@@ -293,7 +294,7 @@ export function sceneFor(
         highlight: state.saidId,
         newContour: state.saidId,
         settle: 1,
-        settleFrom: 0,
+        settleFrom: returning ? 1 : 0,
         highlightSettles: true,
         minInterval: SHEET_MIN_INTERVAL,
       });
@@ -302,9 +303,10 @@ export function sceneFor(
         intervalLock: t(0, 1600),
         lens: t(0, 500),
         lensInk: t(0, 500),
-        settle: t(COLLECTIVE_SETTLE.delay, COLLECTIVE_SETTLE.duration),
+        settle: returning ? NO_TIMING : t(COLLECTIVE_SETTLE.delay, COLLECTIVE_SETTLE.duration),
       };
       break;
+    }
   }
 
   const relief = points.filter((p) => p.scientistId !== null).map(toFieldPoint);

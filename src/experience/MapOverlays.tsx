@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useRef, type CSSProperties } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
 import { Tooltip } from "react-tooltip";
 import type { ScientistPhoto } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
@@ -58,6 +58,8 @@ function CollectiveMarkers({
   view,
   unit,
   obstacles,
+  returning,
+  onOpenProfile,
 }: {
   field: TerrainField;
   points: SheetPoint[];
@@ -65,7 +67,10 @@ function CollectiveMarkers({
   view: LabelView;
   unit: number;
   obstacles: Box[];
+  returning: boolean;
+  onOpenProfile: (id: string) => void;
 }) {
+  const [celebrate] = useState(() => !returning);
   const layout = useMemo(() => {
     const items = points.map((p) => {
       const position = mapPosition(field, p);
@@ -94,18 +99,37 @@ function CollectiveMarkers({
   return (
     <>
       {layout.items.map(({ p, position, sx, sy, named }) => {
-        const said = p.scientistId !== null && p.scientistId === saidId;
+        const said = celebrate && p.scientistId !== null && p.scientistId === saidId;
         const placement = layout.placements.get(p.key);
         const font = layout.fonts.get(p.key) ?? 13;
+        const profileId = p.featured && p.scientistId ? p.scientistId : null;
+        const Label = profileId ? "button" : "span";
         return (
           <MapAnchor key={p.key} x={position.x} y={position.y} className={said ? "z-10" : undefined}>
-            <SummitMark filled={named} unit={unit} />
+            <span aria-hidden="true">
+              <SummitMark filled={named} unit={unit} />
+            </span>
             {named && placement && (
-              <span
-                className="map-label fade-in absolute flex items-baseline whitespace-nowrap leading-[1.25]"
+              <Label
+                {...(profileId
+                  ? {
+                      type: "button" as const,
+                      "data-profile-link": profileId,
+                      "aria-label": `${p.name}, ${p.mentions} ${p.mentions === 1 ? "menção" : "menções"}. Ver perfil`,
+                      onClick: () => onOpenProfile(profileId),
+                    }
+                  : { "aria-hidden": true })}
+                className={`map-label fade-in group absolute flex items-baseline whitespace-nowrap leading-[1.25] ${
+                  profileId
+                    ? "pointer-events-auto cursor-pointer rounded-[2px] outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-iris-blue"
+                    : ""
+                }`}
                 style={{ ...labelPosition(placement, sx, sy), animationDelay: `${700 + (layout.order.get(p.key) ?? 0) * 45}ms` }}
               >
-                <span className={`tracking-[0.08em] text-ink uppercase ${said ? "font-bold" : "font-semibold"}`} style={{ fontSize: font }}>
+                <span
+                  className={`tracking-[0.08em] text-ink uppercase decoration-accent decoration-2 underline-offset-[0.22em] group-hover:underline group-focus-visible:underline ${said ? "font-bold" : "font-semibold"}`}
+                  style={{ fontSize: font }}
+                >
                   {p.name}
                 </span>
                 <span className="ml-[0.45em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
@@ -122,7 +146,7 @@ function CollectiveMarkers({
                     +1
                   </span>
                 )}
-              </span>
+              </Label>
             )}
           </MapAnchor>
         );
@@ -140,6 +164,8 @@ export function SheetMarkers({
   view,
   unit,
   obstacles,
+  returning,
+  onOpenProfile,
 }: {
   step: Step;
   field: TerrainField;
@@ -149,13 +175,24 @@ export function SheetMarkers({
   view: LabelView;
   unit: number;
   obstacles: Box[];
+  returning: boolean;
+  onOpenProfile: (id: string) => void;
 }) {
   const onSheet = SHEET_STEPS.includes(step);
   if (step === "collective") {
     return (
-      <div aria-hidden="true" className={visible(onSheet)}>
-        <CollectiveMarkers field={field} points={points} saidId={saidId} view={view} unit={unit} obstacles={obstacles} />
-      </div>
+      <nav aria-label="Nomes no mapa" className={visible(onSheet)}>
+        <CollectiveMarkers
+          field={field}
+          points={points}
+          saidId={saidId}
+          view={view}
+          unit={unit}
+          obstacles={obstacles}
+          returning={returning}
+          onOpenProfile={onOpenProfile}
+        />
+      </nav>
     );
   }
   return (
