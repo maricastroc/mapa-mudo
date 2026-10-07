@@ -1,12 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import type { Catalog } from "../content/scientists/types.ts";
+import type { Catalog, Participations } from "../content/scientists/types.ts";
 import { CATALOG } from "../content/scientists/catalog.ts";
 import { FEATURED } from "../content/scientists/featured.ts";
 import { FEATURED_FIXTURES } from "../content/scientists/fixtures.ts";
 import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "./source.ts";
 import { chooseDiscovery, recordMention } from "./participations.ts";
-import { autoPosition, sheetPoints, wasOnMapBeforeMention, type SheetLayout } from "./sheetLayout.ts";
+import { autoPosition, MIN_SPACING, sheetPoints, wasOnMapBeforeMention, type SheetLayout } from "./sheetLayout.ts";
 
 const catalog: Catalog = {
   featured: FEATURED_FIXTURES,
@@ -100,4 +100,41 @@ test("a point counts as already on the map unless this mention is what created i
   const again = sheetPoints(catalog, layout, recordMention(recordMention({}, "k2"), "k2")).find((p) => p.scientistId === "k2");
   assert.ok(again);
   assert.equal(wasOnMapBeforeMention(again), true);
+});
+
+const EMPTY_SHEET: SheetLayout = { points: {}, order: [], vacancies: [] };
+
+function crowd(count: number) {
+  const known = Array.from({ length: count }, (_, i) => ({ id: `extra-${i}`, canonicalName: `Cientista Extra ${i}`, aliases: [] }));
+  const participations: Participations = Object.fromEntries([
+    ...FEATURED.map((f, i): [string, number] => [f.id, 1 + ((i * 37) % 90)]),
+    ...known.map((k, i): [string, number] => [k.id, 1 + ((i * 53) % 60)]),
+  ]);
+  return { catalog: { featured: FEATURED, known }, participations };
+}
+
+test("the sheet holds 50 scientists with every summit at least the minimum spacing apart", () => {
+  const { catalog: big, participations } = crowd(50 - FEATURED.length);
+  const points = sheetPoints(big, EMPTY_SHEET, participations);
+  assert.equal(points.length, 50);
+  for (const p of points) {
+    const underTitle = p.x <= 420 && p.y <= 260;
+    const underAction = p.x <= 420 && p.y >= 770;
+    assert.equal(underTitle || underAction, false, `${p.key} sits under the map's title block or action at ${p.x.toFixed(0)},${p.y.toFixed(0)}`);
+  }
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+      assert.ok(d >= MIN_SPACING, `${points[i].key} and ${points[j].key} are ${d.toFixed(0)}px apart`);
+    }
+  }
+});
+
+test("a new name never moves the points already on the map", () => {
+  const { catalog: big, participations } = crowd(30);
+  const withoutOne: Participations = Object.fromEntries(Object.entries(participations).filter(([id]) => id !== "extra-3"));
+  const before = new Map(sheetPoints(big, EMPTY_SHEET, withoutOne).map((p) => [p.key, `${p.x},${p.y}`]));
+  const after = sheetPoints(big, EMPTY_SHEET, recordMention(withoutOne, "extra-3"));
+  for (const p of after) if (before.has(p.key)) assert.equal(`${p.x},${p.y}`, before.get(p.key), p.key);
+  assert.ok(after.some((p) => p.key === "extra-3"));
 });

@@ -20,10 +20,20 @@ export type SheetPoint = {
 
 const PLACEMENT_BOUNDS = { x0: 90, x1: 1350, y0: 210, y1: 840 };
 
+const MARGIN_RESERVES = [
+  { x0: 0, y0: 0, x1: 420, y1: 260 },
+  { x0: 0, y0: 770, x1: 420, y1: 900 },
+];
+
+function reserved(x: number, y: number) {
+  return MARGIN_RESERVES.some((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
+}
+
 export function wasOnMapBeforeMention(point: SheetPoint) {
   return point.featured || point.mentions > 1;
 }
-const MIN_SPACING = 80;
+export const MIN_SPACING = 80;
+const CANDIDATES = 512;
 
 function hash(text: string, seed: number) {
   let h = 2166136261 ^ seed;
@@ -40,9 +50,10 @@ function hash(text: string, seed: number) {
 export function autoPosition(id: string, occupied: { x: number; y: number }[]) {
   let best = { x: PLACEMENT_BOUNDS.x0, y: PLACEMENT_BOUNDS.y0 };
   let bestClearance = -1;
-  for (let k = 0; k < 64; k++) {
+  for (let k = 0; k < CANDIDATES; k++) {
     const x = PLACEMENT_BOUNDS.x0 + hash(id, 2 * k) * (PLACEMENT_BOUNDS.x1 - PLACEMENT_BOUNDS.x0);
     const y = PLACEMENT_BOUNDS.y0 + hash(id, 2 * k + 1) * (PLACEMENT_BOUNDS.y1 - PLACEMENT_BOUNDS.y0);
+    if (reserved(x, y)) continue;
     let clearance = Infinity;
     for (const o of occupied) clearance = Math.min(clearance, Math.hypot(o.x - x, o.y - y));
     if (clearance >= MIN_SPACING) return { x, y };
@@ -70,18 +81,24 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, participation
     ...layout.vacancies,
   ];
   const occupied = [...fixed];
-  const featuredPositions = new Map<string, { x: number; y: number }>();
-  for (const f of catalog.featured) {
-    if (layout.points[f.id] || f.scenery?.map) continue;
-    const position = autoPosition(f.id, occupied);
-    featuredPositions.set(f.id, position);
+  const autoPositions = new Map<string, { x: number; y: number }>();
+  const place = (id: string) => {
+    const position = autoPosition(id, occupied);
+    autoPositions.set(id, position);
     occupied.push(position);
+  };
+  for (const f of catalog.featured) {
+    if (!layout.points[f.id] && !f.scenery?.map) place(f.id);
+  }
+  const presentIds = new Set(present.map((s) => s.id));
+  for (const id of Object.keys(participations)) {
+    if (presentIds.has(id) && !featuredById.has(id) && !layout.points[id] && !autoPositions.has(id)) place(id);
   }
 
   const points: SheetPoint[] = sorted.map((s) => {
     const explicit = layout.points[s.id];
     const editorial = featuredById.get(s.id)?.scenery?.map;
-    const position = explicit ?? editorial ?? featuredPositions.get(s.id) ?? autoPosition(s.id, occupied);
+    const position = explicit ?? editorial ?? autoPositions.get(s.id) ?? autoPosition(s.id, occupied);
     const code = explicit?.code ?? editorial?.code ?? String(100 + (catalogIndex.get(s.id) ?? 0)).padStart(3, "0");
     return {
       key: s.id,
