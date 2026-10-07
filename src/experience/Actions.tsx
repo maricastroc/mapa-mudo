@@ -42,6 +42,11 @@ export function Actions({ speak, type, extras = [], speech, response, reducedMot
     handlers.onClear();
   };
 
+  const cancel = () => {
+    setMode(null);
+    handlers.onClear();
+  };
+
   return (
     <div className={`pointer-events-auto flex flex-col items-start gap-3 ${className ?? ""}`}>
       {effectiveMode === null && (
@@ -81,11 +86,11 @@ export function Actions({ speak, type, extras = [], speech, response, reducedMot
             setMode(null);
             handlers.onSilence();
           }}
-          onCancel={() => setMode(null)}
+          onCancel={cancel}
         />
       )}
       {effectiveMode === "type" && (
-        <TypeName onName={handlers.onName} onCancel={() => setMode(null)} onChange={handlers.onClear} />
+        <TypeName onName={handlers.onName} onCancel={cancel} onChange={handlers.onClear} />
       )}
       {response && <ResponsePanel response={response} handlers={{ ...handlers, onClear: clear }} />}
     </div>
