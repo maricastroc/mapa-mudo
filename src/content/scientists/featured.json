@@ -2719,7 +2719,7 @@
         }
       ],
       "photo": {
-        "src": "/scientists/fabiana-corsi-zuelli.jpg",
+        "src": "/scientists/fabiana-corsi.jpg",
         "alt": "Retrato de Fabiana Corsi Zuelli",
         "credit": null,
         "sourceUrl": null,
@@ -3905,221 +3905,303 @@
         "usageStatus": "rights-review"
       },
       "reviewStatus": "fact-checked-core"
-    },
-    {
-      "id": "sonja-ashauer",
-      "canonicalName": "Sonja Ashauer",
-      "aliases": [],
-      "field": "Física teórica",
-      "identity": {
-        "birthYear": null,
-        "deathYear": null,
-        "nationalityContext": null
-      },
-      "science": {
-        "researchAreas": [
-          "física teórica",
-          "eletrodinâmica quântica",
-          "Cambridge"
-        ],
-        "facts": [
-          {
-            "id": "sonja-ashauer-f1",
-            "statement": "Foi a primeira brasileira a concluir doutorado em Física, em Cambridge, em 1948.",
-            "sourceRefs": [
-              "sonja-ashauer-s1"
-            ]
-          },
-          {
-            "id": "sonja-ashauer-f2",
-            "statement": "Seu doutorado foi orientado por Paul Dirac.",
-            "sourceRefs": [
-              "sonja-ashauer-s1"
-            ]
-          }
+    }, {
+  "id": "mercedes-bustamante",
+  "canonicalName": "Mercedes Bustamante",
+  "aliases": [
+    "Mercedes Maria da Cunha Bustamante"
+  ],
+  "field": "Ecologia",
+  "identity": {
+    "birthYear": 1963,
+    "deathYear": null,
+    "nationalityContext": "Nascida no Chile e naturalizada brasileira."
+  },
+  "science": {
+    "researchAreas": [
+      "ecologia de ecossistemas",
+      "Cerrado",
+      "biogeoquímica",
+      "mudanças no uso da terra",
+      "mudanças ambientais globais"
+    ],
+    "facts": [
+      {
+        "id": "mercedes-bustamante-f1",
+        "statement": "É uma das principais referências científicas no estudo do Cerrado e pesquisa o funcionamento desse bioma há décadas.",
+        "sourceRefs": [
+          "mercedes-bustamante-s1",
+          "mercedes-bustamante-s2"
         ]
       },
-      "experience": {
-        "hints": [
-          {
-            "level": 1,
-            "text": "Em meados do século XX, pouquíssimas mulheres brasileiras chegavam aos centros onde a física quântica estava sendo construída.",
-            "factIds": [
-              "sonja-ashauer-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Ela foi para Cambridge e trabalhou sob orientação de um dos fundadores da mecânica quântica.",
-            "factIds": [
-              "sonja-ashauer-f1"
-            ]
-          },
-          {
-            "level": 3,
-            "text": "Em 1948 tornou-se a primeira brasileira a concluir um doutorado em Física.",
-            "factIds": [
-              "sonja-ashauer-f2"
-            ]
-          }
-        ],
-        "reveal": {
-          "headline": "Sonja Ashauer",
-          "summary": "Física brasileira pioneira, doutora pela Universidade de Cambridge sob orientação de Paul Dirac.",
-          "whyItMatters": "Sua trajetória abriu um precedente histórico para mulheres brasileiras na física.",
-          "sourceRefs": [
-            "sonja-ashauer-s1"
-          ]
-        },
-        "visualMotifs": [
-          "física teórica",
-          "eletrodinâmica quântica",
-          "Cambridge"
-        ],
-        "recognitionLevel": "discovery",
-        "difficulty": 2,
-        "experiencePotential": 4
-      },
-      "facts": [
-        {
-          "id": "sonja-ashauer-f1",
-          "statement": "Foi a primeira brasileira a concluir doutorado em Física, em Cambridge, em 1948.",
-          "sourceRefs": [
-            "sonja-ashauer-s1"
-          ]
-        },
-        {
-          "id": "sonja-ashauer-f2",
-          "statement": "Seu doutorado foi orientado por Paul Dirac.",
-          "sourceRefs": [
-            "sonja-ashauer-s1"
-          ]
-        }
-      ],
-      "sources": [
-        {
-          "id": "sonja-ashauer-s1",
-          "label": "CNPq — Pioneiras da Ciência: Sonja Ashauer",
-          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-1a-edicao",
-          "type": "institutional"
-        }
-      ],
-      "photo": {
-        "src": "/scientists/sonja-ashauer.jpg",
-        "alt": "Retrato de Sonja Ashauer",
-        "credit": null,
-        "sourceUrl": null,
-        "usageStatus": "rights-review"
-      },
-      "reviewStatus": "fact-checked-core"
-    },
-    {
-      "id": "graziela-maciel-barroso",
-      "canonicalName": "Graziela Maciel Barroso",
-      "aliases": [],
-      "field": "Botânica",
-      "identity": {
-        "birthYear": null,
-        "deathYear": null,
-        "nationalityContext": null
-      },
-      "science": {
-        "researchAreas": [
-          "taxonomia vegetal",
-          "sistemática vegetal",
-          "flora brasileira"
-        ],
-        "facts": [
-          {
-            "id": "graziela-maciel-barroso-f1",
-            "statement": "Foi pesquisadora do Jardim Botânico do Rio de Janeiro e referência na formação de botânicos.",
-            "sourceRefs": [
-              "graziela-maciel-barroso-s1"
-            ]
-          },
-          {
-            "id": "graziela-maciel-barroso-f2",
-            "statement": "Sua atuação concentrou-se em botânica sistemática e identificação da flora brasileira.",
-            "sourceRefs": [
-              "graziela-maciel-barroso-s1"
-            ]
-          }
+      {
+        "id": "mercedes-bustamante-f2",
+        "statement": "Suas pesquisas investigam ecologia de ecossistemas, mudanças no uso da terra, biogeoquímica e mudanças ambientais globais.",
+        "sourceRefs": [
+          "mercedes-bustamante-s1",
+          "mercedes-bustamante-s3"
         ]
       },
-      "experience": {
-        "hints": [
-          {
-            "level": 1,
-            "text": "Dar nome a uma planta exige reconhecer diferenças minúsculas entre formas, estruturas e parentescos.",
-            "factIds": [
-              "graziela-maciel-barroso-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Ela dedicou décadas a organizar e identificar a diversidade vegetal brasileira.",
-            "factIds": [
-              "graziela-maciel-barroso-f1"
-            ]
-          },
-          {
-            "level": 3,
-            "text": "Seu nome tornou-se referência na sistemática vegetal e na formação de gerações de botânicos.",
-            "factIds": [
-              "graziela-maciel-barroso-f2"
-            ]
-          }
-        ],
-        "reveal": {
-          "headline": "Graziela Maciel Barroso",
-          "summary": "Botânica brasileira especializada em taxonomia e sistemática vegetal.",
-          "whyItMatters": "Seu trabalho ajudou a tornar a enorme diversidade de plantas do Brasil identificável, comparável e estudável.",
-          "sourceRefs": [
-            "graziela-maciel-barroso-s1"
-          ]
-        },
-        "visualMotifs": [
-          "taxonomia vegetal",
-          "sistemática vegetal",
-          "flora brasileira"
-        ],
-        "recognitionLevel": "discovery",
-        "difficulty": 2,
-        "experiencePotential": 4
+      {
+        "id": "mercedes-bustamante-f3",
+        "statement": "Participou de trabalhos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC), incluindo temas ligados à mitigação das mudanças climáticas.",
+        "sourceRefs": [
+          "mercedes-bustamante-s1"
+        ]
+      }
+    ]
+  },
+  "experience": {
+    "hints": [
+      {
+        "level": 1,
+        "text": "Ela estuda um bioma brasileiro onde árvores retorcidas, gramíneas e longos períodos de seca escondem uma enorme biodiversidade.",
+        "factIds": [
+          "mercedes-bustamante-f1"
+        ]
       },
-      "facts": [
-        {
-          "id": "graziela-maciel-barroso-f1",
-          "statement": "Foi pesquisadora do Jardim Botânico do Rio de Janeiro e referência na formação de botânicos.",
-          "sourceRefs": [
-            "graziela-maciel-barroso-s1"
-          ]
-        },
-        {
-          "id": "graziela-maciel-barroso-f2",
-          "statement": "Sua atuação concentrou-se em botânica sistemática e identificação da flora brasileira.",
-          "sourceRefs": [
-            "graziela-maciel-barroso-s1"
-          ]
-        }
-      ],
-      "sources": [
-        {
-          "id": "graziela-maciel-barroso-s1",
-          "label": "Jardim Botânico do Rio de Janeiro / Reflora — Graziela Maciel Barroso",
-          "url": "https://ipt.jbrj.gov.br/reflora/resource?r=ub_herbarium&request_locale=en&v=1.0",
-          "type": "institutional"
-        }
-      ],
-      "photo": {
-        "src": "/scientists/graziela-maciel-barroso.jpg",
-        "alt": "Retrato de Graziela Maciel Barroso",
-        "credit": null,
-        "sourceUrl": null,
-        "usageStatus": "rights-review"
+      {
+        "level": 2,
+        "text": "Seu trabalho investiga como o Cerrado responde ao desmatamento, às mudanças no uso da terra e às alterações do clima.",
+        "factIds": [
+          "mercedes-bustamante-f1",
+          "mercedes-bustamante-f2"
+        ]
       },
-      "reviewStatus": "fact-checked-core"
+      {
+        "level": 3,
+        "text": "Professora da Universidade de Brasília, ela também participou de trabalhos do IPCC sobre mudanças climáticas.",
+        "factIds": [
+          "mercedes-bustamante-f3"
+        ]
+      }
+    ],
+    "reveal": {
+      "headline": "Mercedes Bustamante",
+      "summary": "Ecóloga brasileira e uma das principais referências no estudo do Cerrado, pesquisa como mudanças no uso da terra e no clima afetam os ecossistemas.",
+      "whyItMatters": "Seu trabalho ajuda a compreender como a transformação do Cerrado interfere no clima, na biodiversidade e no funcionamento de um dos maiores biomas brasileiros.",
+      "sourceRefs": [
+        "mercedes-bustamante-s1",
+        "mercedes-bustamante-s2",
+        "mercedes-bustamante-s3"
+      ]
     },
+    "visualMotifs": [
+      "Cerrado",
+      "vegetação retorcida",
+      "solo",
+      "carbono",
+      "mudanças climáticas"
+    ],
+    "recognitionLevel": "discovery",
+    "difficulty": 2,
+    "experiencePotential": 5
+  },
+  "facts": [
+    {
+      "id": "mercedes-bustamante-f1",
+      "statement": "É uma das principais referências científicas no estudo do Cerrado e pesquisa o funcionamento desse bioma há décadas.",
+      "sourceRefs": [
+        "mercedes-bustamante-s1",
+        "mercedes-bustamante-s2"
+      ]
+    },
+    {
+      "id": "mercedes-bustamante-f2",
+      "statement": "Suas pesquisas investigam ecologia de ecossistemas, mudanças no uso da terra, biogeoquímica e mudanças ambientais globais.",
+      "sourceRefs": [
+        "mercedes-bustamante-s1",
+        "mercedes-bustamante-s3"
+      ]
+    },
+    {
+      "id": "mercedes-bustamante-f3",
+      "statement": "Participou de trabalhos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC), incluindo temas ligados à mitigação das mudanças climáticas.",
+      "sourceRefs": [
+        "mercedes-bustamante-s1"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mercedes-bustamante-s1",
+      "label": "Academia Brasileira de Ciências — Mercedes Maria da Cunha Bustamante",
+      "url": "https://www.abc.org.br/membro/Mercedes-Maria-da-Cunha-Bustamante/",
+      "type": "institutional"
+    },
+    {
+      "id": "mercedes-bustamante-s2",
+      "label": "UnB Notícias — Mercedes Bustamante e sua trajetória no Cerrado",
+      "url": "https://www.noticias.unb.br/ensino/5456-ecologista-mercedes-bustamante-e-a-convidada-das-boas-vindas-do-semestre",
+      "type": "institutional"
+    },
+    {
+      "id": "mercedes-bustamante-s3",
+      "label": "Universidade de Brasília — Instituto de Ciências Biológicas",
+      "url": "https://icb.unb.br/ut-et-tristique-libero/",
+      "type": "institutional"
+    }
+  ],
+  "photo": {
+    "src": "/scientists/mercedes-bustamante.jpg",
+    "alt": "Retrato de Mercedes Bustamante",
+    "credit": null,
+    "sourceUrl": null,
+    "usageStatus": "rights-review"
+  },
+  "reviewStatus": "fact-checked-core"
+},
+{
+  "id": "carolina-horta-andrade",
+  "canonicalName": "Carolina Horta Andrade",
+  "aliases": [
+    "Carolina Horta",
+    "Carolina Andrade"
+  ],
+  "field": "Química medicinal computacional",
+  "identity": {
+    "birthYear": 1983,
+    "deathYear": null,
+    "nationalityContext": "Cientista brasileira, natural de Formosa, Goiás."
+  },
+  "science": {
+    "researchAreas": [
+      "química medicinal computacional",
+      "inteligência artificial",
+      "descoberta de fármacos",
+      "doenças tropicais negligenciadas"
+    ],
+    "facts": [
+      {
+        "id": "carolina-horta-andrade-f1",
+        "statement": "Pesquisa o uso de ferramentas computacionais e inteligência artificial para acelerar a descoberta de novos medicamentos.",
+        "sourceRefs": [
+          "carolina-horta-andrade-s1",
+          "carolina-horta-andrade-s2"
+        ]
+      },
+      {
+        "id": "carolina-horta-andrade-f2",
+        "statement": "Seu trabalho busca candidatos a fármacos para doenças tropicais negligenciadas, incluindo leishmaniose, doença de Chagas e malária.",
+        "sourceRefs": [
+          "carolina-horta-andrade-s1",
+          "carolina-horta-andrade-s3"
+        ]
+      },
+      {
+        "id": "carolina-horta-andrade-f3",
+        "statement": "Foi reconhecida pelo programa Para Mulheres na Ciência e pelo International Rising Talents, da L'Oréal e UNESCO.",
+        "sourceRefs": [
+          "carolina-horta-andrade-s4"
+        ]
+      }
+    ]
+  },
+  "experience": {
+    "hints": [
+      {
+        "level": 1,
+        "text": "Antes de testar milhares de substâncias em laboratório, é possível ensinar computadores a procurar as moléculas mais promissoras.",
+        "factIds": [
+          "carolina-horta-andrade-f1"
+        ]
+      },
+      {
+        "level": 2,
+        "text": "Ela usa inteligência artificial e modelos moleculares para acelerar a busca por novos medicamentos.",
+        "factIds": [
+          "carolina-horta-andrade-f1"
+        ]
+      },
+      {
+        "level": 3,
+        "text": "Na Universidade Federal de Goiás, ela lidera pesquisas voltadas a doenças como leishmaniose, Chagas e malária.",
+        "factIds": [
+          "carolina-horta-andrade-f2"
+        ]
+      }
+    ],
+    "reveal": {
+      "headline": "Carolina Horta Andrade",
+      "summary": "Cientista brasileira que combina química medicinal, modelagem molecular e inteligência artificial para buscar novos medicamentos.",
+      "whyItMatters": "Seu trabalho usa computação para reduzir o universo de moléculas que precisam ser testadas e acelerar a busca por tratamentos, inclusive para doenças que historicamente recebem menos investimento em pesquisa.",
+      "sourceRefs": [
+        "carolina-horta-andrade-s1",
+        "carolina-horta-andrade-s2",
+        "carolina-horta-andrade-s3"
+      ]
+    },
+    "visualMotifs": [
+      "moléculas",
+      "modelagem molecular",
+      "inteligência artificial",
+      "medicamentos",
+      "doenças negligenciadas"
+    ],
+    "recognitionLevel": "discovery",
+    "difficulty": 2,
+    "experiencePotential": 5
+  },
+  "facts": [
+    {
+      "id": "carolina-horta-andrade-f1",
+      "statement": "Pesquisa o uso de ferramentas computacionais e inteligência artificial para acelerar a descoberta de novos medicamentos.",
+      "sourceRefs": [
+        "carolina-horta-andrade-s1",
+        "carolina-horta-andrade-s2"
+      ]
+    },
+    {
+      "id": "carolina-horta-andrade-f2",
+      "statement": "Seu trabalho busca candidatos a fármacos para doenças tropicais negligenciadas, incluindo leishmaniose, doença de Chagas e malária.",
+      "sourceRefs": [
+        "carolina-horta-andrade-s1",
+        "carolina-horta-andrade-s3"
+      ]
+    },
+    {
+      "id": "carolina-horta-andrade-f3",
+      "statement": "Foi reconhecida pelo programa Para Mulheres na Ciência e pelo International Rising Talents, da L'Oréal e UNESCO.",
+      "sourceRefs": [
+        "carolina-horta-andrade-s4"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "carolina-horta-andrade-s1",
+      "label": "UFG — Pesquisadores do CESU-Agro se destacam por excelência científica e inovação",
+      "url": "https://cesu.ufg.br/n/202543-pesquisadores-do-cesu-agro-se-destacam-nacional-e-internacionalmente-por-excelencia-cientifica-e-inovacao",
+      "type": "institutional"
+    },
+    {
+      "id": "carolina-horta-andrade-s2",
+      "label": "UFG — Inteligência artificial auxilia descoberta de tratamentos para doenças negligenciadas",
+      "url": "https://jornal.ufg.br/n/177181-inteligencia-artificial-auxilia-descoberta-de-tratamentos-para-doencas-negligenciadas",
+      "type": "institutional"
+    },
+    {
+      "id": "carolina-horta-andrade-s3",
+      "label": "UFG — A dedicação feminina no universo da ciência",
+      "url": "https://jornal.ufg.br/n/81313-entrevista-carolina-horta-andrade-a-dedicacao-feminina-no-universo-da-ciencia",
+      "type": "institutional"
+    },
+    {
+      "id": "carolina-horta-andrade-s4",
+      "label": "UFG — Prêmio internacional reconhece pesquisa de docente da UFG",
+      "url": "https://ufg.br/n/79364-premio-internacional-reconhece-pesquisa-de-docente-da-ufg",
+      "type": "institutional"
+    }
+  ],
+  "photo": {
+    "src": "/scientists/carolina-horta-andrade.jpg",
+    "alt": "Retrato de Carolina Horta Andrade",
+    "credit": null,
+    "sourceUrl": null,
+    "usageStatus": "rights-review"
+  },
+  "reviewStatus": "fact-checked-core"
+},
     {
       "id": "marta-vannucci",
       "canonicalName": "Marta Vannucci",
@@ -4221,113 +4303,6 @@
       "photo": {
         "src": "/scientists/marta-vannucci.jpg",
         "alt": "Retrato de Marta Vannucci",
-        "credit": null,
-        "sourceUrl": null,
-        "usageStatus": "rights-review"
-      },
-      "reviewStatus": "fact-checked-core"
-    },
-    {
-      "id": "maria-deane",
-      "canonicalName": "Maria Deane",
-      "aliases": [],
-      "field": "Parasitologia",
-      "identity": {
-        "birthYear": null,
-        "deathYear": null,
-        "nationalityContext": null
-      },
-      "science": {
-        "researchAreas": [
-          "leishmaniose",
-          "malária",
-          "doença de Chagas"
-        ],
-        "facts": [
-          {
-            "id": "maria-deane-f1",
-            "statement": "Participou de pesquisas pioneiras sobre leishmaniose visceral e outras endemias rurais.",
-            "sourceRefs": [
-              "maria-deane-s1"
-            ]
-          },
-          {
-            "id": "maria-deane-f2",
-            "statement": "Realizou estudos sobre reservatórios e transmissores da leishmaniose visceral no Ceará.",
-            "sourceRefs": [
-              "maria-deane-s1"
-            ]
-          }
-        ]
-      },
-      "experience": {
-        "hints": [
-          {
-            "level": 1,
-            "text": "Para controlar uma doença parasitária, é preciso descobrir não só o parasita, mas também quem o transmite e quais animais podem mantê-lo circulando.",
-            "factIds": [
-              "maria-deane-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Ela fez pesquisa de campo sobre doenças tropicais e seus vetores e reservatórios.",
-            "factIds": [
-              "maria-deane-f1"
-            ]
-          },
-          {
-            "level": 3,
-            "text": "No Ceará, estudou reservatórios e transmissores da leishmaniose visceral.",
-            "factIds": [
-              "maria-deane-f2"
-            ]
-          }
-        ],
-        "reveal": {
-          "headline": "Maria Deane",
-          "summary": "Parasitologista brasileira que pesquisou leishmaniose, malária e outras endemias.",
-          "whyItMatters": "Seu trabalho de campo ajudou a compreender ciclos de transmissão essenciais para a saúde pública.",
-          "sourceRefs": [
-            "maria-deane-s1"
-          ]
-        },
-        "visualMotifs": [
-          "leishmaniose",
-          "malária",
-          "doença de Chagas"
-        ],
-        "recognitionLevel": "discovery",
-        "difficulty": 2,
-        "experiencePotential": 4
-      },
-      "facts": [
-        {
-          "id": "maria-deane-f1",
-          "statement": "Participou de pesquisas pioneiras sobre leishmaniose visceral e outras endemias rurais.",
-          "sourceRefs": [
-            "maria-deane-s1"
-          ]
-        },
-        {
-          "id": "maria-deane-f2",
-          "statement": "Realizou estudos sobre reservatórios e transmissores da leishmaniose visceral no Ceará.",
-          "sourceRefs": [
-            "maria-deane-s1"
-          ]
-        }
-      ],
-      "sources": [
-        {
-          "id": "maria-deane-s1",
-          "label": "Fiocruz/COC — Coleção Leônidas e Maria Deane",
-          "url": "https://basearch.coc.fiocruz.br/index.php/colecao-leonidas-e-maria-deane",
-          "type": "institutional"
-        }
-      ],
-      "photo": {
-        "src": "/scientists/maria-deane.jpg",
-        "alt": "Retrato de Maria Deane",
         "credit": null,
         "sourceUrl": null,
         "usageStatus": "rights-review"
@@ -4442,219 +4417,167 @@
       "reviewStatus": "fact-checked-core"
     },
     {
-      "id": "eloisa-mano",
-      "canonicalName": "Eloisa Mano",
-      "aliases": [],
-      "field": "Química de polímeros",
-      "identity": {
-        "birthYear": null,
-        "deathYear": null,
-        "nationalityContext": null
-      },
-      "science": {
-        "researchAreas": [
-          "polímeros",
-          "macromoléculas",
-          "materiais"
-        ],
-        "facts": [
-          {
-            "id": "eloisa-mano-f1",
-            "statement": "Criou o primeiro grupo de pesquisadores em polímeros no Brasil, em 1968.",
-            "sourceRefs": [
-              "eloisa-mano-s1"
-            ]
-          },
-          {
-            "id": "eloisa-mano-f2",
-            "statement": "Esse grupo deu origem ao Instituto de Macromoléculas da UFRJ, que hoje leva seu nome.",
-            "sourceRefs": [
-              "eloisa-mano-s1"
-            ]
-          }
+  "id": "debora-peres-menezes",
+  "canonicalName": "Débora Peres Menezes",
+  "aliases": [
+    "Débora Menezes",
+    "Debora Peres Menezes",
+    "Debora Menezes"
+  ],
+  "field": "Física nuclear",
+  "identity": {
+    "birthYear": 1962,
+    "deathYear": null,
+    "nationalityContext": "brasileira; nascida em São Paulo (SP)"
+  },
+  "science": {
+    "researchAreas": [
+      "física nuclear",
+      "física de hádrons",
+      "astrofísica nuclear",
+      "estrelas de nêutrons",
+      "equações de estado"
+    ],
+    "facts": [
+      {
+        "id": "debora-peres-menezes-f1",
+        "statement": "Pesquisa física nuclear e de hádrons, incluindo modelos que descrevem matéria em condições extremas.",
+        "sourceRefs": [
+          "debora-peres-menezes-s1",
+          "debora-peres-menezes-s2"
         ]
       },
-      "experience": {
-        "hints": [
-          {
-            "level": 1,
-            "text": "Plásticos, borrachas e fibras pertencem a uma família de materiais construída por moléculas gigantes.",
-            "factIds": [
-              "eloisa-mano-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Ela ajudou a estabelecer no Brasil a pesquisa sistemática dessas macromoléculas.",
-            "factIds": [
-              "eloisa-mano-f1"
-            ]
-          },
-          {
-            "level": 3,
-            "text": "O grupo que criou em 1968 deu origem a um instituto da UFRJ que hoje leva seu nome.",
-            "factIds": [
-              "eloisa-mano-f2"
-            ]
-          }
-        ],
-        "reveal": {
-          "headline": "Eloisa Mano",
-          "summary": "Química brasileira pioneira da ciência de polímeros.",
-          "whyItMatters": "Seu trabalho estruturou uma área inteira de pesquisa em materiais no país.",
-          "sourceRefs": [
-            "eloisa-mano-s1"
-          ]
-        },
-        "visualMotifs": [
-          "polímeros",
-          "macromoléculas",
-          "materiais"
-        ],
-        "recognitionLevel": "discovery",
-        "difficulty": 2,
-        "experiencePotential": 4
+      {
+        "id": "debora-peres-menezes-f2",
+        "statement": "Sua pesquisa utiliza equações de estado para estudar objetos astrofísicos, incluindo estrelas de nêutrons.",
+        "sourceRefs": [
+          "debora-peres-menezes-s1",
+          "debora-peres-menezes-s3"
+        ]
       },
-      "facts": [
-        {
-          "id": "eloisa-mano-f1",
-          "statement": "Criou o primeiro grupo de pesquisadores em polímeros no Brasil, em 1968.",
-          "sourceRefs": [
-            "eloisa-mano-s1"
-          ]
-        },
-        {
-          "id": "eloisa-mano-f2",
-          "statement": "Esse grupo deu origem ao Instituto de Macromoléculas da UFRJ, que hoje leva seu nome.",
-          "sourceRefs": [
-            "eloisa-mano-s1"
-          ]
-        }
-      ],
-      "sources": [
-        {
-          "id": "eloisa-mano-s1",
-          "label": "UFRJ/IMA — Eloisa Biasotto Mano",
-          "url": "https://www.ima.ufrj.br/index.php/pt/docentes/103-professores-emeritos/72-eloisa-biasotto-mano",
-          "type": "institutional"
-        }
-      ],
-      "photo": {
-        "src": "/scientists/eloisa-mano.jpg",
-        "alt": "Retrato de Eloisa Mano",
-        "credit": null,
-        "sourceUrl": null,
-        "usageStatus": "rights-review"
+      {
+        "id": "debora-peres-menezes-f3",
+        "statement": "Foi a primeira mulher eleita presidente da Sociedade Brasileira de Física, cargo que exerceu entre 2021 e 2023.",
+        "sourceRefs": [
+          "debora-peres-menezes-s4",
+          "debora-peres-menezes-s5"
+        ]
+      }
+    ]
+  },
+  "experience": {
+    "hints": [
+      {
+        "level": 1,
+        "text": "Uma estrela pode concentrar uma massa maior que a do Sol em uma esfera do tamanho de uma cidade.",
+        "factIds": [
+          "debora-peres-menezes-f2"
+        ]
       },
-      "reviewStatus": "fact-checked-core"
+      {
+        "level": 2,
+        "text": "Para entender o que acontece com a matéria sob pressões tão extremas, ela trabalha com modelos da física nuclear.",
+        "factIds": [
+          "debora-peres-menezes-f1",
+          "debora-peres-menezes-f2"
+        ]
+      },
+      {
+        "level": 3,
+        "text": "Física brasileira e pesquisadora da UFSC, ela estuda equações de estado e objetos como estrelas de nêutrons.",
+        "factIds": [
+          "debora-peres-menezes-f2"
+        ]
+      }
+    ],
+    "reveal": {
+      "headline": "Débora Peres Menezes",
+      "summary": "Física brasileira que pesquisa matéria nuclear em condições extremas e sua relação com objetos como estrelas de nêutrons.",
+      "whyItMatters": "Seu trabalho conecta a física das partículas que formam a matéria a alguns dos objetos mais densos do Universo, ajudando a investigar como a matéria se comporta em condições impossíveis de reproduzir diretamente na Terra.",
+      "sourceRefs": [
+        "debora-peres-menezes-s1",
+        "debora-peres-menezes-s2",
+        "debora-peres-menezes-s3"
+      ]
+    },
+    "visualMotifs": [
+      "estrela de nêutrons",
+      "matéria ultradensa",
+      "núcleo atômico",
+      "pressão",
+      "diagrama de fases"
+    ],
+    "recognitionLevel": "discovery",
+    "difficulty": 2,
+    "experiencePotential": 5
+  },
+  "facts": [
+    {
+      "id": "debora-peres-menezes-f1",
+      "statement": "Pesquisa física nuclear e de hádrons, incluindo modelos que descrevem matéria em condições extremas.",
+      "sourceRefs": [
+        "debora-peres-menezes-s1",
+        "debora-peres-menezes-s2"
+      ]
     },
     {
-      "id": "enedina-alves-marques",
-      "canonicalName": "Enedina Alves Marques",
-      "aliases": [],
-      "field": "Engenharia civil",
-      "identity": {
-        "birthYear": null,
-        "deathYear": null,
-        "nationalityContext": null
-      },
-      "science": {
-        "researchAreas": [
-          "engenharia civil",
-          "hidrelétricas",
-          "topografia"
-        ],
-        "facts": [
-          {
-            "id": "enedina-alves-marques-f1",
-            "statement": "Formou-se em Engenharia Civil pela UFPR em 1945 e foi a primeira engenheira negra do Brasil.",
-            "sourceRefs": [
-              "enedina-alves-marques-s1"
-            ]
-          },
-          {
-            "id": "enedina-alves-marques-f2",
-            "statement": "Atuou em obras e estudos ligados ao aproveitamento hidrelétrico no Paraná, incluindo a Usina Capivari-Cachoeira.",
-            "sourceRefs": [
-              "enedina-alves-marques-s1"
-            ]
-          }
-        ]
-      },
-      "experience": {
-        "hints": [
-          {
-            "level": 1,
-            "text": "Projetar energia e infraestrutura também depende de medir terreno, água e desníveis com precisão.",
-            "factIds": [
-              "enedina-alves-marques-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Ela trabalhou em obras públicas e no aproveitamento das águas de rios paranaenses.",
-            "factIds": [
-              "enedina-alves-marques-f1"
-            ]
-          },
-          {
-            "level": 3,
-            "text": "Em 1945 tornou-se a primeira engenheira negra do Brasil.",
-            "factIds": [
-              "enedina-alves-marques-f2"
-            ]
-          }
-        ],
-        "reveal": {
-          "headline": "Enedina Alves Marques",
-          "summary": "Engenheira civil paranaense e pioneira da engenharia brasileira.",
-          "whyItMatters": "Sua trajetória rompeu barreiras raciais e de gênero em uma profissão então quase exclusivamente masculina.",
-          "sourceRefs": [
-            "enedina-alves-marques-s1"
-          ]
-        },
-        "visualMotifs": [
-          "engenharia civil",
-          "hidrelétricas",
-          "topografia"
-        ],
-        "recognitionLevel": "discovery",
-        "difficulty": 2,
-        "experiencePotential": 4
-      },
-      "facts": [
-        {
-          "id": "enedina-alves-marques-f1",
-          "statement": "Formou-se em Engenharia Civil pela UFPR em 1945 e foi a primeira engenheira negra do Brasil.",
-          "sourceRefs": [
-            "enedina-alves-marques-s1"
-          ]
-        },
-        {
-          "id": "enedina-alves-marques-f2",
-          "statement": "Atuou em obras e estudos ligados ao aproveitamento hidrelétrico no Paraná, incluindo a Usina Capivari-Cachoeira.",
-          "sourceRefs": [
-            "enedina-alves-marques-s1"
-          ]
-        }
-      ],
-      "sources": [
-        {
-          "id": "enedina-alves-marques-s1",
-          "label": "UFPR — Enedina Alves Marques",
-          "url": "https://ufpr.br/inaugurada-placa-em-homenagem-a-enedina-alves-marques-primeira-engenheira-negra-do-pais-e-formada-na-ufpr/",
-          "type": "reference"
-        }
-      ],
-      "photo": {
-        "src": "/scientists/enedina-alves-marques.jpg",
-        "alt": "Retrato de Enedina Alves Marques",
-        "credit": null,
-        "sourceUrl": null,
-        "usageStatus": "rights-review"
-      },
-      "reviewStatus": "fact-checked-core"
+      "id": "debora-peres-menezes-f2",
+      "statement": "Sua pesquisa utiliza equações de estado para estudar objetos astrofísicos, incluindo estrelas de nêutrons.",
+      "sourceRefs": [
+        "debora-peres-menezes-s1",
+        "debora-peres-menezes-s3"
+      ]
     },
+    {
+      "id": "debora-peres-menezes-f3",
+      "statement": "Foi a primeira mulher eleita presidente da Sociedade Brasileira de Física, cargo que exerceu entre 2021 e 2023.",
+      "sourceRefs": [
+        "debora-peres-menezes-s4",
+        "debora-peres-menezes-s5"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "debora-peres-menezes-s1",
+      "label": "Programa de Pós-Graduação em Física da UFSC — Débora Peres Menezes",
+      "url": "https://ppgfsc.posgrad.ufsc.br/pt/debora-peres-menezes/",
+      "type": "institutional"
+    },
+    {
+      "id": "debora-peres-menezes-s2",
+      "label": "Sociedade Brasileira de Física — Débora Peres Menezes",
+      "url": "https://www.sbfisica.org.br/v1/sbf/teacher/debora-peres-menezes/",
+      "type": "institutional"
+    },
+    {
+      "id": "debora-peres-menezes-s3",
+      "label": "Caderno Brasileiro de Ensino de Física — A física da UFSC em números",
+      "url": "https://periodicos.ufsc.br/index.php/fisica/article/view/2175-7941.2018v35n1p324",
+      "type": "academic"
+    },
+    {
+      "id": "debora-peres-menezes-s4",
+      "label": "UFSC — Professora é a primeira mulher eleita para presidir a Sociedade Brasileira de Física",
+      "url": "https://noticias.ufsc.br/2021/06/professora-da-ufsc-e-a-primeira-mulher-eleita-para-presidir-a-sociedade-brasileira-de-fisica/",
+      "type": "institutional"
+    },
+    {
+      "id": "debora-peres-menezes-s5",
+      "label": "Sociedade Brasileira de Física — Eleições reforçam a presença da mulher na ciência",
+      "url": "https://www.sbfisica.org.br/v1/sbf/eleicoes-na-sbf-reforcam-a-presenca-da-mulher-na-ciencia/",
+      "type": "institutional"
+    }
+  ],
+  "photo": {
+    "src": "/scientists/debora-peres-menezes.jpg",
+    "alt": "Retrato de Débora Peres Menezes",
+    "credit": null,
+    "sourceUrl": null,
+    "usageStatus": "rights-review"
+  },
+  "reviewStatus": "fact-checked-core"
+},
     {
       "id": "lelia-gonzalez",
       "canonicalName": "Lélia Gonzalez",
@@ -5510,46 +5433,387 @@
         "usageStatus": "rights-review"
       },
       "reviewStatus": "fact-checked-core"
+    },
+    {
+  "id": "tatiana-sampaio",
+  "canonicalName": "Tatiana Sampaio",
+  "aliases": [],
+  "field": "Neurociência",
+  "identity": {
+    "birthYear": null,
+    "deathYear": null,
+    "nationalityContext": "Cientista brasileira."
+  },
+  "science": {
+    "researchAreas": [
+      "neurociência",
+      "regeneração neural",
+      "lesões da medula espinhal",
+      "terapias celulares"
+    ],
+    "facts": [
+      {
+        "id": "tatiana-sampaio-f1",
+        "statement": "Desenvolveu pesquisas pioneiras voltadas à regeneração do sistema nervoso e ao tratamento de lesões da medula espinhal.",
+        "sourceRefs": [
+          "tatiana-sampaio-s1"
+        ]
+      },
+      {
+        "id": "tatiana-sampaio-f2",
+        "statement": "Seu trabalho abriu novas perspectivas para o desenvolvimento de tratamentos para lesões medulares.",
+        "sourceRefs": [
+          "tatiana-sampaio-s1"
+        ]
+      }
+    ]
+  },
+  "experience": {
+    "hints": [
+      {
+        "level": 1,
+        "text": "Quando a medula espinhal é lesionada, reconectar os caminhos interrompidos do sistema nervoso é um dos grandes desafios da medicina.",
+        "factIds": [
+          "tatiana-sampaio-f1"
+        ]
+      },
+      {
+        "level": 2,
+        "text": "Ela investigou maneiras de estimular a regeneração do tecido nervoso depois de uma lesão.",
+        "factIds": [
+          "tatiana-sampaio-f1"
+        ]
+      },
+      {
+        "level": 3,
+        "text": "Seu trabalho pioneiro abriu novas perspectivas para o tratamento de lesões da medula espinhal.",
+        "factIds": [
+          "tatiana-sampaio-f2"
+        ]
+      }
+    ],
+    "reveal": {
+      "headline": "Tatiana Sampaio",
+      "summary": "Neurocientista brasileira cujo trabalho pioneiro investigou caminhos para regenerar o sistema nervoso após lesões da medula espinhal.",
+      "whyItMatters": "Suas pesquisas ajudaram a abrir novas possibilidades para uma área em que recuperar funções perdidas após uma lesão continua sendo um dos grandes desafios terapêuticos.",
+      "sourceRefs": [
+        "tatiana-sampaio-s1"
+      ]
+    },
+    "visualMotifs": [
+      "medula espinhal",
+      "neurônios",
+      "conexões nervosas",
+      "regeneração"
+    ],
+    "recognitionLevel": "discovery",
+    "difficulty": 2,
+    "experiencePotential": 5
+  },
+  "facts": [
+    {
+      "id": "tatiana-sampaio-f1",
+      "statement": "Desenvolveu pesquisas pioneiras voltadas à regeneração do sistema nervoso e ao tratamento de lesões da medula espinhal.",
+      "sourceRefs": [
+        "tatiana-sampaio-s1"
+      ]
+    },
+    {
+      "id": "tatiana-sampaio-f2",
+      "statement": "Seu trabalho abriu novas perspectivas para o desenvolvimento de tratamentos para lesões medulares.",
+      "sourceRefs": [
+        "tatiana-sampaio-s1"
+      ]
     }
   ],
-  "pendingIdentityReview": [
+  "sources": [
     {
-      "id": "neusa-frutuoso",
-      "canonicalName": "Neusa Frutuoso",
-      "aliases": [],
-      "field": "Identidade a confirmar",
-      "identity": {
-        "birthYear": null,
-        "deathYear": null,
-        "nationalityContext": null
-      },
-      "science": {
-        "researchAreas": [],
-        "facts": []
-      },
-      "experience": {
-        "hints": [],
-        "reveal": {
-          "headline": "Neusa Frutuoso",
-          "summary": "Nome mantido no catálogo de curadoria, mas a identidade científica ainda não foi confirmada por fonte confiável.",
-          "whyItMatters": "Não publicar esta ficha até confirmar quem é a pesquisadora pretendida.",
-          "sourceRefs": []
-        },
-        "visualMotifs": [],
-        "recognitionLevel": null,
-        "difficulty": null,
-        "experiencePotential": null
-      },
-      "facts": [],
-      "sources": [],
-      "photo": {
-        "src": null,
-        "alt": "Retrato de Neusa Frutuoso",
-        "credit": null,
-        "sourceUrl": null,
-        "usageStatus": "rights-review"
-      },
-      "reviewStatus": "identity-review"
+      "id": "tatiana-sampaio-s1",
+      "label": "Fiocruz — Programa de Apoio à Jovem Cientista Mulher Dra. Tatiana Sampaio",
+      "url": "https://www.campusvirtual.fiocruz.br/portal/?q=jovemcientistamulher",
+      "type": "institutional"
     }
+  ],
+  "photo": {
+    "src": "/scientists/tatiana-sampaio.jpg",
+    "alt": "Retrato de Tatiana Sampaio",
+    "credit": null,
+    "sourceUrl": null,
+    "usageStatus": "rights-review"
+  },
+  "reviewStatus": "fact-checked-core"
+},
+{
+  "id": "marilda-goncalves",
+  "canonicalName": "Marilda Gonçalves",
+  "aliases": [
+    "Marilda de Souza Gonçalves"
+  ],
+  "field": "Hematologia e genética",
+  "identity": {
+    "birthYear": 1957,
+    "deathYear": null,
+    "nationalityContext": "brasileira"
+  },
+  "science": {
+    "researchAreas": [
+      "doença falciforme",
+      "hematologia",
+      "genética",
+      "biologia molecular",
+      "hemoglobinopatias"
+    ],
+    "facts": [
+      {
+        "id": "marilda-goncalves-f1",
+        "statement": "Pesquisa a interação entre genética e marcadores hematológicos, bioquímicos e imunológicos, com destaque para a doença falciforme.",
+        "sourceRefs": [
+          "marilda-goncalves-s1",
+          "marilda-goncalves-s2"
+        ]
+      },
+      {
+        "id": "marilda-goncalves-f2",
+        "statement": "É pesquisadora titular da Fiocruz Bahia e professora titular da Faculdade de Farmácia da UFBA.",
+        "sourceRefs": [
+          "marilda-goncalves-s1"
+        ]
+      },
+      {
+        "id": "marilda-goncalves-f3",
+        "statement": "Tornou-se a primeira mulher negra a dirigir a Fiocruz Bahia.",
+        "sourceRefs": [
+          "marilda-goncalves-s2"
+        ]
+      }
+    ]
+  },
+  "experience": {
+    "hints": [
+      {
+        "level": 1,
+        "text": "Uma pequena alteração no DNA pode mudar o formato das células responsáveis por transportar oxigênio pelo corpo.",
+        "factIds": [
+          "marilda-goncalves-f1"
+        ]
+      },
+      {
+        "level": 2,
+        "text": "Ela estuda como genética e sangue se relacionam em doenças como a falciforme.",
+        "factIds": [
+          "marilda-goncalves-f1"
+        ]
+      },
+      {
+        "level": 3,
+        "text": "Pesquisadora da Fiocruz Bahia, tornou-se a primeira mulher negra a dirigir a instituição.",
+        "factIds": [
+          "marilda-goncalves-f2",
+          "marilda-goncalves-f3"
+        ]
+      }
+    ],
+    "reveal": {
+      "headline": "Marilda Gonçalves",
+      "summary": "Cientista brasileira que pesquisa genética, hematologia e doença falciforme.",
+      "whyItMatters": "Seu trabalho conecta genética, biologia molecular e saúde pública para ampliar o conhecimento sobre doenças do sangue relevantes para a população brasileira.",
+      "sourceRefs": [
+        "marilda-goncalves-s1",
+        "marilda-goncalves-s2"
+      ]
+    },
+    "visualMotifs": [
+      "hemácias",
+      "DNA",
+      "sangue",
+      "doença falciforme"
+    ],
+    "recognitionLevel": "discovery",
+    "difficulty": 2,
+    "experiencePotential": 5
+  },
+  "facts": [
+    {
+      "id": "marilda-goncalves-f1",
+      "statement": "Pesquisa a interação entre genética e marcadores hematológicos, bioquímicos e imunológicos, com destaque para a doença falciforme.",
+      "sourceRefs": [
+        "marilda-goncalves-s1",
+        "marilda-goncalves-s2"
+      ]
+    },
+    {
+      "id": "marilda-goncalves-f2",
+      "statement": "É pesquisadora titular da Fiocruz Bahia e professora titular da Faculdade de Farmácia da UFBA.",
+      "sourceRefs": [
+        "marilda-goncalves-s1"
+      ]
+    },
+    {
+      "id": "marilda-goncalves-f3",
+      "statement": "Tornou-se a primeira mulher negra a dirigir a Fiocruz Bahia.",
+      "sourceRefs": [
+        "marilda-goncalves-s2"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "marilda-goncalves-s1",
+      "label": "Fiocruz Bahia — Marilda de Souza Gonçalves",
+      "url": "https://pgbsmi.bahia.fiocruz.br/marilda-de-souza-goncalves/",
+      "type": "institutional"
+    },
+    {
+      "id": "marilda-goncalves-s2",
+      "label": "Fiocruz Bahia — Cientistas: Marilda Gonçalves",
+      "url": "https://www.bahia.fiocruz.br/author/julia-salles/page/9/",
+      "type": "institutional"
+    }
+  ],
+  "photo": {
+    "src": "/scientists/marilda-goncalves.jpg",
+    "alt": "Retrato de Marilda Gonçalves",
+    "credit": null,
+    "sourceUrl": null,
+    "usageStatus": "rights-review"
+  },
+  "reviewStatus": "fact-checked-core"
+},
+{
+  "id": "jaqueline-godoy-mesquita",
+  "canonicalName": "Jaqueline Godoy Mesquita",
+  "aliases": [
+    "Jaqueline Mesquita"
+  ],
+  "field": "Matemática",
+  "identity": {
+    "birthYear": null,
+    "deathYear": null,
+    "nationalityContext": "brasileira"
+  },
+  "science": {
+    "researchAreas": [
+      "análise matemática",
+      "equações diferenciais funcionais",
+      "sistemas dinâmicos",
+      "equações com atraso"
+    ],
+    "facts": [
+      {
+        "id": "jaqueline-mesquita-f1",
+        "statement": "Sua pesquisa está concentrada em análise matemática, com ênfase em equações diferenciais funcionais.",
+        "sourceRefs": [
+          "jaqueline-mesquita-s1",
+          "jaqueline-mesquita-s2"
+        ]
+      },
+      {
+        "id": "jaqueline-mesquita-f2",
+        "statement": "Investiga equações capazes de representar fenômenos cujo estado atual depende também do que aconteceu anteriormente.",
+        "sourceRefs": [
+          "jaqueline-mesquita-s2"
+        ]
+      },
+      {
+        "id": "jaqueline-mesquita-f3",
+        "statement": "Em 2023, tomou posse como presidente da Sociedade Brasileira de Matemática.",
+        "sourceRefs": [
+          "jaqueline-mesquita-s1"
+        ]
+      }
+    ]
+  },
+  "experience": {
+    "hints": [
+      {
+        "level": 1,
+        "text": "Nem tudo o que acontece agora depende apenas do instante presente. Em alguns sistemas, o passado continua fazendo parte da equação.",
+        "factIds": [
+          "jaqueline-mesquita-f2"
+        ]
+      },
+      {
+        "level": 2,
+        "text": "Ela estuda equações usadas para representar fenômenos em que existe atraso entre uma mudança e seu efeito.",
+        "factIds": [
+          "jaqueline-mesquita-f1",
+          "jaqueline-mesquita-f2"
+        ]
+      },
+      {
+        "level": 3,
+        "text": "Matemática brasileira, tornou-se presidente da Sociedade Brasileira de Matemática em 2023.",
+        "factIds": [
+          "jaqueline-mesquita-f3"
+        ]
+      }
+    ],
+    "reveal": {
+      "headline": "Jaqueline Godoy Mesquita",
+      "summary": "Matemática brasileira que pesquisa equações diferenciais funcionais e formas de descrever sistemas em que o passado influencia o presente.",
+      "whyItMatters": "Equações desse tipo permitem construir modelos matemáticos para fenômenos que não respondem instantaneamente às mudanças.",
+      "sourceRefs": [
+        "jaqueline-mesquita-s1",
+        "jaqueline-mesquita-s2"
+      ]
+    },
+    "visualMotifs": [
+      "equações",
+      "curvas",
+      "tempo",
+      "atraso",
+      "sistemas dinâmicos"
+    ],
+    "recognitionLevel": "discovery",
+    "difficulty": 2,
+    "experiencePotential": 5
+  },
+  "facts": [
+    {
+      "id": "jaqueline-mesquita-f1",
+      "statement": "Sua pesquisa está concentrada em análise matemática, com ênfase em equações diferenciais funcionais.",
+      "sourceRefs": [
+        "jaqueline-mesquita-s1",
+        "jaqueline-mesquita-s2"
+      ]
+    },
+    {
+      "id": "jaqueline-mesquita-f2",
+      "statement": "Investiga equações capazes de representar fenômenos cujo estado atual depende também do que aconteceu anteriormente.",
+      "sourceRefs": [
+        "jaqueline-mesquita-s2"
+      ]
+    },
+    {
+      "id": "jaqueline-mesquita-f3",
+      "statement": "Em 2023, tomou posse como presidente da Sociedade Brasileira de Matemática.",
+      "sourceRefs": [
+        "jaqueline-mesquita-s1"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "jaqueline-mesquita-s1",
+      "label": "Universidade de Brasília — Jaqueline Godoy Mesquita assume presidência da Sociedade Brasileira de Matemática",
+      "url": "https://mat.unb.br/index.php/outras-noticias/14-eventos/627-ex-aluna-da-unb-e-professora-do-departamento-de-matematica-da-universidade-de-brasilia-toma-posse-como-presidenta-da-sociedade-brasileira-de-matematica",
+      "type": "institutional"
+    },
+    {
+      "id": "jaqueline-mesquita-s2",
+      "label": "UnB Notícias — Professora da UnB recebe prêmio para mulheres cientistas",
+      "url": "https://noticias.unb.br/39-homenagem/3160-professora-da-matematica-recebe-premio-para-mulheres-cientistas",
+      "type": "institutional"
+    }
+  ],
+  "photo": {
+    "src": "/scientists/jaqueline-godoy-mesquita.jpg",
+    "alt": "Retrato de Jaqueline Godoy Mesquita",
+    "credit": null,
+    "sourceUrl": null,
+    "usageStatus": "rights-review"
+  },
+  "reviewStatus": "fact-checked-core"
+}
   ]
 }
