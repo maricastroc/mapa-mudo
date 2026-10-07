@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useMemo, useReducer, useState, type CSSProperties } from "react";
-import { CATALOG } from "@/content/scientists/catalog";
+import { CATALOG, findFeatured } from "@/content/scientists/catalog";
 import type { Participations } from "@/content/scientists/types";
 import { MapCanvas, ZoomPlane } from "@/map/MapCanvas";
 import { TerrainField } from "@/map/terrainField";
@@ -14,6 +14,7 @@ import {
   PointLabel,
   PortraitMedallion,
   SaidNameLabel,
+  SummitPortrait,
   ScaleRuler,
   SheetMarkers,
   Transect,
@@ -130,12 +131,25 @@ export function Experience() {
         reducedMotion={reducedMotion}
         description={mapDescription(state, contextFor(state.step))}
       >
-        <SheetMarkers step={state.step} field={field} points={points} discoveryId={discovery?.id ?? null} saidId={state.saidId} />
+        <SheetMarkers
+          step={state.step}
+          field={field}
+          points={points}
+          discoveryId={discovery?.id ?? null}
+          saidId={state.saidId}
+          saidPhoto={state.saidId ? (findFeatured(CATALOG, state.saidId)?.photo ?? null) : null}
+        />
         <PlaceNames step={state.step} geometry={geometry} />
         <Transect step={state.step} geometry={geometry} prefix={discovery ? (sceneryFor(discovery).transect?.prefix ?? "") : ""} />
         <PortraitPhoto step={state.step} photo={discovery?.photo ?? null} />
         <LensRing variant={lensVariantFor(state.step)} />
         <PointLabel step={state.step} geometry={geometry} />
+        <SummitPortrait
+          step={state.step}
+          field={field}
+          point={points.find((p) => p.scientistId !== null && p.scientistId === state.saidId)}
+          photo={state.saidId ? (findFeatured(CATALOG, state.saidId)?.photo ?? null) : null}
+        />
         <SaidNameLabel
           step={state.step}
           field={field}

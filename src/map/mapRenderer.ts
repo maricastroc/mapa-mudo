@@ -19,9 +19,10 @@ export type Scene = {
   portraitFrame: { x: number; y: number; r: number };
   highlight: string | null;
   newContour: string | null;
+  settle: number;
 };
 
-export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks";
+export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle";
 export type Timing = { delay: number; duration: number };
 export type ReliefPoint = { id: string; x: number; y: number; mentions: number };
 export type SceneTarget = { scene: Scene; timings: Partial<Record<Channel, Timing>>; relief: ReliefPoint[] };
@@ -32,13 +33,13 @@ export type View = {
   fit: number;
   camera: Camera;
   lens: Lens;
-  newContour: { x: number; y: number; r: number } | null;
+  newContour: { x: number; y: number; r: number; emphasis: number } | null;
 };
 
 type Frame = Scene["portraitFrame"];
 type RGB = [number, number, number];
 type Transition<T> = { from: T; to: T; start: number; duration: number };
-type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density";
+type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density" | "settle";
 type ContourLevel = { value: number; alpha: number; index: number; coastline: boolean; lines: Polyline[] };
 
 export function toScreen(v: { W: number; H: number; fit: number; camera: Camera }, x: number, y: number): [number, number] {
@@ -206,6 +207,7 @@ export class MapRenderer {
       intervalLock: still(this.scene.intervalLock),
       lockedInterval: still(this.scene.lockedInterval),
       density: still(this.scene.density),
+      settle: still(this.scene.settle),
     };
     this.currentView = { W: 1, H: 1, fit: 1, camera: this.scene.camera, lens: this.scene.lens, newContour: null };
     this.readColors();
@@ -269,6 +271,7 @@ export class MapRenderer {
       intervalLock: transition(this.scene.intervalLock, target.scene.intervalLock, "intervalLock"),
       lockedInterval: transition(this.scene.lockedInterval, target.scene.lockedInterval, "intervalLock"),
       density: transition(this.scene.density, target.scene.density, "density"),
+      settle: transition(this.scene.settle, target.scene.settle, "settle"),
     };
     const present = new Set<string>();
     for (const r of target.relief) {
@@ -537,14 +540,15 @@ export class MapRenderer {
         const [sx, sy] = toScreen({ W, H, fit: this.fit, camera: cam }, p.summitX, p.summitY);
         const gx = sx / cell;
         const gy = sy / cell;
-        const limit = ((2.6 / Math.sqrt(2 * p.k)) * scale) / cell;
+        const limit = ((5.2 / Math.sqrt(2 * p.k)) * scale) / cell;
+        const ink = mix(this.colors.ink, this.colors.ink, 0);
         for (const level of levels) {
           const rings = level.lines.filter((l) => {
             if (!l.closed) return false;
             const c = bounds(l.pts);
             return c.x1 - c.x0 < limit && c.y1 - c.y0 < limit && contains(l.pts, gx, gy);
           });
-          if (rings.length) paint({ ...level, lines: rings }, accent, Math.max(0.6, level.alpha), thin * 1.6);
+          if (rings.length) paint({ ...level, lines: rings }, ink, Math.max(0.55, level.alpha) * 0.85, thin * (1.1 + 0.6 * level.index));
         }
       }
     }
@@ -565,12 +569,14 @@ export class MapRenderer {
             const cb = bounds(b.pts);
             return cb.x1 - cb.x0 < ca.x1 - ca.x0 ? b : a;
           });
-          paint({ value, alpha: 1, index: 0, coastline: false, lines: [ring] }, accent, 1, thin * 2.8);
+          const emphasis = 1 - clamp(scene.settle, 0, 1);
+          if (emphasis > 0.01) paint({ value, alpha: 1, index: 0, coastline: false, lines: [ring] }, accent, emphasis, thin * (1.2 + 1.6 * emphasis));
           const c = bounds(ring.pts);
           newContour = {
             x: ((c.x0 + c.x1) / 2) * cell,
             y: ((c.y0 + c.y1) / 2) * cell,
             r: (Math.max(c.x1 - c.x0, c.y1 - c.y0) / 2) * cell,
+            emphasis,
           };
         }
       }

@@ -1,5 +1,5 @@
 import type { FeaturedScientist } from "@/content/scientists/types";
-import { NEW_RING_GAUSS, type TerrainField } from "@/map/terrainField";
+import type { TerrainField } from "@/map/terrainField";
 import { SHEET, type Camera, type Channel, type Lens, type Scene, type SceneTarget, type Timing } from "@/map/mapRenderer";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import type { State, Step } from "./state";
@@ -71,6 +71,7 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
     density: 28,
     highlight: null,
     newContour: null,
+    settle: 0,
     ...scene,
   };
 }
@@ -96,13 +97,12 @@ export function portraitPlacement(screen: Screen) {
   return { x, y: y + Math.max(0, scaleRulerBottom(fit) + RULER_GAP - top), d };
 }
 
-const NEW_RING_SCREEN_RADIUS = 210;
-const NEW_RING_RADIUS_IN_SIGMAS = Math.sqrt(2 * Math.log(1 / NEW_RING_GAUSS));
+export const NEW_CONTOUR_RADIUS = 112;
 
-export function nameSaidZoom(sigma: number, mentions: number, fresh: boolean) {
-  if (fresh) return NEW_RING_SCREEN_RADIUS / (NEW_RING_RADIUS_IN_SIGMAS * sigma);
-  const radius = sigma * Math.sqrt((2 * 22) / Math.max(mentions, 23));
-  return Math.min(60, Math.max(3, 640 / radius));
+export const CONTRIBUTION_TIMING = { growth: 2600, growthFor: 1800, settle: 5900, settleFor: 1300 };
+
+export function contributionZoom(ringRadius: number) {
+  return Math.min(80, Math.max(2.5, NEW_CONTOUR_RADIUS / Math.max(ringRadius, 1e-3)));
 }
 
 export function sceneFor(
@@ -244,18 +244,29 @@ export function sceneFor(
     case "nameSaid": {
       const point = points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
       const id = point?.scientistId ?? null;
-      const summit = point ? field.summit(toFieldPoint(point)) : { ...geometry.summit, sigma: 40, fresh: false };
-      const a = at(880, 470, 0.5, 0.3);
+      const fieldPoint = point ? toFieldPoint(point) : null;
+      const summit = fieldPoint ? field.summit(fieldPoint) : geometry.summit;
+      const ring = fieldPoint ? field.growthRadius(fieldPoint) : 20;
+      const a = at(820, 430, 0.5, 0.3);
+      const { growth, growthFor, settle, settleFor } = CONTRIBUTION_TIMING;
       scene = withDefaults({
         ...fixed,
-        camera: camera(summit, nameSaidZoom(summit.sigma, point?.mentions ?? 1, summit.fresh), a),
-        lens: circle(a, compact ? 420 : 620, 1),
-        lensInk: 0.55,
+        camera: camera(summit, contributionZoom(ring), a),
+        lens: circle(a, 120, 0),
         intervalLock: 1,
         lockedInterval: 0,
+        highlight: id,
         newContour: id,
+        settle: 1,
       });
-      timings = { camera: t(0, 2300), intervalLock: t(500, 1700), lens: t(900, 1300), lensInk: t(900, 1300), peaks: t(2500, 1700) };
+      timings = {
+        camera: t(0, 2300),
+        intervalLock: t(500, 1700),
+        lens: t(0, 600),
+        lensInk: t(0, 600),
+        peaks: t(growth, growthFor),
+        settle: t(settle, settleFor),
+      };
       break;
     }
     case "collective":

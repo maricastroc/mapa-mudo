@@ -10,6 +10,7 @@ import { Actions, type ResponseHandlers } from "./Actions";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
 import { ProfilePlane } from "./ProfilePlane";
+import { CONTRIBUTION_TIMING } from "./scenes";
 import { sceneryFor } from "./scenery";
 import { widestWordInEm } from "./typography";
 import { ArrowIcon, Button, PaperStrip, TriangleMarker } from "./ui";
@@ -316,6 +317,8 @@ function HumanScale({ state, screen, commands, context }: PlaneProps) {
 
 function NameSaid({ state, screen, commands, context }: PlaneProps) {
   const said = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
+  const first = (said?.mentions ?? 1) <= 1;
+  const ready = CONTRIBUTION_TIMING.settle + CONTRIBUTION_TIMING.settleFor - 400;
   return (
     <Stage screen={screen}>
       <div className="absolute top-[84px] left-[64px] flex w-[480px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
@@ -323,22 +326,26 @@ function NameSaid({ state, screen, commands, context }: PlaneProps) {
           <PaperStrip className="px-2 py-1">DITO EM VOZ ALTA</PaperStrip>
         </p>
         <Heading className="fade-in text-[52px] leading-[1.14] font-semibold tracking-[-0.02em] [animation-delay:1400ms] compact:text-[30px]">
-          <PaperStrip className="px-3 compact:px-2">O ponto agora tem nome.</PaperStrip>
+          <PaperStrip className="px-3 compact:px-2">{first ? "O ponto agora tem nome." : "Este nome já estava no mapa."}</PaperStrip>
         </Heading>
         <p className="fade-in text-[23px] leading-[1.45] text-ink-soft [animation-delay:3900ms] compact:text-[17px]">
-          <PaperStrip className="px-3 py-0.5 compact:px-2">Cada vez que um nome é dito, o relevo dele sobe uma curva.</PaperStrip>
+          <PaperStrip className="px-3 py-0.5 compact:px-2">
+            {first ? "Cada vez que um nome é dito, o relevo dele sobe uma curva." : "Agora seu relevo cresce."}
+          </PaperStrip>
         </p>
         <p className="fade-in font-notation text-[12px] tracking-[0.06em] text-ink-soft [animation-delay:4300ms]">
           <PaperStrip className="px-2 py-1">EQUIDISTÂNCIA DESTA VISTA: 1 NOME DITO</PaperStrip>
         </p>
       </div>
-      <div className="fade-in absolute top-[776px] left-[64px] [animation-delay:4300ms] compact:static">
+      <div className="fade-in absolute top-[776px] left-[64px] compact:static" style={{ animationDelay: `${ready}ms` }}>
         <Button variant="primary" arrow onClick={commands.seeMap}>
           Ver o mapa inteiro
         </Button>
       </div>
       <span className="sr-only" role="status">
-        {said?.name} +1. Uma nova curva de nível surgiu no relevo.
+        {first
+          ? `${said?.name ?? ""} +1. O ponto agora tem nome: a primeira curva de nível surgiu no relevo.`
+          : `${said?.name ?? ""} +1. Este nome já estava no mapa: uma nova curva de nível surgiu no topo do relevo.`}
       </span>
     </Stage>
   );
@@ -454,7 +461,7 @@ export function mapDescription(state: State, context: PlaneContext) {
     case "askAgain":
       return `Mapa mudo inteiro. O ${point} agora mostra o retrato de ${context.discovery?.canonicalName ?? "uma cientista"}, esperando que o nome seja dito.`;
     case "nameSaid":
-      return `O relevo de ${name} sobe: uma nova curva de nível surge no topo.`;
+      return `Aproximação ao relevo de ${name}: uma nova curva de nível surge ao redor do topo e depois se integra às demais.`;
     case "collective":
       return "Mapa dos nomes ditos: cada nome no topo do seu relevo; quanto mais dito, mais alto e maior.";
   }

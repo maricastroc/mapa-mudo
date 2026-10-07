@@ -10,7 +10,7 @@ import { MapAnchor, useMapView } from "@/map/MapCanvas";
 import { toScreen } from "@/map/mapRenderer";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import { PHOTO_CLASS } from "./PortraitPhoto";
-import { SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
+import { NEW_CONTOUR_RADIUS, SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { ArrowIcon, TriangleMarker } from "./ui";
 
@@ -36,12 +36,14 @@ export function SheetMarkers({
   points,
   discoveryId,
   saidId,
+  saidPhoto,
 }: {
   step: Step;
   field: TerrainField;
   points: SheetPoint[];
   discoveryId: string | null;
   saidId: string | null;
+  saidPhoto: ScientistPhoto | null;
 }) {
   const onSheet = SHEET_STEPS.includes(step);
   const rank = new Map([...points].sort((a, b) => b.mentions - a.mentions).map((p, i) => [p.key, i]));
@@ -53,8 +55,9 @@ export function SheetMarkers({
         const reserved = p.scientistId !== null && p.scientistId === discoveryId && (step === "noName" || step === "askAgain");
         if (named) {
           const highlighted = p.scientistId === saidId;
+          const anchored = highlighted && Boolean(saidPhoto?.src);
           return (
-            <MapAnchor key={p.key} x={x} y={y}>
+            <MapAnchor key={p.key} x={x} y={y} className={highlighted ? "z-10" : undefined}>
               {highlighted &&
                 [0, 800, 1600].map((delay) => (
                   <span
@@ -63,8 +66,15 @@ export function SheetMarkers({
                     style={{ animationDelay: `${2400 + delay}ms`, animationDuration: "2600ms", animationIterationCount: 2, animationFillMode: "both" }}
                   />
                 ))}
+              {anchored && saidPhoto?.src && (
+                <span className="fade-in absolute block size-[calc(var(--u)*56px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-2 border-ink bg-paper">
+                  <Image src={saidPhoto.src} alt="" fill sizes="64px" className={PHOTO_CLASS} />
+                </span>
+              )}
               <div
-                className="fade-in relative flex -translate-x-1/2 -translate-y-1/2 flex-col items-center whitespace-nowrap"
+                className={`fade-in relative flex -translate-x-1/2 flex-col items-center whitespace-nowrap ${
+                  anchored ? "-translate-y-[calc(100%+var(--u)*34px)]" : "-translate-y-1/2"
+                }`}
                 style={{ animationDelay: `${600 + (rank.get(p.key) ?? 0) * 70}ms` }}
               >
                 <span
@@ -383,6 +393,41 @@ export function PortraitMedallion({
   );
 }
 
+export function SummitPortrait({
+  step,
+  field,
+  point,
+  photo,
+}: {
+  step: Step;
+  field: TerrainField;
+  point: SheetPoint | undefined;
+  photo: ScientistPhoto | null;
+}) {
+  if (!point || !point.scientistId) return null;
+  const summit = mapPosition(field, point);
+  const active = step === "nameSaid";
+  return (
+    <div aria-hidden="true" className={visible(active)}>
+      <MapAnchor x={summit.x} y={summit.y}>
+        {photo?.src ? (
+          <span
+            key={active ? point.key : "idle"}
+            className="fade-in absolute block size-[calc(var(--u)*88px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-2 border-ink bg-paper"
+            style={{ animationDelay: "900ms" }}
+          >
+            <Image src={photo.src} alt="" fill sizes="96px" className={PHOTO_CLASS} />
+          </span>
+        ) : (
+          <span className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[7px]">
+            <TriangleMarker />
+          </span>
+        )}
+      </MapAnchor>
+    </div>
+  );
+}
+
 export function SaidNameLabel({
   step,
   field,
@@ -400,21 +445,25 @@ export function SaidNameLabel({
     const el = contourLabel.current;
     if (!el) return;
     const c = v.newContour;
-    el.style.opacity = c ? "1" : "0";
-    if (!c) return;
+    el.style.opacity = c ? c.emphasis.toFixed(3) : "0";
+    if (!c || c.emphasis < 0.01) return;
     const width = el.offsetWidth;
     const fitsRight = c.x + c.r + 18 + width < v.W - 16;
     const x = fitsRight ? c.x + c.r + 18 : Math.min(v.W - 16 - width, Math.max(16, c.x - width / 2));
     const y = fitsRight ? c.y - c.r * 0.35 : Math.min(v.H - 48, c.y + c.r + 14);
     el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
   });
-  if (!point || !point.name) return null;
+  if (!point || !point.name || !point.scientistId) return null;
   const summit = mapPosition(field, point);
   const mentions = point.mentions;
+  const { elongation } = field.summit({ id: point.scientistId, x: point.x, y: point.y, mentions });
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={summit.x} y={summit.y}>
-        <div className="absolute top-[calc(var(--u)*92px)] left-0 flex -translate-x-1/2 flex-col items-center gap-1.5">
+        <div
+          className="absolute left-0 flex -translate-x-1/2 flex-col items-center gap-1.5"
+          style={{ top: `calc(var(--u) * ${Math.round(NEW_CONTOUR_RADIUS * elongation + 30)}px)` }}
+        >
           <div
             key={active ? `${point.key}-${mentions}` : "idle"}
             className="fade-in flex items-baseline gap-[0.3em] bg-paper px-[0.3em] text-[calc(var(--u)*58px)] leading-none font-bold tracking-[0.03em] whitespace-nowrap uppercase"

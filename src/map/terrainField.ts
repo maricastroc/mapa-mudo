@@ -37,6 +37,8 @@ const RIVER: [number, number][] = [
 
 const RIVER_WIDTH = 5.5;
 export const NEW_RING_GAUSS = 0.75;
+const PLATEAU_LIFT = 0.05;
+const PLATEAU_SPREAD = 3.2;
 const SHEET_OCTAVES = 3.8;
 
 function hash(text: string) {
@@ -142,8 +144,8 @@ export class TerrainField {
     if (ready) return ready;
     const fresh = this.createPeak({ ...point, mentions: 1 });
     fresh.flattens = true;
-    fresh.plateau = this.terrain(fresh.cx, fresh.cy, SHEET_OCTAVES, this.peaks);
-    fresh.baseLevel = Math.max(0, Math.floor(fresh.plateau));
+    fresh.baseLevel = Math.max(0, Math.floor(this.terrain(fresh.cx, fresh.cy, SHEET_OCTAVES, this.peaks)));
+    fresh.plateau = fresh.baseLevel + PLATEAU_LIFT;
     fresh.amp = (fresh.baseLevel + 1 - fresh.plateau) / NEW_RING_GAUSS;
     fresh.baseAmp = fresh.amp;
     fresh.baseMentions = 1;
@@ -159,7 +161,15 @@ export class TerrainField {
 
   summit(point: FieldPoint) {
     const p = this.byId.get(point.id) ?? this.predict(point);
-    return { x: p.summitX, y: p.summitY, sigma: 1 / Math.sqrt(2 * p.k), fresh: p.flattens };
+    return { x: p.summitX, y: p.summitY, sigma: 1 / Math.sqrt(2 * p.k), fresh: p.flattens, elongation: Math.max(p.ex, p.ey) };
+  }
+
+  growthRadius(point: FieldPoint) {
+    const p = this.byId.get(point.id) ?? this.predict(point);
+    const amp = Math.max(1e-6, p.baseAmp + (point.mentions - p.baseMentions));
+    const below = p.flattens ? p.plateau + amp - (p.baseLevel + point.mentions) : 0.5;
+    const g = Math.min(0.99999, Math.max(0.02, 1 - below / amp));
+    return Math.sqrt(2 * Math.log(1 / g)) / Math.sqrt(2 * p.k);
   }
 
   addPeak(point: FieldPoint) {
@@ -255,7 +265,7 @@ export class TerrainField {
       if (e > 10) continue;
       const g = Math.exp(-e);
       if (p.flattens) {
-        const w = Math.min(1, 1.6 * g) * p.presence;
+        const w = Math.min(1, PLATEAU_SPREAD * g) * p.presence;
         flatWeight += w;
         flatLevel += p.plateau * w;
         flatSum += p.amp * g * p.presence;

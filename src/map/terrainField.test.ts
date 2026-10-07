@@ -80,3 +80,54 @@ test("a first mention on a steep slope still closes a ring around the new summit
     assert.ok(crossesBelow, `ray ${a} never drops below the new contour`);
   }
 });
+
+function ringHolds(field: TerrainField, id: string, mentions: number, radius: number) {
+  const peak = field.peak(id);
+  assert.ok(peak);
+  const level = peak.baseLevel + mentions;
+  for (let a = 0; a < 36; a++) {
+    const t = (a / 36) * Math.PI * 2;
+    const at = (r: number) => field.terrain(peak.summitX + Math.cos(t) * r, peak.summitY + Math.sin(t) * r, SHEET_OCTAVES, field.peaks);
+    let crossing = 0;
+    while (crossing < 3 * radius && at(crossing) > level) crossing += radius / 200;
+    assert.ok(crossing > 0.6 * radius && crossing < 1.6 * radius, `${id} ray ${a} crosses at ${crossing.toFixed(2)} for ${radius.toFixed(2)}`);
+  }
+}
+
+test("the predicted growth radius frames the contour a new mention creates on an existing peak", () => {
+  const field = fixtureField();
+  const raimunda = field.peak("p001");
+  assert.ok(raimunda);
+  const mentions = (FIXTURE_PARTICIPATIONS.p001 ?? 0) + 1;
+  const radius = field.growthRadius({ id: "p001", x: raimunda.cx, y: raimunda.cy, mentions });
+  field.setAmplitude("p001", raimunda.baseAmp + 1, 1);
+  ringHolds(field, "p001", mentions, radius);
+});
+
+test("the predicted growth radius also holds for the first and second mention of a new peak", () => {
+  const field = fixtureField();
+  const point = { id: "new-known", x: 720, y: 560, mentions: 1 };
+  const first = field.growthRadius(point);
+  const peak = field.addPeak(point);
+  field.setAmplitude(peak.id, peak.baseAmp, 1);
+  ringHolds(field, peak.id, 1, first);
+  const second = field.growthRadius({ ...point, mentions: 2 });
+  assert.ok(second < first);
+  field.setAmplitude(peak.id, peak.baseAmp + 1, 1);
+  ringHolds(field, peak.id, 2, second);
+});
+
+test("a peak born at the fair keeps its earlier contours closed as it grows, except the lowest one merging into the land", () => {
+  const field = fixtureField();
+  const point = { id: "growing", x: 720, y: 560, mentions: 1 };
+  const peak = field.addPeak(point);
+  const sigma = 1 / Math.sqrt(2 * peak.k);
+  for (let mentions = 2; mentions <= 4; mentions++) {
+    const amp = peak.baseAmp + (mentions - 1);
+    field.setAmplitude(peak.id, amp, 1);
+    for (let level = mentions === 2 ? 1 : 2; level <= mentions; level++) {
+      const g = (peak.baseLevel + level - peak.plateau) / amp;
+      ringHolds(field, peak.id, level, sigma * Math.sqrt(2 * Math.log(1 / g)));
+    }
+  }
+});
