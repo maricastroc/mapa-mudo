@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { shownSources } from "@/content/scientists/catalog";
 import { scientistProfile } from "@/content/scientists/profile";
 import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
@@ -76,6 +76,27 @@ function Stage({ screen, children }: { screen: Screen; children: ReactNode }) {
   );
 }
 
+const FOOTER_GAP = 16;
+
+function useLift(ref: RefObject<HTMLDivElement | null>, screen: Screen, max: number): CSSProperties {
+  const [lift, setLift] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || screen.compact) return;
+    const update = () => {
+      const footer = document.querySelector<HTMLElement>("footer")?.offsetHeight ?? 0;
+      const safeBottom = (screen.H - footer - FOOTER_GAP - screen.oy) / screen.fit;
+      setLift(Math.min(max, Math.max(0, Math.ceil(el.offsetTop + el.offsetHeight - safeBottom))));
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref, screen, max]);
+  const amount = screen.compact ? 0 : lift;
+  return { transform: amount > 0 ? `translateY(${-amount}px)` : undefined };
+}
+
 function SheetHeader({ children }: { children: ReactNode }) {
   return (
     <p className="absolute top-[40px] left-[64px] font-notation text-[13px] tracking-[0.06em] text-ink-soft compact:hidden">
@@ -93,32 +114,37 @@ function Heading({ children, className, style }: { children: ReactNode; classNam
 }
 
 function SayAName({ state, screen, commands, reducedMotion, context, again }: PlaneProps & { again: boolean }) {
+  const actions = useRef<HTMLDivElement>(null);
+  const lift = useLift(actions, screen, 120);
   return (
     <Stage screen={screen}>
       <SheetHeader>
         {again ? "FOLHA 01 — MAPA MUDO · 1 PONTO ESPERANDO NOME" : "FOLHA 01 — CIÊNCIA DELAS · MAPA MUDO · RELEVO ILUSTRATIVO"}
       </SheetHeader>
-      <Heading className="display absolute top-[228px] left-[64px] text-[150px] leading-none compact:static compact:text-[60px]">
-        <span className="block w-fit bg-paper px-4 compact:px-2">DIGA</span>
-        <span className="block w-fit bg-paper px-4 compact:px-2">UM NOME.</span>
-      </Heading>
-      <p
-        key={again ? "knows" : "ask"}
-        className={`absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px] ${again ? "fade-in" : ""}`}
-        style={{ animationDelay: "2400ms" }}
-      >
-        <PaperStrip className="px-4 py-1.5 compact:px-2">{again ? "Agora você sabe." : "Diga o nome de uma cientista brasileira."}</PaperStrip>
-      </p>
-      <Actions
-        className="absolute top-[618px] left-[52px] compact:static"
-        speak={{ label: "Falar", accent: again }}
-        type
-        extras={again ? [{ label: "Ver de novo", onClick: commands.seeAgain }] : [{ label: "Não sei", onClick: commands.dontKnow }]}
-        speech={context.speech}
-        response={state.response}
-        reducedMotion={reducedMotion}
-        handlers={handlersFrom(commands)}
-      />
+      <div className="absolute inset-0 transition-transform duration-500 compact:contents" style={lift}>
+        <Heading className="display absolute top-[228px] left-[64px] text-[150px] leading-none compact:static compact:text-[60px]">
+          <span className="block w-fit bg-paper px-4 compact:px-2">DIGA</span>
+          <span className="block w-fit bg-paper px-4 compact:px-2">UM NOME.</span>
+        </Heading>
+        <p
+          key={again ? "knows" : "ask"}
+          className={`absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px] ${again ? "fade-in" : ""}`}
+          style={{ animationDelay: "2400ms" }}
+        >
+          <PaperStrip className="px-4 py-1.5 compact:px-2">{again ? "Agora você sabe." : "Diga o nome de uma cientista brasileira."}</PaperStrip>
+        </p>
+        <div ref={actions} className="absolute top-[618px] left-[52px] compact:static">
+          <Actions
+            speak={{ label: "Falar", accent: again }}
+            type
+            extras={again ? [{ label: "Ver de novo", onClick: commands.seeAgain }] : [{ label: "Não sei", onClick: commands.dontKnow }]}
+            speech={context.speech}
+            response={state.response}
+            reducedMotion={reducedMotion}
+            handlers={handlersFrom(commands)}
+          />
+        </div>
+      </div>
     </Stage>
   );
 }
@@ -155,6 +181,8 @@ function nameSize(name: string) {
 }
 
 function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneProps & { index: 0 | 1 | 2 }) {
+  const actions = useRef<HTMLDivElement>(null);
+  const lift = useLift(actions, screen, 160);
   const discovery = context.discovery;
   if (!discovery) return null;
   const hint = discovery.experience.hints[index];
@@ -180,20 +208,21 @@ function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneP
         )}
       </div>
       {index === 2 && core && <CoreAnnotations research={core} />}
-      <Actions
-        className="absolute top-[752px] left-[52px] compact:static"
-        speak={{ label: "Dizer o nome" }}
-        type
-        extras={[
-          index < 2
-            ? { label: "Outra pista", arrow: true, onClick: commands.nextClue }
-            : { label: "Chegar à escala 1:1", arrow: true, onClick: commands.reachHumanScale },
-        ]}
-        speech={context.speech}
-        response={state.response}
-        reducedMotion={reducedMotion}
-        handlers={handlersFrom(commands)}
-      />
+      <div ref={actions} className="absolute top-[752px] left-[52px] transition-transform duration-500 compact:static" style={lift}>
+        <Actions
+          speak={{ label: "Dizer o nome" }}
+          type
+          extras={[
+            index < 2
+              ? { label: "Outra pista", arrow: true, onClick: commands.nextClue }
+              : { label: "Chegar à escala 1:1", arrow: true, onClick: commands.reachHumanScale },
+          ]}
+          speech={context.speech}
+          response={state.response}
+          reducedMotion={reducedMotion}
+          handlers={handlersFrom(commands)}
+        />
+      </div>
     </Stage>
   );
 }
