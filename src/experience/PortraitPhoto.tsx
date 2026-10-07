@@ -6,7 +6,7 @@ import type { ScientistPhoto } from "@/content/scientists/types";
 import { useMapView } from "@/map/MapCanvas";
 import type { Step } from "./state";
 
-export const PHOTO_ADAPTATION = "recorte circular e conversão para tons de cinza na instalação";
+export const PHOTO_ADAPTATION = "recorte quadrado e redução do arquivo original; recorte circular e conversão para tons de cinza na instalação";
 
 export const PHOTO_CLASS = "object-cover object-[50%_28%] grayscale";
 

@@ -1,16 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import { isCleared } from "@/content/scientists/curatedPackage";
 import { CURATION_INFO, FEATURED, IMAGE_MANIFEST } from "@/content/scientists/featured";
-import { BUNDLED_PORTRAITS } from "@/content/scientists/portraits";
 import { PHOTO_ADAPTATION } from "./PortraitPhoto";
 import { Button } from "./ui";
 
 export function Credits({ illustrative }: { illustrative: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const manifest = new Map(IMAGE_MANIFEST.map((m) => [m.id, m]));
-  const bundled = FEATURED.filter((s) => s.photo?.src && isCleared(s.photo.usageStatus));
+  const bundled = FEATURED.filter((s) => s.photo?.src);
   const pending = FEATURED.length - bundled.length;
 
   return (
@@ -59,15 +57,14 @@ export function Credits({ illustrative }: { illustrative: boolean }) {
                   {bundled.map((s) => {
                     const entry = manifest.get(s.id);
                     const license = entry?.license ?? null;
-                    const adaptation = [BUNDLED_PORTRAITS[s.id], PHOTO_ADAPTATION].filter(Boolean).join("; ");
                     return (
                       <li key={s.id} className="flex flex-col gap-0.5">
                         <span className="font-semibold">{s.canonicalName}</span>
                         <span>
-                          {entry?.creditLine ?? s.photo?.credit}
+                          {entry?.creditLine ?? s.photo?.credit ?? "Crédito a confirmar."}
                           {license ? ` Licença: ${license}.` : ""}
                         </span>
-                        <span className="text-ink-soft">Imagem adaptada: {adaptation}.</span>
+                        <span className="text-ink-soft">Imagem adaptada: {PHOTO_ADAPTATION}.</span>
                         {license?.includes("BY-SA") && (
                           <span className="text-ink-soft">A versão adaptada é compartilhada sob a mesma licença ({license}).</span>
                         )}

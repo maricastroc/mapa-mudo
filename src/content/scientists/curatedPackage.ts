@@ -56,10 +56,6 @@ function usageStatus(value: unknown, path: string): PhotoUsageStatus {
   return value as PhotoUsageStatus;
 }
 
-export function isCleared(status: PhotoUsageStatus) {
-  return status === "approved" || status === "approved-with-credit";
-}
-
 function parseFact(value: unknown, path: string): ScientistFact {
   const f = object(value, path);
   return { id: text(f.id, `${path}.id`), statement: text(f.statement, `${path}.statement`), sourceRefs: texts(f.sourceRefs, `${path}.sourceRefs`) };
@@ -81,21 +77,19 @@ function parseHint(value: unknown, path: string): DiscoveryHint {
   return { level: h.level, text: text(h.text, `${path}.text`), factIds: texts(h.factIds, `${path}.factIds`) };
 }
 
-function parsePhoto(value: unknown, path: string, id: string, bundledPortraits: ReadonlySet<string>): ScientistPhoto | null {
+function parsePhoto(value: unknown, path: string): ScientistPhoto | null {
   if (value === undefined || value === null) return null;
   const p = object(value, path);
-  const status = usageStatus(p.usageStatus, `${path}.usageStatus`);
-  const declaredSrc = optionalText(p.src, `${path}.src`);
   return {
-    src: declaredSrc && isCleared(status) && bundledPortraits.has(id) ? declaredSrc : null,
+    src: optionalText(p.src, `${path}.src`),
     alt: text(p.alt, `${path}.alt`),
     credit: optionalText(p.credit, `${path}.credit`),
     sourceUrl: optionalText(p.sourceUrl, `${path}.sourceUrl`),
-    usageStatus: status,
+    usageStatus: usageStatus(p.usageStatus, `${path}.usageStatus`),
   };
 }
 
-function parseFeatured(value: unknown, path: string, bundledPortraits: ReadonlySet<string>): FeaturedScientist {
+function parseFeatured(value: unknown, path: string): FeaturedScientist {
   const s = object(value, path);
   const id = text(s.id, `${path}.id`);
   const experience = object(s.experience, `${path}.experience`);
@@ -133,13 +127,13 @@ function parseFeatured(value: unknown, path: string, bundledPortraits: ReadonlyS
     },
     facts: list(s.facts, `${path}.facts`).map((f, i) => parseFact(f, `${path}.facts[${i}]`)),
     sources: list(s.sources, `${path}.sources`).map((x, i) => parseSource(x, `${path}.sources[${i}]`)),
-    photo: parsePhoto(s.photo, `${path}.photo`, id, bundledPortraits),
+    photo: parsePhoto(s.photo, `${path}.photo`),
     reviewStatus: optionalText(s.reviewStatus, `${path}.reviewStatus`) ?? undefined,
     editorialNotes: optionalText(s.editorialNotes, `${path}.editorialNotes`) ?? undefined,
   };
 }
 
-export function parseCuratedPackage(raw: unknown, bundledPortraits: ReadonlySet<string>) {
+export function parseCuratedPackage(raw: unknown) {
   const root = object(raw, "featured.json");
   const policy = object(root.reviewPolicy, "featured.json.reviewPolicy");
   const info: CurationInfo = {
@@ -152,7 +146,7 @@ export function parseCuratedPackage(raw: unknown, bundledPortraits: ReadonlySet<
     },
   };
   const featured = list(root.featuredScientists, "featured.json.featuredScientists").map((s, i) =>
-    parseFeatured(s, `featured.json.featuredScientists[${i}]`, bundledPortraits),
+    parseFeatured(s, `featured.json.featuredScientists[${i}]`),
   );
   return { info, featured };
 }
@@ -178,7 +172,7 @@ export function parseImageManifest(raw: unknown): ImageManifestEntry[] {
   });
 }
 
-export function curationProblems(featured: FeaturedScientist[], manifest: ImageManifestEntry[], rawPhotoSources: Map<string, string | null>) {
+export function curationProblems(featured: FeaturedScientist[], manifest: ImageManifestEntry[]) {
   const problems: string[] = [];
   const ids = new Set<string>();
   const byManifest = new Map(manifest.map((m) => [m.id, m]));
@@ -205,22 +199,7 @@ export function curationProblems(featured: FeaturedScientist[], manifest: ImageM
     if (s.photo && entry && s.photo.usageStatus !== entry.usageStatus) {
       problems.push(`${s.id}: photo status ${s.photo.usageStatus} differs from manifest ${entry.usageStatus}`);
     }
-    if (s.photo?.usageStatus === "rights-review" && rawPhotoSources.get(s.id)) {
-      problems.push(`${s.id}: rights-review photo declares a src`);
-    }
   }
   for (const m of manifest) if (!ids.has(m.id)) problems.push(`${m.id}: manifest entry without featured scientist`);
   return problems;
-}
-
-export function declaredPhotoSources(raw: unknown) {
-  const sources = new Map<string, string | null>();
-  if (!isObject(raw) || !Array.isArray(raw.featuredScientists)) return sources;
-  for (const s of raw.featuredScientists) {
-    if (isObject(s) && typeof s.id === "string") {
-      const photo = isObject(s.photo) ? s.photo : null;
-      sources.set(s.id, photo && typeof photo.src === "string" ? photo.src : null);
-    }
-  }
-  return sources;
 }

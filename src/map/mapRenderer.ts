@@ -74,6 +74,7 @@ function interpolateCamera(a: Camera, b: Camera, t: number, W: number, H: number
 }
 
 function interpolateLens(a: Lens, b: Lens, t: number): Lens {
+  if (t >= 1) return b;
   return {
     x: a.x + (b.x - a.x) * t,
     y: a.y + (b.y - a.y) * t,
@@ -85,6 +86,7 @@ function interpolateLens(a: Lens, b: Lens, t: number): Lens {
 }
 
 function interpolateFrame(a: Frame, b: Frame, t: number): Frame {
+  if (t >= 1) return b;
   return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, r: a.r + (b.r - a.r) * t };
 }
 

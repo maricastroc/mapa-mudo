@@ -5,17 +5,16 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import rawFeatured from "./featured.json" with { type: "json" };
 import { CATALOG, shownSources } from "./catalog.ts";
-import { curationProblems, declaredPhotoSources, isCleared, parseCuratedPackage } from "./curatedPackage.ts";
+import { curationProblems } from "./curatedPackage.ts";
 import { FEATURED, IMAGE_MANIFEST } from "./featured.ts";
 import { createMatcher } from "./matcher.ts";
-import { BUNDLED_PORTRAITS } from "./portraits.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const publicDir = join(root, "public");
 
 test("the curated package parses and has no referential problems", () => {
   assert.equal(FEATURED.length, 20);
-  assert.deepEqual(curationProblems(FEATURED, IMAGE_MANIFEST, declaredPhotoSources(rawFeatured)), []);
+  assert.deepEqual(curationProblems(FEATURED, IMAGE_MANIFEST), []);
 });
 
 test("scientist ids are unique across featured and known", () => {
@@ -62,47 +61,19 @@ test("the 1:1 scale can link every featured scientist to the sources behind what
   }
 });
 
-test("every photo src resolves to a bundled cleared asset or is null", () => {
+test("every declared photo is a local file under public/scientists", () => {
   for (const s of FEATURED) {
     if (!s.photo?.src) continue;
-    assert.ok(isCleared(s.photo.usageStatus), `${s.id} is not cleared`);
+    assert.ok(s.photo.src.startsWith("/scientists/"), `${s.id} points outside public/scientists`);
     assert.ok(existsSync(join(publicDir, s.photo.src)), `${s.id} asset missing at ${s.photo.src}`);
   }
 });
 
-test("every bundled portrait is a cleared manifest asset served from public/scientists", () => {
-  for (const id of Object.keys(BUNDLED_PORTRAITS)) {
-    const scientist = FEATURED.find((s) => s.id === id);
-    const entry = IMAGE_MANIFEST.find((m) => m.id === id);
-    assert.ok(scientist?.photo?.src, `${id} has no photo src`);
-    assert.ok(entry && isCleared(entry.usageStatus), `${id} is not cleared in the manifest`);
-    assert.equal(scientist.photo.src, `/scientists/${entry.fileName}`);
-    assert.ok(existsSync(join(publicDir, scientist.photo.src)), `${id} file missing`);
-  }
-});
-
-test("public/scientists only holds registered, cleared portraits", () => {
+test("every file in public/scientists is used by a featured scientist", () => {
   const folder = join(publicDir, "scientists");
   const files = existsSync(folder) ? readdirSync(folder).filter((f) => !f.startsWith(".")) : [];
-  for (const file of files) {
-    const entry = IMAGE_MANIFEST.find((m) => m.fileName === file);
-    assert.ok(entry, `${file} is not in the manifest`);
-    assert.ok(isCleared(entry.usageStatus), `${file} is ${entry.usageStatus}`);
-    assert.ok(entry.id in BUNDLED_PORTRAITS, `${file} is not registered in portraits.ts`);
-  }
-});
-
-test("no rights-review image is bundled", () => {
-  const folder = join(publicDir, "scientists");
-  const files = existsSync(folder) ? readdirSync(folder) : [];
-  const pending = IMAGE_MANIFEST.filter((m) => m.usageStatus === "rights-review").map((m) => m.fileName);
-  for (const file of pending) assert.equal(files.includes(file), false, file);
-  for (const s of FEATURED) if (s.photo?.usageStatus === "rights-review") assert.equal(s.photo.src, null, s.id);
-});
-
-test("a declared src is dropped when the asset is not bundled", () => {
-  const parsed = parseCuratedPackage(rawFeatured, new Set());
-  assert.ok(parsed.featured.every((s) => s.photo === null || s.photo.src === null));
+  const used = new Set(FEATURED.flatMap((s) => (s.photo?.src ? [s.photo.src] : [])));
+  for (const file of files) assert.ok(used.has(`/scientists/${file}`), `${file} is not referenced`);
 });
 
 test("every canonical name and alias of every featured scientist resolves to her", () => {

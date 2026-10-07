@@ -19,8 +19,8 @@ const SERVER_SCREEN = measure(SHEET.w, SHEET.h);
 let cache: Screen = SERVER_SCREEN;
 
 function read() {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
+  const W = Math.max(1, window.innerWidth);
+  const H = Math.max(1, window.innerHeight);
   if (cache.W !== W || cache.H !== H) cache = measure(W, H);
   return cache;
 }
