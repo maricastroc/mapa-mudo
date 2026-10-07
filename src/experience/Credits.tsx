@@ -33,7 +33,7 @@ export function Credits({ illustrative }: { illustrative: boolean }) {
               </h2>
               <p className="max-w-[720px] text-[15px] text-ink-soft">
                 Uma experiência do <span className="font-semibold text-iris-blue">ÍRIS</span> — Laboratório de Inovação e Dados do Governo do
-                Ceará. Conteúdo verificado na curadoria ({CURATION_INFO.status})
+                Ceará. {FEATURED.length} cientistas com conteúdo verificado na curadoria (versão {CURATION_INFO.version})
                 {CURATION_INFO.reviewPolicy.institutionalApprovalRequired ? "; aprovação editorial institucional pendente" : ""}.
                 {illustrative ? " Os demais nomes do mapa coletivo são fictícios e as cotas são ilustrativas." : ""}
               </p>

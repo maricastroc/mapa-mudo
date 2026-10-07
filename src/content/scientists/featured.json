@@ -1,7 +1,7 @@
 {
-  "version": 1,
+  "version": "1.3",
   "theme": "Ciência Delas",
-  "status": "fact-checked-core",
+  "status": "49 fully content-mapped featured scientists; 1 name pending identity confirmation",
   "reviewPolicy": {
     "meaning": "Core scientific claims, hints and reveals were checked against institutional, academic or primary/peer-reviewed sources. This is not the same as final institutional editorial approval.",
     "institutionalApprovalRequired": true
@@ -2405,6 +2405,3151 @@
       },
       "reviewStatus": "fact-checked-core",
       "editorialNotes": "A regra editorial de 'cientista brasileira' precisa definir se inclui cientistas nascidas fora do país cuja carreira e reconhecimento científico se consolidaram no Brasil."
+    },
+    {
+      "id": "sue-ann-clemens",
+      "canonicalName": "Sue Ann Clemens",
+      "aliases": [],
+      "field": "Infectologia e vacinologia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "pesquisa clínica",
+          "vacinas",
+          "saúde global"
+        ],
+        "facts": [
+          {
+            "id": "sue-ann-clemens-f1",
+            "statement": "Coordenou no Brasil ensaios clínicos da vacina Oxford/AstraZeneca contra a Covid-19.",
+            "sourceRefs": [
+              "sue-ann-clemens-s1"
+            ]
+          },
+          {
+            "id": "sue-ann-clemens-f2",
+            "statement": "Atua em pesquisa clínica e desenvolvimento de vacinas em redes internacionais.",
+            "sourceRefs": [
+              "sue-ann-clemens-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Vacinas passam por uma longa sequência de testes antes de chegar à população.",
+            "factIds": [
+              "sue-ann-clemens-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Durante a pandemia, ela coordenou no Brasil os testes clínicos de uma das vacinas mais conhecidas contra a Covid-19.",
+            "factIds": [
+              "sue-ann-clemens-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua carreira conecta pesquisa clínica brasileira a grandes redes internacionais de desenvolvimento de vacinas.",
+            "factIds": [
+              "sue-ann-clemens-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Sue Ann Clemens",
+          "summary": "Infectologista e pesquisadora brasileira com atuação internacional em vacinologia e pesquisa clínica.",
+          "whyItMatters": "Seu trabalho ajuda a transformar candidatas a vacinas em evidência clínica capaz de orientar seu uso.",
+          "sourceRefs": [
+            "sue-ann-clemens-s1"
+          ]
+        },
+        "visualMotifs": [
+          "pesquisa clínica",
+          "vacinas",
+          "saúde global"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "sue-ann-clemens-f1",
+          "statement": "Coordenou no Brasil ensaios clínicos da vacina Oxford/AstraZeneca contra a Covid-19.",
+          "sourceRefs": [
+            "sue-ann-clemens-s1"
+          ]
+        },
+        {
+          "id": "sue-ann-clemens-f2",
+          "statement": "Atua em pesquisa clínica e desenvolvimento de vacinas em redes internacionais.",
+          "sourceRefs": [
+            "sue-ann-clemens-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "sue-ann-clemens-s1",
+          "label": "Pesquisa FAPESP — entrevista com Sue Ann Clemens",
+          "url": "https://revistapesquisa.fapesp.br/por-tras-da-linha-de-frente-de-um-ensaio-clinico-ha-um-exercito-de-outros-profissionais/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Sue Ann Clemens",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "margareth-dalcolmo",
+      "canonicalName": "Margareth Dalcolmo",
+      "aliases": [],
+      "field": "Pneumologia e saúde pública",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "tuberculose",
+          "doenças respiratórias",
+          "saúde pública"
+        ],
+        "facts": [
+          {
+            "id": "margareth-dalcolmo-f1",
+            "statement": "Dedicou grande parte da carreira ao estudo da tuberculose, incluindo protocolos de pesquisa e tratamento.",
+            "sourceRefs": [
+              "margareth-dalcolmo-s1"
+            ]
+          },
+          {
+            "id": "margareth-dalcolmo-f2",
+            "statement": "É pesquisadora sênior da Fiocruz e atua em pneumologia, doenças infecciosas e saúde pública.",
+            "sourceRefs": [
+              "margareth-dalcolmo-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma doença transmitida pelo ar acompanha a humanidade há séculos e ainda exige pesquisa, diagnóstico e tratamento.",
+            "factIds": [
+              "margareth-dalcolmo-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Grande parte de sua carreira foi dedicada à tuberculose e às doenças respiratórias.",
+            "factIds": [
+              "margareth-dalcolmo-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Na pandemia de Covid-19, tornou-se também uma das vozes científicas mais reconhecidas do país.",
+            "factIds": [
+              "margareth-dalcolmo-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Margareth Dalcolmo",
+          "summary": "Pneumologista e pesquisadora da Fiocruz com trajetória marcante em tuberculose e saúde pública.",
+          "whyItMatters": "Sua atuação conecta pesquisa clínica, políticas de saúde e comunicação científica.",
+          "sourceRefs": [
+            "margareth-dalcolmo-s1"
+          ]
+        },
+        "visualMotifs": [
+          "tuberculose",
+          "doenças respiratórias",
+          "saúde pública"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "margareth-dalcolmo-f1",
+          "statement": "Dedicou grande parte da carreira ao estudo da tuberculose, incluindo protocolos de pesquisa e tratamento.",
+          "sourceRefs": [
+            "margareth-dalcolmo-s1"
+          ]
+        },
+        {
+          "id": "margareth-dalcolmo-f2",
+          "statement": "É pesquisadora sênior da Fiocruz e atua em pneumologia, doenças infecciosas e saúde pública.",
+          "sourceRefs": [
+            "margareth-dalcolmo-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "margareth-dalcolmo-s1",
+          "label": "Fiocruz — perfil de Margareth Dalcolmo",
+          "url": "https://isi.bio.fiocruz.br/speaker/margareth-dalcolmo/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Margareth Dalcolmo",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "fabiana-corsi-zuelli",
+      "canonicalName": "Fabiana Corsi Zuelli",
+      "aliases": [],
+      "field": "Neurociência e imunopsiquiatria",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "psicose",
+          "imunologia",
+          "neurociência"
+        ],
+        "facts": [
+          {
+            "id": "fabiana-corsi-zuelli-f1",
+            "statement": "Pesquisa mecanismos celulares e imunológicos envolvidos na psicose.",
+            "sourceRefs": [
+              "fabiana-corsi-zuelli-s1"
+            ]
+          },
+          {
+            "id": "fabiana-corsi-zuelli-f2",
+            "statement": "Integra dados imunológicos e genéticos para investigar a comunicação entre sistema imune, cérebro e comportamento.",
+            "sourceRefs": [
+              "fabiana-corsi-zuelli-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "E se parte da diversidade dos transtornos psiquiátricos também pudesse ser investigada olhando para o sistema imune?",
+            "factIds": [
+              "fabiana-corsi-zuelli-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela estuda células e sinais imunológicos no sangue de pessoas com psicose.",
+            "factIds": [
+              "fabiana-corsi-zuelli-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Seu trabalho busca entender como alterações imunes periféricas se relacionam com cérebro, sintomas e comportamento.",
+            "factIds": [
+              "fabiana-corsi-zuelli-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Fabiana Corsi Zuelli",
+          "summary": "Neurocientista brasileira que investiga mecanismos imunes da psicose.",
+          "whyItMatters": "A pesquisa pode ajudar a identificar alvos biológicos para tratamentos psiquiátricos mais personalizados.",
+          "sourceRefs": [
+            "fabiana-corsi-zuelli-s1"
+          ]
+        },
+        "visualMotifs": [
+          "psicose",
+          "imunologia",
+          "neurociência"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "fabiana-corsi-zuelli-f1",
+          "statement": "Pesquisa mecanismos celulares e imunológicos envolvidos na psicose.",
+          "sourceRefs": [
+            "fabiana-corsi-zuelli-s1"
+          ]
+        },
+        {
+          "id": "fabiana-corsi-zuelli-f2",
+          "statement": "Integra dados imunológicos e genéticos para investigar a comunicação entre sistema imune, cérebro e comportamento.",
+          "sourceRefs": [
+            "fabiana-corsi-zuelli-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "fabiana-corsi-zuelli-s1",
+          "label": "University of Oxford — Fabiana Corsi Zuelli",
+          "url": "https://www.psych.ox.ac.uk/team/fabiana-corsi-zuelli",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Fabiana Corsi Zuelli",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "neuza-frazatti",
+      "canonicalName": "Neuza Frazatti",
+      "aliases": [],
+      "field": "Biotecnologia e vacinas",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "dengue",
+          "vacinas virais",
+          "biotecnologia"
+        ],
+        "facts": [
+          {
+            "id": "neuza-frazatti-f1",
+            "statement": "Liderou no Butantan o desenvolvimento de processos da vacina brasileira contra a dengue.",
+            "sourceRefs": [
+              "neuza-frazatti-s1"
+            ]
+          },
+          {
+            "id": "neuza-frazatti-f2",
+            "statement": "Implementou no Butantan tecnologia de produção de vacinas e antígenos virais em células Vero.",
+            "sourceRefs": [
+              "neuza-frazatti-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Fazer uma vacina contra dengue exige lidar ao mesmo tempo com quatro sorotipos diferentes do vírus.",
+            "factIds": [
+              "neuza-frazatti-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Sua equipe realizou centenas de experimentos para chegar a uma formulação tetravalente.",
+            "factIds": [
+              "neuza-frazatti-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela liderou no Butantan o desenvolvimento do processo produtivo da vacina brasileira contra a dengue.",
+            "factIds": [
+              "neuza-frazatti-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Neuza Frazatti",
+          "summary": "Bióloga e pesquisadora do Instituto Butantan, referência em desenvolvimento de vacinas virais.",
+          "whyItMatters": "Seu trabalho levou conhecimento de bancada a processos capazes de produzir imunizantes em escala.",
+          "sourceRefs": [
+            "neuza-frazatti-s1"
+          ]
+        },
+        "visualMotifs": [
+          "dengue",
+          "vacinas virais",
+          "biotecnologia"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "neuza-frazatti-f1",
+          "statement": "Liderou no Butantan o desenvolvimento de processos da vacina brasileira contra a dengue.",
+          "sourceRefs": [
+            "neuza-frazatti-s1"
+          ]
+        },
+        {
+          "id": "neuza-frazatti-f2",
+          "statement": "Implementou no Butantan tecnologia de produção de vacinas e antígenos virais em células Vero.",
+          "sourceRefs": [
+            "neuza-frazatti-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "neuza-frazatti-s1",
+          "label": "Instituto Butantan — Neuza Frazatti",
+          "url": "https://butantan.gov.br/noticias/40-anos-de-butantan-educadora-e-mae-de-dois-conheca-neuza-frazatti-a-cientista-brasileira-que-liderou-o-desenvolvimento-da-vacina-da-dengue",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Neuza Frazatti",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "duda-franklin",
+      "canonicalName": "Duda Franklin",
+      "aliases": [],
+      "field": "Neuroengenharia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "neuromodulação",
+          "engenharia biomédica",
+          "reabilitação"
+        ],
+        "facts": [
+          {
+            "id": "duda-franklin-f1",
+            "statement": "É neurocientista e engenheira biomédica com formação em neuroengenharia.",
+            "sourceRefs": [
+              "duda-franklin-s1"
+            ]
+          },
+          {
+            "id": "duda-franklin-f2",
+            "statement": "Cofundou a Orby e desenvolve sistemas de neuromodulação não invasiva voltados a reabilitação motora e dor.",
+            "sourceRefs": [
+              "duda-franklin-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Sinais elétricos podem ser usados para conversar com o sistema nervoso sem cirurgia.",
+            "factIds": [
+              "duda-franklin-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela uniu neurociência, hardware e software para trabalhar com neuromodulação.",
+            "factIds": [
+              "duda-franklin-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua tecnologia é voltada à recuperação de movimento e ao alívio de dor em pessoas com disfunções neurológicas.",
+            "factIds": [
+              "duda-franklin-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Duda Franklin",
+          "summary": "Neurocientista e engenheira biomédica potiguar que trabalha com neurotecnologia.",
+          "whyItMatters": "Sua trajetória mostra ciência aplicada virando tecnologia de reabilitação.",
+          "sourceRefs": [
+            "duda-franklin-s1"
+          ]
+        },
+        "visualMotifs": [
+          "neuromodulação",
+          "engenharia biomédica",
+          "reabilitação"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "duda-franklin-f1",
+          "statement": "É neurocientista e engenheira biomédica com formação em neuroengenharia.",
+          "sourceRefs": [
+            "duda-franklin-s1"
+          ]
+        },
+        {
+          "id": "duda-franklin-f2",
+          "statement": "Cofundou a Orby e desenvolve sistemas de neuromodulação não invasiva voltados a reabilitação motora e dor.",
+          "sourceRefs": [
+            "duda-franklin-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "duda-franklin-s1",
+          "label": "Forbes Under 30 — Eduarda Franklin",
+          "url": "https://forbes.com.br/under-30/2023/ciencia-educacao-u30/eduarda-franklin/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Duda Franklin",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "natalia-pasternak",
+      "canonicalName": "Natália Pasternak",
+      "aliases": [],
+      "field": "Microbiologia e divulgação científica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "microbiologia",
+          "genética bacteriana",
+          "comunicação científica"
+        ],
+        "facts": [
+          {
+            "id": "natalia-pasternak-f1",
+            "statement": "É microbiologista, com doutorado em genética bacteriana pela USP.",
+            "sourceRefs": [
+              "natalia-pasternak-s1"
+            ]
+          },
+          {
+            "id": "natalia-pasternak-f2",
+            "statement": "Preside o Instituto Questão de Ciência e atua fortemente em comunicação e defesa de políticas baseadas em evidências.",
+            "sourceRefs": [
+              "natalia-pasternak-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Nem toda afirmação que parece científica sobrevive ao teste das evidências.",
+            "factIds": [
+              "natalia-pasternak-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Sua formação é em microbiologia e genética molecular de bactérias.",
+            "factIds": [
+              "natalia-pasternak-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela levou o método científico para o debate público, especialmente em saúde e desinformação.",
+            "factIds": [
+              "natalia-pasternak-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Natália Pasternak",
+          "summary": "Microbiologista e divulgadora científica brasileira.",
+          "whyItMatters": "Seu trabalho aproxima evidência científica, políticas públicas e sociedade.",
+          "sourceRefs": [
+            "natalia-pasternak-s1"
+          ]
+        },
+        "visualMotifs": [
+          "microbiologia",
+          "genética bacteriana",
+          "comunicação científica"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "natalia-pasternak-f1",
+          "statement": "É microbiologista, com doutorado em genética bacteriana pela USP.",
+          "sourceRefs": [
+            "natalia-pasternak-s1"
+          ]
+        },
+        {
+          "id": "natalia-pasternak-f2",
+          "statement": "Preside o Instituto Questão de Ciência e atua fortemente em comunicação e defesa de políticas baseadas em evidências.",
+          "sourceRefs": [
+            "natalia-pasternak-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "natalia-pasternak-s1",
+          "label": "Instituto Questão de Ciência — Natália Pasternak",
+          "url": "https://iqc.org.br/quem-somos/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Natália Pasternak",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "viviane-dos-santos",
+      "canonicalName": "Viviane dos Santos",
+      "aliases": [],
+      "field": "Engenharia química e nanotecnologia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "catálise",
+          "nanotecnologia",
+          "engenharia química"
+        ],
+        "facts": [
+          {
+            "id": "viviane-dos-santos-f1",
+            "statement": "Formou-se em engenharia química e bioquímica e fez mestrado em engenharia química na área de nanotecnologia em Delft.",
+            "sourceRefs": [
+              "viviane-dos-santos-s1"
+            ]
+          },
+          {
+            "id": "viviane-dos-santos-f2",
+            "statement": "Desenvolveu pesquisa com catalisadores metálicos nanoestruturados envolvendo paládio e platina.",
+            "sourceRefs": [
+              "viviane-dos-santos-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Catalisadores aceleram reações e podem torná-las mais eficientes e menos poluentes.",
+            "factIds": [
+              "viviane-dos-santos-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela trabalhou com metais organizados em escala nanométrica para criar novos catalisadores.",
+            "factIds": [
+              "viviane-dos-santos-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua trajetória saiu da escola pública na Bahia e chegou à engenharia química e nanotecnologia na Holanda.",
+            "factIds": [
+              "viviane-dos-santos-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Viviane dos Santos",
+          "summary": "Engenheira química e bioquímica baiana com atuação em catálise e nanotecnologia.",
+          "whyItMatters": "Seu trabalho mostra como materiais em escala nanométrica podem alterar o desempenho de processos químicos.",
+          "sourceRefs": [
+            "viviane-dos-santos-s1"
+          ]
+        },
+        "visualMotifs": [
+          "catálise",
+          "nanotecnologia",
+          "engenharia química"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "viviane-dos-santos-f1",
+          "statement": "Formou-se em engenharia química e bioquímica e fez mestrado em engenharia química na área de nanotecnologia em Delft.",
+          "sourceRefs": [
+            "viviane-dos-santos-s1"
+          ]
+        },
+        {
+          "id": "viviane-dos-santos-f2",
+          "statement": "Desenvolveu pesquisa com catalisadores metálicos nanoestruturados envolvendo paládio e platina.",
+          "sourceRefs": [
+            "viviane-dos-santos-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "viviane-dos-santos-s1",
+          "label": "UFES LabPop — Viviane dos Santos Barbosa",
+          "url": "https://labpop.ufes.br/pt-br/viviane-dos-santos-barbosa",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Viviane dos Santos",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "helena-nader",
+      "canonicalName": "Helena Nader",
+      "aliases": [],
+      "field": "Biologia molecular e bioquímica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "glicosaminoglicanos",
+          "heparina",
+          "biologia molecular"
+        ],
+        "facts": [
+          {
+            "id": "helena-nader-f1",
+            "statement": "Sua pesquisa investiga glicosaminoglicanos, incluindo heparina, e suas aplicações biomédicas.",
+            "sourceRefs": [
+              "helena-nader-s1"
+            ]
+          },
+          {
+            "id": "helena-nader-f2",
+            "statement": "Foi a primeira mulher eleita presidente da Academia Brasileira de Ciências.",
+            "sourceRefs": [
+              "helena-nader-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Moléculas de açúcar também podem ter funções estruturais e regulatórias decisivas no organismo.",
+            "factIds": [
+              "helena-nader-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela dedicou sua pesquisa a glicosaminoglicanos, moléculas como a heparina.",
+            "factIds": [
+              "helena-nader-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Além do laboratório, tornou-se a primeira mulher a presidir a Academia Brasileira de Ciências.",
+            "factIds": [
+              "helena-nader-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Helena Nader",
+          "summary": "Biomédica, bioquímica e liderança científica brasileira.",
+          "whyItMatters": "Sua trajetória combina pesquisa molecular com décadas de defesa institucional da ciência brasileira.",
+          "sourceRefs": [
+            "helena-nader-s1"
+          ]
+        },
+        "visualMotifs": [
+          "glicosaminoglicanos",
+          "heparina",
+          "biologia molecular"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "helena-nader-f1",
+          "statement": "Sua pesquisa investiga glicosaminoglicanos, incluindo heparina, e suas aplicações biomédicas.",
+          "sourceRefs": [
+            "helena-nader-s1"
+          ]
+        },
+        {
+          "id": "helena-nader-f2",
+          "statement": "Foi a primeira mulher eleita presidente da Academia Brasileira de Ciências.",
+          "sourceRefs": [
+            "helena-nader-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "helena-nader-s1",
+          "label": "Academia Brasileira de Ciências — Helena Nader",
+          "url": "https://www.abc.org.br/2025/04/11/helena-nader-e-reeleita/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Helena Nader",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "deliane-penha",
+      "canonicalName": "Deliane Penha",
+      "aliases": [],
+      "field": "Ecologia funcional",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "ecologia amazônica",
+          "solo-planta",
+          "ecofisiologia vegetal"
+        ],
+        "facts": [
+          {
+            "id": "deliane-penha-f1",
+            "statement": "Pesquisa como espécies vegetais e suas interações respondem a fatores ambientais em ecossistemas amazônicos.",
+            "sourceRefs": [
+              "deliane-penha-s1"
+            ]
+          },
+          {
+            "id": "deliane-penha-f2",
+            "statement": "Atua com interações solo-planta e planta-patógenos e ecologia funcional.",
+            "sourceRefs": [
+              "deliane-penha-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Para entender uma floresta, não basta contar árvores: é preciso observar como elas funcionam e interagem.",
+            "factIds": [
+              "deliane-penha-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela investiga atributos das plantas e relações entre solo, vegetação e patógenos.",
+            "factIds": [
+              "deliane-penha-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Seu laboratório trabalha para entender respostas de espécies vegetais em diferentes ecossistemas amazônicos.",
+            "factIds": [
+              "deliane-penha-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Deliane Penha",
+          "summary": "Bióloga amazônida e pesquisadora em ecologia funcional.",
+          "whyItMatters": "Seu trabalho ajuda a compreender como a biodiversidade amazônica responde às condições ambientais e às interações biológicas.",
+          "sourceRefs": [
+            "deliane-penha-s1"
+          ]
+        },
+        "visualMotifs": [
+          "ecologia amazônica",
+          "solo-planta",
+          "ecofisiologia vegetal"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "deliane-penha-f1",
+          "statement": "Pesquisa como espécies vegetais e suas interações respondem a fatores ambientais em ecossistemas amazônicos.",
+          "sourceRefs": [
+            "deliane-penha-s1"
+          ]
+        },
+        {
+          "id": "deliane-penha-f2",
+          "statement": "Atua com interações solo-planta e planta-patógenos e ecologia funcional.",
+          "sourceRefs": [
+            "deliane-penha-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "deliane-penha-s1",
+          "label": "INPA — perfil de Deliane Penha",
+          "url": "https://www.gov.br/inpa/pt-br/assuntos/noticias/2026/pesquisadora-amazonida-debate-ciencia-decolonial-em-palestra-no-inpa",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Deliane Penha",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "maria-augusta-arruda",
+      "canonicalName": "Maria Augusta Arruda",
+      "aliases": [],
+      "field": "Farmacologia e biociências",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "biologia integrativa",
+          "interação hospedeiro-patógeno",
+          "descoberta de fármacos"
+        ],
+        "facts": [
+          {
+            "id": "maria-augusta-arruda-f1",
+            "statement": "Lidera o Laboratório Nacional de Biociências do CNPEM.",
+            "sourceRefs": [
+              "maria-augusta-arruda-s1"
+            ]
+          },
+          {
+            "id": "maria-augusta-arruda-f2",
+            "statement": "Sua pesquisa usa biologia integrativa em temas que incluem interação hospedeiro-patógeno e descoberta de medicamentos a partir da biodiversidade.",
+            "sourceRefs": [
+              "maria-augusta-arruda-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma descoberta em biologia pode atravessar muitas escalas até se transformar em um novo medicamento.",
+            "factIds": [
+              "maria-augusta-arruda-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela trabalha na interface entre biologia fundamental, doenças e descoberta de fármacos.",
+            "factIds": [
+              "maria-augusta-arruda-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Hoje dirige um laboratório nacional dedicado a biociências e infraestrutura científica de ponta.",
+            "factIds": [
+              "maria-augusta-arruda-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Maria Augusta Arruda",
+          "summary": "Farmacologista e pesquisadora brasileira, diretora do LNBio/CNPEM.",
+          "whyItMatters": "Sua atuação conecta pesquisa básica, biodiversidade, saúde e inovação tecnológica.",
+          "sourceRefs": [
+            "maria-augusta-arruda-s1"
+          ]
+        },
+        "visualMotifs": [
+          "biologia integrativa",
+          "interação hospedeiro-patógeno",
+          "descoberta de fármacos"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "maria-augusta-arruda-f1",
+          "statement": "Lidera o Laboratório Nacional de Biociências do CNPEM.",
+          "sourceRefs": [
+            "maria-augusta-arruda-s1"
+          ]
+        },
+        {
+          "id": "maria-augusta-arruda-f2",
+          "statement": "Sua pesquisa usa biologia integrativa em temas que incluem interação hospedeiro-patógeno e descoberta de medicamentos a partir da biodiversidade.",
+          "sourceRefs": [
+            "maria-augusta-arruda-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "maria-augusta-arruda-s1",
+          "label": "Fiocruz — entrevista com Maria Augusta Arruda",
+          "url": "https://www.boletim.plataformas.fiocruz.br/entrevista-maria-augusta-arruda-o-conhecimento-e-uma-forca-transformadora/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Maria Augusta Arruda",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "fernanda-matias",
+      "canonicalName": "Fernanda Matias",
+      "aliases": [
+        "Fernanda Maltias"
+      ],
+      "field": "Física e neurociência computacional",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "sistemas complexos",
+          "dinâmica cerebral",
+          "neurociência computacional"
+        ],
+        "facts": [
+          {
+            "id": "fernanda-matias-f1",
+            "statement": "Fernanda Selingardi Matias é professora da UFAL e pesquisa física de sistemas complexos aplicada à dinâmica cerebral.",
+            "sourceRefs": [
+              "fernanda-matias-s1"
+            ]
+          },
+          {
+            "id": "fernanda-matias-f2",
+            "statement": "Recebeu em 2022 o Prêmio Para Mulheres na Ciência L’Oréal-UNESCO-ABC na área de Física.",
+            "sourceRefs": [
+              "fernanda-matias-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "O cérebro também pode ser estudado como um sistema complexo, usando matemática e física estatística.",
+            "factIds": [
+              "fernanda-matias-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela analisa padrões de atividade cerebral, entropia e complexidade em grandes conjuntos de dados.",
+            "factIds": [
+              "fernanda-matias-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua pesquisa busca inclusive biomarcadores de envelhecimento e doença de Alzheimer.",
+            "factIds": [
+              "fernanda-matias-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Fernanda Matias",
+          "summary": "Física brasileira que aplica ferramentas de sistemas complexos à neurociência computacional.",
+          "whyItMatters": "Seu trabalho aproxima física, matemática e dados cerebrais para investigar organização e doença no sistema nervoso.",
+          "sourceRefs": [
+            "fernanda-matias-s1"
+          ]
+        },
+        "visualMotifs": [
+          "sistemas complexos",
+          "dinâmica cerebral",
+          "neurociência computacional"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "fernanda-matias-f1",
+          "statement": "Fernanda Selingardi Matias é professora da UFAL e pesquisa física de sistemas complexos aplicada à dinâmica cerebral.",
+          "sourceRefs": [
+            "fernanda-matias-s1"
+          ]
+        },
+        {
+          "id": "fernanda-matias-f2",
+          "statement": "Recebeu em 2022 o Prêmio Para Mulheres na Ciência L’Oréal-UNESCO-ABC na área de Física.",
+          "sourceRefs": [
+            "fernanda-matias-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "fernanda-matias-s1",
+          "label": "Ciência Pioneira — Fernanda Matias",
+          "url": "https://cienciapioneira.org/pesquisador/fernanda-matias/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Fernanda Maltias",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "tatiana-ometto",
+      "canonicalName": "Tatiana Ometto",
+      "aliases": [],
+      "field": "Virologia e biossegurança",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "vírus emergentes",
+          "biossegurança",
+          "microbiologia"
+        ],
+        "facts": [
+          {
+            "id": "tatiana-ometto-f1",
+            "statement": "Pesquisa vírus emergentes e reemergentes.",
+            "sourceRefs": [
+              "tatiana-ometto-s1"
+            ]
+          },
+          {
+            "id": "tatiana-ometto-f2",
+            "statement": "Atuou com patógenos em laboratórios de alta contenção BSL-3/4 e foi responsável por laboratório BSL3+ da USP.",
+            "sourceRefs": [
+              "tatiana-ometto-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Alguns vírus só podem ser estudados em laboratórios construídos para impedir que o agente saia de ambientes altamente controlados.",
+            "factIds": [
+              "tatiana-ometto-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela pesquisa vírus emergentes e reemergentes em condições de alta biossegurança.",
+            "factIds": [
+              "tatiana-ometto-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua trajetória inclui trabalho com níveis de contenção BSL-3 e BSL-4.",
+            "factIds": [
+              "tatiana-ometto-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Tatiana Ometto",
+          "summary": "Biomédica e virologista brasileira especializada em vírus emergentes e biossegurança.",
+          "whyItMatters": "Seu trabalho é parte da preparação científica necessária para responder a novas ameaças infecciosas.",
+          "sourceRefs": [
+            "tatiana-ometto-s1"
+          ]
+        },
+        "visualMotifs": [
+          "vírus emergentes",
+          "biossegurança",
+          "microbiologia"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "tatiana-ometto-f1",
+          "statement": "Pesquisa vírus emergentes e reemergentes.",
+          "sourceRefs": [
+            "tatiana-ometto-s1"
+          ]
+        },
+        {
+          "id": "tatiana-ometto-f2",
+          "statement": "Atuou com patógenos em laboratórios de alta contenção BSL-3/4 e foi responsável por laboratório BSL3+ da USP.",
+          "sourceRefs": [
+            "tatiana-ometto-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "tatiana-ometto-s1",
+          "label": "USP IEA — Tatiana Ometto",
+          "url": "https://www.iea.usp.br/pessoas/pasta-pessoat/tatiana-ometto",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Tatiana Ometto",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "liu-lin",
+      "canonicalName": "Liu Lin",
+      "aliases": [],
+      "field": "Física de aceleradores",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "aceleradores de partículas",
+          "luz síncrotron",
+          "Sirius"
+        ],
+        "facts": [
+          {
+            "id": "liu-lin-f1",
+            "statement": "Trabalhou no projeto, construção, comissionamento e operação dos aceleradores da fonte UVX.",
+            "sourceRefs": [
+              "liu-lin-s1"
+            ]
+          },
+          {
+            "id": "liu-lin-f2",
+            "statement": "Desde 2008 coordenou o projeto dos aceleradores da fonte de luz síncrotron Sirius.",
+            "sourceRefs": [
+              "liu-lin-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Para produzir uma luz capaz de investigar matéria em escala microscópica, elétrons precisam circular em aceleradores com enorme precisão.",
+            "factIds": [
+              "liu-lin-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela participou da construção e operação da primeira fonte de luz síncrotron brasileira, o UVX.",
+            "factIds": [
+              "liu-lin-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Depois coordenou o projeto dos aceleradores do Sirius, uma das maiores infraestruturas científicas do país.",
+            "factIds": [
+              "liu-lin-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Liu Lin",
+          "summary": "Física brasileira especializada em aceleradores de partículas e luz síncrotron.",
+          "whyItMatters": "Seu trabalho está literalmente na máquina que permite milhares de outros experimentos científicos.",
+          "sourceRefs": [
+            "liu-lin-s1"
+          ]
+        },
+        "visualMotifs": [
+          "aceleradores de partículas",
+          "luz síncrotron",
+          "Sirius"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "liu-lin-f1",
+          "statement": "Trabalhou no projeto, construção, comissionamento e operação dos aceleradores da fonte UVX.",
+          "sourceRefs": [
+            "liu-lin-s1"
+          ]
+        },
+        {
+          "id": "liu-lin-f2",
+          "statement": "Desde 2008 coordenou o projeto dos aceleradores da fonte de luz síncrotron Sirius.",
+          "sourceRefs": [
+            "liu-lin-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "liu-lin-s1",
+          "label": "LNLS/CNPEM — Liu Lin",
+          "url": "https://lnls.cnpem.br/organizacao/diretoria/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Liu Lin",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "maria-laura-mouzinho-leite-lopes",
+      "canonicalName": "Maria Laura Mouzinho Leite Lopes",
+      "aliases": [],
+      "field": "Matemática",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "matemática",
+          "educação matemática",
+          "instituições científicas"
+        ],
+        "facts": [
+          {
+            "id": "maria-laura-mouzinho-leite-lopes-f1",
+            "statement": "Foi uma das pioneiras da matemática brasileira e membro da Academia Brasileira de Ciências desde 1952.",
+            "sourceRefs": [
+              "maria-laura-mouzinho-leite-lopes-s1"
+            ]
+          },
+          {
+            "id": "maria-laura-mouzinho-leite-lopes-f2",
+            "statement": "Participou da construção institucional da matemática e da ciência no Brasil.",
+            "sourceRefs": [
+              "maria-laura-mouzinho-leite-lopes-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Antes de computadores resolverem milhões de operações por segundo, formar uma comunidade matemática brasileira já era um desafio científico.",
+            "factIds": [
+              "maria-laura-mouzinho-leite-lopes-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela esteve entre as primeiras mulheres a construir carreira de destaque na matemática brasileira.",
+            "factIds": [
+              "maria-laura-mouzinho-leite-lopes-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua trajetória também atravessou a criação e consolidação de instituições científicas e a educação matemática.",
+            "factIds": [
+              "maria-laura-mouzinho-leite-lopes-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Maria Laura Mouzinho Leite Lopes",
+          "summary": "Matemática pernambucana e pioneira da ciência brasileira.",
+          "whyItMatters": "Seu legado une produção matemática, formação de pesquisadores e construção institucional.",
+          "sourceRefs": [
+            "maria-laura-mouzinho-leite-lopes-s1"
+          ]
+        },
+        "visualMotifs": [
+          "matemática",
+          "educação matemática",
+          "instituições científicas"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "maria-laura-mouzinho-leite-lopes-f1",
+          "statement": "Foi uma das pioneiras da matemática brasileira e membro da Academia Brasileira de Ciências desde 1952.",
+          "sourceRefs": [
+            "maria-laura-mouzinho-leite-lopes-s1"
+          ]
+        },
+        {
+          "id": "maria-laura-mouzinho-leite-lopes-f2",
+          "statement": "Participou da construção institucional da matemática e da ciência no Brasil.",
+          "sourceRefs": [
+            "maria-laura-mouzinho-leite-lopes-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "maria-laura-mouzinho-leite-lopes-s1",
+          "label": "Academia Brasileira de Ciências — Maria Laura Mouzinho Leite Lopes",
+          "url": "https://www.abc.org.br/membro/maria-laura-mouzinho-leite-lopes/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Maria Laura Mouzinho Leite Lopes",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "sonja-ashauer",
+      "canonicalName": "Sonja Ashauer",
+      "aliases": [],
+      "field": "Física teórica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "física teórica",
+          "eletrodinâmica quântica",
+          "Cambridge"
+        ],
+        "facts": [
+          {
+            "id": "sonja-ashauer-f1",
+            "statement": "Foi a primeira brasileira a concluir doutorado em Física, em Cambridge, em 1948.",
+            "sourceRefs": [
+              "sonja-ashauer-s1"
+            ]
+          },
+          {
+            "id": "sonja-ashauer-f2",
+            "statement": "Seu doutorado foi orientado por Paul Dirac.",
+            "sourceRefs": [
+              "sonja-ashauer-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Em meados do século XX, pouquíssimas mulheres brasileiras chegavam aos centros onde a física quântica estava sendo construída.",
+            "factIds": [
+              "sonja-ashauer-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela foi para Cambridge e trabalhou sob orientação de um dos fundadores da mecânica quântica.",
+            "factIds": [
+              "sonja-ashauer-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Em 1948 tornou-se a primeira brasileira a concluir um doutorado em Física.",
+            "factIds": [
+              "sonja-ashauer-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Sonja Ashauer",
+          "summary": "Física brasileira pioneira, doutora pela Universidade de Cambridge sob orientação de Paul Dirac.",
+          "whyItMatters": "Sua trajetória abriu um precedente histórico para mulheres brasileiras na física.",
+          "sourceRefs": [
+            "sonja-ashauer-s1"
+          ]
+        },
+        "visualMotifs": [
+          "física teórica",
+          "eletrodinâmica quântica",
+          "Cambridge"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "sonja-ashauer-f1",
+          "statement": "Foi a primeira brasileira a concluir doutorado em Física, em Cambridge, em 1948.",
+          "sourceRefs": [
+            "sonja-ashauer-s1"
+          ]
+        },
+        {
+          "id": "sonja-ashauer-f2",
+          "statement": "Seu doutorado foi orientado por Paul Dirac.",
+          "sourceRefs": [
+            "sonja-ashauer-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "sonja-ashauer-s1",
+          "label": "CNPq — Pioneiras da Ciência: Sonja Ashauer",
+          "url": "https://www.gov.br/cnpq/pt-br/acesso-a-informacao/acoes-e-programas/programas/mulher-e-ciencia/pioneiras-da-ciencia-1/pioneiras-1a-edicao",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Sonja Ashauer",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "graziela-maciel-barroso",
+      "canonicalName": "Graziela Maciel Barroso",
+      "aliases": [],
+      "field": "Botânica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "taxonomia vegetal",
+          "sistemática vegetal",
+          "flora brasileira"
+        ],
+        "facts": [
+          {
+            "id": "graziela-maciel-barroso-f1",
+            "statement": "Foi pesquisadora do Jardim Botânico do Rio de Janeiro e referência na formação de botânicos.",
+            "sourceRefs": [
+              "graziela-maciel-barroso-s1"
+            ]
+          },
+          {
+            "id": "graziela-maciel-barroso-f2",
+            "statement": "Sua atuação concentrou-se em botânica sistemática e identificação da flora brasileira.",
+            "sourceRefs": [
+              "graziela-maciel-barroso-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Dar nome a uma planta exige reconhecer diferenças minúsculas entre formas, estruturas e parentescos.",
+            "factIds": [
+              "graziela-maciel-barroso-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela dedicou décadas a organizar e identificar a diversidade vegetal brasileira.",
+            "factIds": [
+              "graziela-maciel-barroso-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Seu nome tornou-se referência na sistemática vegetal e na formação de gerações de botânicos.",
+            "factIds": [
+              "graziela-maciel-barroso-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Graziela Maciel Barroso",
+          "summary": "Botânica brasileira especializada em taxonomia e sistemática vegetal.",
+          "whyItMatters": "Seu trabalho ajudou a tornar a enorme diversidade de plantas do Brasil identificável, comparável e estudável.",
+          "sourceRefs": [
+            "graziela-maciel-barroso-s1"
+          ]
+        },
+        "visualMotifs": [
+          "taxonomia vegetal",
+          "sistemática vegetal",
+          "flora brasileira"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "graziela-maciel-barroso-f1",
+          "statement": "Foi pesquisadora do Jardim Botânico do Rio de Janeiro e referência na formação de botânicos.",
+          "sourceRefs": [
+            "graziela-maciel-barroso-s1"
+          ]
+        },
+        {
+          "id": "graziela-maciel-barroso-f2",
+          "statement": "Sua atuação concentrou-se em botânica sistemática e identificação da flora brasileira.",
+          "sourceRefs": [
+            "graziela-maciel-barroso-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "graziela-maciel-barroso-s1",
+          "label": "Jardim Botânico do Rio de Janeiro / Reflora — Graziela Maciel Barroso",
+          "url": "https://ipt.jbrj.gov.br/reflora/resource?r=ub_herbarium&request_locale=en&v=1.0",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Graziela Maciel Barroso",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "marta-vannucci",
+      "canonicalName": "Marta Vannucci",
+      "aliases": [],
+      "field": "Oceanografia biológica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "manguezais",
+          "plâncton",
+          "oceanografia biológica"
+        ],
+        "facts": [
+          {
+            "id": "marta-vannucci-f1",
+            "statement": "Teve papel central na consolidação da oceanografia brasileira e dirigiu o Instituto Oceanográfico da USP.",
+            "sourceRefs": [
+              "marta-vannucci-s1"
+            ]
+          },
+          {
+            "id": "marta-vannucci-f2",
+            "statement": "Tornou-se referência internacional em manguezais e trabalhou também com plâncton e ecossistemas costeiros.",
+            "sourceRefs": [
+              "marta-vannucci-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Entre terra e mar existe um ecossistema capaz de proteger costas, abrigar espécies e armazenar carbono.",
+            "factIds": [
+              "marta-vannucci-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela começou estudando manguezais em Cananeia e tornou-se referência internacional no tema.",
+            "factIds": [
+              "marta-vannucci-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Depois dirigiu o Instituto Oceanográfico da USP e ajudou a consolidar a oceanografia no Brasil.",
+            "factIds": [
+              "marta-vannucci-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Marta Vannucci",
+          "summary": "Bióloga e oceanógrafa brasileira, pioneira nos estudos de manguezais e ciências do mar.",
+          "whyItMatters": "Seu trabalho ajudou a construir tanto conhecimento sobre ecossistemas costeiros quanto instituições de oceanografia no país.",
+          "sourceRefs": [
+            "marta-vannucci-s1"
+          ]
+        },
+        "visualMotifs": [
+          "manguezais",
+          "plâncton",
+          "oceanografia biológica"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "marta-vannucci-f1",
+          "statement": "Teve papel central na consolidação da oceanografia brasileira e dirigiu o Instituto Oceanográfico da USP.",
+          "sourceRefs": [
+            "marta-vannucci-s1"
+          ]
+        },
+        {
+          "id": "marta-vannucci-f2",
+          "statement": "Tornou-se referência internacional em manguezais e trabalhou também com plâncton e ecossistemas costeiros.",
+          "sourceRefs": [
+            "marta-vannucci-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "marta-vannucci-s1",
+          "label": "Academia Brasileira de Ciências — Marta Vannucci",
+          "url": "https://www.abc.org.br/membro/marta-vannucci/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Marta Vannucci",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "maria-deane",
+      "canonicalName": "Maria Deane",
+      "aliases": [],
+      "field": "Parasitologia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "leishmaniose",
+          "malária",
+          "doença de Chagas"
+        ],
+        "facts": [
+          {
+            "id": "maria-deane-f1",
+            "statement": "Participou de pesquisas pioneiras sobre leishmaniose visceral e outras endemias rurais.",
+            "sourceRefs": [
+              "maria-deane-s1"
+            ]
+          },
+          {
+            "id": "maria-deane-f2",
+            "statement": "Realizou estudos sobre reservatórios e transmissores da leishmaniose visceral no Ceará.",
+            "sourceRefs": [
+              "maria-deane-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Para controlar uma doença parasitária, é preciso descobrir não só o parasita, mas também quem o transmite e quais animais podem mantê-lo circulando.",
+            "factIds": [
+              "maria-deane-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela fez pesquisa de campo sobre doenças tropicais e seus vetores e reservatórios.",
+            "factIds": [
+              "maria-deane-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "No Ceará, estudou reservatórios e transmissores da leishmaniose visceral.",
+            "factIds": [
+              "maria-deane-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Maria Deane",
+          "summary": "Parasitologista brasileira que pesquisou leishmaniose, malária e outras endemias.",
+          "whyItMatters": "Seu trabalho de campo ajudou a compreender ciclos de transmissão essenciais para a saúde pública.",
+          "sourceRefs": [
+            "maria-deane-s1"
+          ]
+        },
+        "visualMotifs": [
+          "leishmaniose",
+          "malária",
+          "doença de Chagas"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "maria-deane-f1",
+          "statement": "Participou de pesquisas pioneiras sobre leishmaniose visceral e outras endemias rurais.",
+          "sourceRefs": [
+            "maria-deane-s1"
+          ]
+        },
+        {
+          "id": "maria-deane-f2",
+          "statement": "Realizou estudos sobre reservatórios e transmissores da leishmaniose visceral no Ceará.",
+          "sourceRefs": [
+            "maria-deane-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "maria-deane-s1",
+          "label": "Fiocruz/COC — Coleção Leônidas e Maria Deane",
+          "url": "https://basearch.coc.fiocruz.br/index.php/colecao-leonidas-e-maria-deane",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Maria Deane",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "maria-zelia-rouquayrol",
+      "canonicalName": "Maria Zélia Rouquayrol",
+      "aliases": [],
+      "field": "Epidemiologia e saúde pública",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "epidemiologia",
+          "saúde coletiva",
+          "vigilância epidemiológica"
+        ],
+        "facts": [
+          {
+            "id": "maria-zelia-rouquayrol-f1",
+            "statement": "Foi professora da UFC e pesquisadora em saúde pública.",
+            "sourceRefs": [
+              "maria-zelia-rouquayrol-s1"
+            ]
+          },
+          {
+            "id": "maria-zelia-rouquayrol-f2",
+            "statement": "É coautora e organizadora de Rouquayrol: Epidemiologia & Saúde, obra de referência na formação em saúde coletiva.",
+            "sourceRefs": [
+              "maria-zelia-rouquayrol-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Epidemiologia transforma casos individuais de doença em padrões que podem orientar decisões para populações inteiras.",
+            "factIds": [
+              "maria-zelia-rouquayrol-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela fez da epidemiologia uma ferramenta de pesquisa, ensino e vigilância em saúde no Ceará.",
+            "factIds": [
+              "maria-zelia-rouquayrol-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Seu sobrenome virou parte do título de uma obra usada por gerações de estudantes e profissionais de saúde.",
+            "factIds": [
+              "maria-zelia-rouquayrol-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Maria Zélia Rouquayrol",
+          "summary": "Epidemiologista brasileira ligada à UFC e à saúde pública do Ceará.",
+          "whyItMatters": "Seu trabalho ajudou a formar gerações de profissionais capazes de medir e interpretar a saúde das populações.",
+          "sourceRefs": [
+            "maria-zelia-rouquayrol-s1"
+          ]
+        },
+        "visualMotifs": [
+          "epidemiologia",
+          "saúde coletiva",
+          "vigilância epidemiológica"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "maria-zelia-rouquayrol-f1",
+          "statement": "Foi professora da UFC e pesquisadora em saúde pública.",
+          "sourceRefs": [
+            "maria-zelia-rouquayrol-s1"
+          ]
+        },
+        {
+          "id": "maria-zelia-rouquayrol-f2",
+          "statement": "É coautora e organizadora de Rouquayrol: Epidemiologia & Saúde, obra de referência na formação em saúde coletiva.",
+          "sourceRefs": [
+            "maria-zelia-rouquayrol-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "maria-zelia-rouquayrol-s1",
+          "label": "UFC — Maria Zélia Rouquayrol e Epidemiologia & Saúde",
+          "url": "https://www.ufc.br/noticias/noticias-de-2012/2919-professores-lancam-7-edicao-de-livro-sobre-epidemiologia",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Maria Zélia Rouquayrol",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "eloisa-mano",
+      "canonicalName": "Eloisa Mano",
+      "aliases": [],
+      "field": "Química de polímeros",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "polímeros",
+          "macromoléculas",
+          "materiais"
+        ],
+        "facts": [
+          {
+            "id": "eloisa-mano-f1",
+            "statement": "Criou o primeiro grupo de pesquisadores em polímeros no Brasil, em 1968.",
+            "sourceRefs": [
+              "eloisa-mano-s1"
+            ]
+          },
+          {
+            "id": "eloisa-mano-f2",
+            "statement": "Esse grupo deu origem ao Instituto de Macromoléculas da UFRJ, que hoje leva seu nome.",
+            "sourceRefs": [
+              "eloisa-mano-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Plásticos, borrachas e fibras pertencem a uma família de materiais construída por moléculas gigantes.",
+            "factIds": [
+              "eloisa-mano-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela ajudou a estabelecer no Brasil a pesquisa sistemática dessas macromoléculas.",
+            "factIds": [
+              "eloisa-mano-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "O grupo que criou em 1968 deu origem a um instituto da UFRJ que hoje leva seu nome.",
+            "factIds": [
+              "eloisa-mano-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Eloisa Mano",
+          "summary": "Química brasileira pioneira da ciência de polímeros.",
+          "whyItMatters": "Seu trabalho estruturou uma área inteira de pesquisa em materiais no país.",
+          "sourceRefs": [
+            "eloisa-mano-s1"
+          ]
+        },
+        "visualMotifs": [
+          "polímeros",
+          "macromoléculas",
+          "materiais"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "eloisa-mano-f1",
+          "statement": "Criou o primeiro grupo de pesquisadores em polímeros no Brasil, em 1968.",
+          "sourceRefs": [
+            "eloisa-mano-s1"
+          ]
+        },
+        {
+          "id": "eloisa-mano-f2",
+          "statement": "Esse grupo deu origem ao Instituto de Macromoléculas da UFRJ, que hoje leva seu nome.",
+          "sourceRefs": [
+            "eloisa-mano-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "eloisa-mano-s1",
+          "label": "UFRJ/IMA — Eloisa Biasotto Mano",
+          "url": "https://www.ima.ufrj.br/index.php/pt/docentes/103-professores-emeritos/72-eloisa-biasotto-mano",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Eloisa Mano",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "enedina-alves-marques",
+      "canonicalName": "Enedina Alves Marques",
+      "aliases": [],
+      "field": "Engenharia civil",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "engenharia civil",
+          "hidrelétricas",
+          "topografia"
+        ],
+        "facts": [
+          {
+            "id": "enedina-alves-marques-f1",
+            "statement": "Formou-se em Engenharia Civil pela UFPR em 1945 e foi a primeira engenheira negra do Brasil.",
+            "sourceRefs": [
+              "enedina-alves-marques-s1"
+            ]
+          },
+          {
+            "id": "enedina-alves-marques-f2",
+            "statement": "Atuou em obras e estudos ligados ao aproveitamento hidrelétrico no Paraná, incluindo a Usina Capivari-Cachoeira.",
+            "sourceRefs": [
+              "enedina-alves-marques-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Projetar energia e infraestrutura também depende de medir terreno, água e desníveis com precisão.",
+            "factIds": [
+              "enedina-alves-marques-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela trabalhou em obras públicas e no aproveitamento das águas de rios paranaenses.",
+            "factIds": [
+              "enedina-alves-marques-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Em 1945 tornou-se a primeira engenheira negra do Brasil.",
+            "factIds": [
+              "enedina-alves-marques-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Enedina Alves Marques",
+          "summary": "Engenheira civil paranaense e pioneira da engenharia brasileira.",
+          "whyItMatters": "Sua trajetória rompeu barreiras raciais e de gênero em uma profissão então quase exclusivamente masculina.",
+          "sourceRefs": [
+            "enedina-alves-marques-s1"
+          ]
+        },
+        "visualMotifs": [
+          "engenharia civil",
+          "hidrelétricas",
+          "topografia"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "enedina-alves-marques-f1",
+          "statement": "Formou-se em Engenharia Civil pela UFPR em 1945 e foi a primeira engenheira negra do Brasil.",
+          "sourceRefs": [
+            "enedina-alves-marques-s1"
+          ]
+        },
+        {
+          "id": "enedina-alves-marques-f2",
+          "statement": "Atuou em obras e estudos ligados ao aproveitamento hidrelétrico no Paraná, incluindo a Usina Capivari-Cachoeira.",
+          "sourceRefs": [
+            "enedina-alves-marques-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "enedina-alves-marques-s1",
+          "label": "UFPR — Enedina Alves Marques",
+          "url": "https://ufpr.br/inaugurada-placa-em-homenagem-a-enedina-alves-marques-primeira-engenheira-negra-do-pais-e-formada-na-ufpr/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Enedina Alves Marques",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "lelia-gonzalez",
+      "canonicalName": "Lélia Gonzalez",
+      "aliases": [],
+      "field": "Antropologia e filosofia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "raça e gênero",
+          "cultura brasileira",
+          "amefricanidade"
+        ],
+        "facts": [
+          {
+            "id": "lelia-gonzalez-f1",
+            "statement": "Foi filósofa e antropóloga e uma importante liderança do movimento negro brasileiro.",
+            "sourceRefs": [
+              "lelia-gonzalez-s1"
+            ]
+          },
+          {
+            "id": "lelia-gonzalez-f2",
+            "statement": "Introduziu o conceito de amefricanidade como chave para pensar a formação social e cultural das Américas.",
+            "sourceRefs": [
+              "lelia-gonzalez-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma palavra nova pode mudar a forma como enxergamos um continente inteiro.",
+            "factIds": [
+              "lelia-gonzalez-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela analisou como raça, gênero, cultura e linguagem se cruzam na formação brasileira.",
+            "factIds": [
+              "lelia-gonzalez-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Na década de 1980, formulou a ideia de amefricanidade para destacar as presenças negras e indígenas nas Américas.",
+            "factIds": [
+              "lelia-gonzalez-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Lélia Gonzalez",
+          "summary": "Filósofa e antropóloga brasileira, referência do pensamento negro e feminista.",
+          "whyItMatters": "Sua obra criou conceitos que seguem sendo usados para interpretar raça, gênero e cultura no Brasil e nas Américas.",
+          "sourceRefs": [
+            "lelia-gonzalez-s1"
+          ]
+        },
+        "visualMotifs": [
+          "raça e gênero",
+          "cultura brasileira",
+          "amefricanidade"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "lelia-gonzalez-f1",
+          "statement": "Foi filósofa e antropóloga e uma importante liderança do movimento negro brasileiro.",
+          "sourceRefs": [
+            "lelia-gonzalez-s1"
+          ]
+        },
+        {
+          "id": "lelia-gonzalez-f2",
+          "statement": "Introduziu o conceito de amefricanidade como chave para pensar a formação social e cultural das Américas.",
+          "sourceRefs": [
+            "lelia-gonzalez-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "lelia-gonzalez-s1",
+          "label": "Governo do Ceará / Pinacoteca — Lélia Gonzalez e amefricanidade",
+          "url": "https://www.ce.gov.br/2025/11/14/no-dia-da-consciencia-negra-pinacoteca-recebe-raquel-barreto-para-aula-aberta-sobre-lelia-gonzalez-e-a-amefricanidade/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Lélia Gonzalez",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "rosaly-lopes",
+      "canonicalName": "Rosaly Lopes",
+      "aliases": [],
+      "field": "Geologia planetária",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "vulcanologia",
+          "Io",
+          "geologia planetária"
+        ],
+        "facts": [
+          {
+            "id": "rosaly-lopes-f1",
+            "statement": "No projeto Galileo, foi responsável por observações da lua vulcânica Io entre 1996 e 2001.",
+            "sourceRefs": [
+              "rosaly-lopes-s1"
+            ]
+          },
+          {
+            "id": "rosaly-lopes-f2",
+            "statement": "Descobriu 71 vulcões ativos em Io usando dados do espectrômetro infravermelho da missão Galileo.",
+            "sourceRefs": [
+              "rosaly-lopes-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Existe um mundo no Sistema Solar onde vulcões lançam lava muito além da Terra.",
+            "factIds": [
+              "rosaly-lopes-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela usou uma sonda espacial e luz infravermelha para procurar atividade vulcânica em uma lua de Júpiter.",
+            "factIds": [
+              "rosaly-lopes-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Seu trabalho identificou 71 vulcões ativos em Io.",
+            "factIds": [
+              "rosaly-lopes-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Rosaly Lopes",
+          "summary": "Geóloga planetária brasileira do Jet Propulsion Laboratory da NASA.",
+          "whyItMatters": "Suas descobertas ajudaram a revelar Io como um dos mundos vulcanicamente mais extremos conhecidos.",
+          "sourceRefs": [
+            "rosaly-lopes-s1"
+          ]
+        },
+        "visualMotifs": [
+          "vulcanologia",
+          "Io",
+          "geologia planetária"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "rosaly-lopes-f1",
+          "statement": "No projeto Galileo, foi responsável por observações da lua vulcânica Io entre 1996 e 2001.",
+          "sourceRefs": [
+            "rosaly-lopes-s1"
+          ]
+        },
+        {
+          "id": "rosaly-lopes-f2",
+          "statement": "Descobriu 71 vulcões ativos em Io usando dados do espectrômetro infravermelho da missão Galileo.",
+          "sourceRefs": [
+            "rosaly-lopes-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "rosaly-lopes-s1",
+          "label": "NASA/JPL — Rosaly Lopes",
+          "url": "https://science.jpl.nasa.gov/people/Lopes/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Rosaly Lopes",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "thaisa-storchi-bergmann",
+      "canonicalName": "Thaisa Storchi Bergmann",
+      "aliases": [],
+      "field": "Astrofísica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "buracos negros supermassivos",
+          "núcleos ativos de galáxias",
+          "astrofísica extragaláctica"
+        ],
+        "facts": [
+          {
+            "id": "thaisa-storchi-bergmann-f1",
+            "statement": "Pesquisa buracos negros supermassivos e núcleos ativos de galáxias.",
+            "sourceRefs": [
+              "thaisa-storchi-bergmann-s1"
+            ]
+          },
+          {
+            "id": "thaisa-storchi-bergmann-f2",
+            "statement": "Foi uma das cinco laureadas do prêmio L’Oréal-UNESCO For Women in Science de 2015.",
+            "sourceRefs": [
+              "thaisa-storchi-bergmann-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "No centro de muitas galáxias existe um objeto com milhões ou bilhões de vezes a massa do Sol.",
+            "factIds": [
+              "thaisa-storchi-bergmann-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela observa o gás e a radiação ao redor desses buracos negros supermassivos para entender como eles se alimentam.",
+            "factIds": [
+              "thaisa-storchi-bergmann-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Em 2015, seu trabalho foi reconhecido pelo prêmio internacional L’Oréal-UNESCO Para Mulheres na Ciência.",
+            "factIds": [
+              "thaisa-storchi-bergmann-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Thaisa Storchi Bergmann",
+          "summary": "Astrofísica brasileira referência em buracos negros supermassivos e núcleos ativos de galáxias.",
+          "whyItMatters": "Seu trabalho ajuda a explicar a relação entre buracos negros e a evolução das galáxias que os abrigam.",
+          "sourceRefs": [
+            "thaisa-storchi-bergmann-s1"
+          ]
+        },
+        "visualMotifs": [
+          "buracos negros supermassivos",
+          "núcleos ativos de galáxias",
+          "astrofísica extragaláctica"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "thaisa-storchi-bergmann-f1",
+          "statement": "Pesquisa buracos negros supermassivos e núcleos ativos de galáxias.",
+          "sourceRefs": [
+            "thaisa-storchi-bergmann-s1"
+          ]
+        },
+        {
+          "id": "thaisa-storchi-bergmann-f2",
+          "statement": "Foi uma das cinco laureadas do prêmio L’Oréal-UNESCO For Women in Science de 2015.",
+          "sourceRefs": [
+            "thaisa-storchi-bergmann-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "thaisa-storchi-bergmann-s1",
+          "label": "UNESCO — laureadas For Women in Science 2015",
+          "url": "https://www.unesco.org/en/articles/female-scientists-who-are-changing-world",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Thaisa Storchi Bergmann",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "suzana-herculano-houzel",
+      "canonicalName": "Suzana Herculano-Houzel",
+      "aliases": [],
+      "field": "Neurociência",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "neuroanatomia comparada",
+          "neurônios",
+          "evolução cerebral"
+        ],
+        "facts": [
+          {
+            "id": "suzana-herculano-houzel-f1",
+            "statement": "Desenvolveu uma abordagem de contagem celular conhecida como fracionador isotrópico.",
+            "sourceRefs": [
+              "suzana-herculano-houzel-s1"
+            ]
+          },
+          {
+            "id": "suzana-herculano-houzel-f2",
+            "statement": "Seus estudos estimaram que o cérebro humano tem em média cerca de 86 bilhões de neurônios.",
+            "sourceRefs": [
+              "suzana-herculano-houzel-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Por décadas, livros repetiram um número redondo para a quantidade de neurônios do cérebro humano sem uma medição direta convincente.",
+            "factIds": [
+              "suzana-herculano-houzel-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela transformou tecido cerebral em uma suspensão homogênea para tornar possível contar núcleos celulares.",
+            "factIds": [
+              "suzana-herculano-houzel-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "O resultado derrubou o famoso número de 100 bilhões: a média encontrada foi de cerca de 86 bilhões de neurônios.",
+            "factIds": [
+              "suzana-herculano-houzel-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Suzana Herculano-Houzel",
+          "summary": "Neurocientista brasileira conhecida por criar uma nova forma de contar células no cérebro.",
+          "whyItMatters": "Seu método mudou números básicos da neurociência e abriu comparações quantitativas entre cérebros de diferentes espécies.",
+          "sourceRefs": [
+            "suzana-herculano-houzel-s1"
+          ]
+        },
+        "visualMotifs": [
+          "neuroanatomia comparada",
+          "neurônios",
+          "evolução cerebral"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "suzana-herculano-houzel-f1",
+          "statement": "Desenvolveu uma abordagem de contagem celular conhecida como fracionador isotrópico.",
+          "sourceRefs": [
+            "suzana-herculano-houzel-s1"
+          ]
+        },
+        {
+          "id": "suzana-herculano-houzel-f2",
+          "statement": "Seus estudos estimaram que o cérebro humano tem em média cerca de 86 bilhões de neurônios.",
+          "sourceRefs": [
+            "suzana-herculano-houzel-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "suzana-herculano-houzel-s1",
+          "label": "BrainFacts / Society for Neuroscience — Suzana Herculano-Houzel",
+          "url": "https://www.brainfacts.org/in-the-lab/meet-the-researcher/2018/how-many-neurons-are-in-the-brain-120418",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Suzana Herculano-Houzel",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "lygia-da-veiga-pereira",
+      "canonicalName": "Lygia da Veiga Pereira",
+      "aliases": [],
+      "field": "Genética",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "células-tronco",
+          "genética humana",
+          "biologia molecular"
+        ],
+        "facts": [
+          {
+            "id": "lygia-da-veiga-pereira-f1",
+            "statement": "Em 2008, seu grupo anunciou a obtenção da primeira linhagem brasileira de células-tronco embrionárias humanas, a BR-1.",
+            "sourceRefs": [
+              "lygia-da-veiga-pereira-s1"
+            ]
+          },
+          {
+            "id": "lygia-da-veiga-pereira-f2",
+            "statement": "A linhagem permitiu desenvolver competência técnica nacional para obtenção e manutenção dessas células.",
+            "sourceRefs": [
+              "lygia-da-veiga-pereira-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma célula embrionária pode se multiplicar e dar origem a muitos tipos de tecido — mas mantê-la em laboratório exige domínio técnico extraordinário.",
+            "factIds": [
+              "lygia-da-veiga-pereira-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Seu grupo trabalhou com centenas de embriões congelados para estabelecer uma linhagem estável.",
+            "factIds": [
+              "lygia-da-veiga-pereira-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Em 2008 anunciou a BR-1, primeira linhagem brasileira de células-tronco embrionárias humanas.",
+            "factIds": [
+              "lygia-da-veiga-pereira-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Lygia da Veiga Pereira",
+          "summary": "Geneticista brasileira e pesquisadora da USP.",
+          "whyItMatters": "A BR-1 reduziu a dependência de linhagens importadas e ampliou a capacidade brasileira de pesquisa com células-tronco.",
+          "sourceRefs": [
+            "lygia-da-veiga-pereira-s1"
+          ]
+        },
+        "visualMotifs": [
+          "células-tronco",
+          "genética humana",
+          "biologia molecular"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "lygia-da-veiga-pereira-f1",
+          "statement": "Em 2008, seu grupo anunciou a obtenção da primeira linhagem brasileira de células-tronco embrionárias humanas, a BR-1.",
+          "sourceRefs": [
+            "lygia-da-veiga-pereira-s1"
+          ]
+        },
+        {
+          "id": "lygia-da-veiga-pereira-f2",
+          "statement": "A linhagem permitiu desenvolver competência técnica nacional para obtenção e manutenção dessas células.",
+          "sourceRefs": [
+            "lygia-da-veiga-pereira-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "lygia-da-veiga-pereira-s1",
+          "label": "Pesquisa FAPESP — Lygia da Veiga Pereira e BR-1",
+          "url": "https://revistapesquisa.fapesp.br/uma-linhagem-bem-enraizada/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Lygia da Veiga Pereira",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "celina-turchi",
+      "canonicalName": "Celina Turchi",
+      "aliases": [],
+      "field": "Epidemiologia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "zika",
+          "microcefalia",
+          "epidemiologia de campo"
+        ],
+        "facts": [
+          {
+            "id": "celina-turchi-f1",
+            "statement": "Coordenou pesquisa em Pernambuco sobre a associação entre infecção por zika e microcefalia.",
+            "sourceRefs": [
+              "celina-turchi-s1"
+            ]
+          },
+          {
+            "id": "celina-turchi-f2",
+            "statement": "Foi incluída na seleção Nature’s 10 de 2016 pelo impacto de seu trabalho durante a epidemia de zika.",
+            "sourceRefs": [
+              "celina-turchi-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Em 2015, médicos no Nordeste começaram a perceber um aumento incomum de bebês nascendo com microcefalia.",
+            "factIds": [
+              "celina-turchi-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Era preciso descobrir rapidamente se o surto tinha relação com o vírus zika.",
+            "factIds": [
+              "celina-turchi-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Ela coordenou em Pernambuco uma investigação epidemiológica que ajudou a estabelecer essa associação.",
+            "factIds": [
+              "celina-turchi-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Celina Turchi",
+          "summary": "Epidemiologista brasileira da Fiocruz Pernambuco, protagonista da resposta científica à epidemia de zika.",
+          "whyItMatters": "Seu trabalho mostrou como epidemiologia rápida e rigorosa pode responder a uma emergência de saúde pública.",
+          "sourceRefs": [
+            "celina-turchi-s1"
+          ]
+        },
+        "visualMotifs": [
+          "zika",
+          "microcefalia",
+          "epidemiologia de campo"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "celina-turchi-f1",
+          "statement": "Coordenou pesquisa em Pernambuco sobre a associação entre infecção por zika e microcefalia.",
+          "sourceRefs": [
+            "celina-turchi-s1"
+          ]
+        },
+        {
+          "id": "celina-turchi-f2",
+          "statement": "Foi incluída na seleção Nature’s 10 de 2016 pelo impacto de seu trabalho durante a epidemia de zika.",
+          "sourceRefs": [
+            "celina-turchi-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "celina-turchi-s1",
+          "label": "Fiocruz/Fiotec — Celina Turchi e zika",
+          "url": "https://www.fiotec.fiocruz.br/pt/noticias/projetos/pesquisa-realizada-pela-fiocruz-pe-recebe-premio-peter-murany-e-prova-como-o-estudo-impactou-a-medicina",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Celina Turchi",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "marcelle-soares-santos",
+      "canonicalName": "Marcelle Soares-Santos",
+      "aliases": [],
+      "field": "Astrofísica e cosmologia",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "ondas gravitacionais",
+          "energia escura",
+          "estrelas de nêutrons"
+        ],
+        "facts": [
+          {
+            "id": "marcelle-soares-santos-f1",
+            "statement": "Coordena trabalho que usa a Dark Energy Camera para procurar contrapartidas ópticas de eventos de ondas gravitacionais.",
+            "sourceRefs": [
+              "marcelle-soares-santos-s1"
+            ]
+          },
+          {
+            "id": "marcelle-soares-santos-f2",
+            "statement": "Em 2017, sua equipe esteve entre as primeiras a observar a luz produzida após uma colisão de duas estrelas de nêutrons detectada por LIGO/Virgo.",
+            "sourceRefs": [
+              "marcelle-soares-santos-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Ondas gravitacionais fazem o espaço-tempo vibrar, mas descobrir de onde vieram também pode exigir encontrar um ponto de luz no céu.",
+            "factIds": [
+              "marcelle-soares-santos-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela ajudou a conectar detectores de ondas gravitacionais a uma das câmeras astronômicas mais poderosas do mundo.",
+            "factIds": [
+              "marcelle-soares-santos-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Em 2017, sua equipe observou a contraparte luminosa de uma colisão de estrelas de nêutrons.",
+            "factIds": [
+              "marcelle-soares-santos-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Marcelle Soares-Santos",
+          "summary": "Astrofísica brasileira que trabalha com cosmologia, energia escura e astronomia de ondas gravitacionais.",
+          "whyItMatters": "Seu trabalho ajuda a combinar diferentes mensageiros do Universo para estudar eventos extremos e cosmologia.",
+          "sourceRefs": [
+            "marcelle-soares-santos-s1"
+          ]
+        },
+        "visualMotifs": [
+          "ondas gravitacionais",
+          "energia escura",
+          "estrelas de nêutrons"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "marcelle-soares-santos-f1",
+          "statement": "Coordena trabalho que usa a Dark Energy Camera para procurar contrapartidas ópticas de eventos de ondas gravitacionais.",
+          "sourceRefs": [
+            "marcelle-soares-santos-s1"
+          ]
+        },
+        {
+          "id": "marcelle-soares-santos-f2",
+          "statement": "Em 2017, sua equipe esteve entre as primeiras a observar a luz produzida após uma colisão de duas estrelas de nêutrons detectada por LIGO/Virgo.",
+          "sourceRefs": [
+            "marcelle-soares-santos-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "marcelle-soares-santos-s1",
+          "label": "Fermilab — observação da colisão de estrelas de nêutrons",
+          "url": "https://news.fnal.gov/2017/10/scientists-spot-explosive-counterpart-ligovirgos-latest-gravitational-waves/",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Marcelle Soares-Santos",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "luciana-gatti",
+      "canonicalName": "Luciana Gatti",
+      "aliases": [],
+      "field": "Química atmosférica",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [
+          "ciclo do carbono",
+          "Amazônia",
+          "gases de efeito estufa"
+        ],
+        "facts": [
+          {
+            "id": "luciana-gatti-f1",
+            "statement": "Liderou um programa de medições atmosféricas por avião em quatro regiões da Amazônia entre 2010 e 2018.",
+            "sourceRefs": [
+              "luciana-gatti-s1"
+            ]
+          },
+          {
+            "id": "luciana-gatti-f2",
+            "statement": "O estudo publicado na Nature em 2021 mostrou emissões maiores no leste amazônico e identificou o sudeste da Amazônia como fonte líquida de carbono para a atmosfera.",
+            "sourceRefs": [
+              "luciana-gatti-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Para saber se uma floresta absorve ou libera carbono, pesquisadores podem medir o ar acima dela repetidamente durante anos.",
+            "factIds": [
+              "luciana-gatti-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Sua equipe realizou centenas de perfis verticais de gases atmosféricos usando aviões sobre a Amazônia.",
+            "factIds": [
+              "luciana-gatti-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Os dados mostraram forte contraste regional e revelaram o sudeste amazônico como fonte líquida de carbono.",
+            "factIds": [
+              "luciana-gatti-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Luciana Gatti",
+          "summary": "Química atmosférica brasileira e pesquisadora do INPE, especialista no balanço de carbono da Amazônia.",
+          "whyItMatters": "Seu trabalho fornece medições diretas para entender como desmatamento e mudança climática estão alterando o papel da Amazônia no clima.",
+          "sourceRefs": [
+            "luciana-gatti-s1"
+          ]
+        },
+        "visualMotifs": [
+          "ciclo do carbono",
+          "Amazônia",
+          "gases de efeito estufa"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 4
+      },
+      "facts": [
+        {
+          "id": "luciana-gatti-f1",
+          "statement": "Liderou um programa de medições atmosféricas por avião em quatro regiões da Amazônia entre 2010 e 2018.",
+          "sourceRefs": [
+            "luciana-gatti-s1"
+          ]
+        },
+        {
+          "id": "luciana-gatti-f2",
+          "statement": "O estudo publicado na Nature em 2021 mostrou emissões maiores no leste amazônico e identificou o sudeste da Amazônia como fonte líquida de carbono para a atmosfera.",
+          "sourceRefs": [
+            "luciana-gatti-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "luciana-gatti-s1",
+          "label": "Nature — Amazonia as a carbon source linked to deforestation and climate change",
+          "url": "https://www.nature.com/articles/s41586-021-03629-6",
+          "type": "reference"
+        }
+      ],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Luciana Gatti",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    }
+  ],
+  "pendingIdentityReview": [
+    {
+      "id": "neusa-frutuoso",
+      "canonicalName": "Neusa Frutuoso",
+      "aliases": [],
+      "field": "Identidade a confirmar",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": null
+      },
+      "science": {
+        "researchAreas": [],
+        "facts": []
+      },
+      "experience": {
+        "hints": [],
+        "reveal": {
+          "headline": "Neusa Frutuoso",
+          "summary": "Nome mantido no catálogo de curadoria, mas a identidade científica ainda não foi confirmada por fonte confiável.",
+          "whyItMatters": "Não publicar esta ficha até confirmar quem é a pesquisadora pretendida.",
+          "sourceRefs": []
+        },
+        "visualMotifs": [],
+        "recognitionLevel": null,
+        "difficulty": null,
+        "experiencePotential": null
+      },
+      "facts": [],
+      "sources": [],
+      "photo": {
+        "src": null,
+        "alt": "Retrato de Neusa Frutuoso",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "identity-review"
     }
   ]
 }

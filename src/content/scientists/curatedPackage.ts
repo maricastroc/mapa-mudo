@@ -133,11 +133,18 @@ function parseFeatured(value: unknown, path: string): FeaturedScientist {
   };
 }
 
+function versionText(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (typeof value === "string" && value.trim() !== "") return value.trim();
+  if (value === undefined || value === null) return "0";
+  throw new CurationError("featured.json.version: expected a number or text");
+}
+
 export function parseCuratedPackage(raw: unknown) {
   const root = object(raw, "featured.json");
   const policy = object(root.reviewPolicy, "featured.json.reviewPolicy");
   const info: CurationInfo = {
-    version: optionalNumber(root.version, "featured.json.version") ?? 0,
+    version: versionText(root.version),
     theme: text(root.theme, "featured.json.theme"),
     status: text(root.status, "featured.json.status"),
     reviewPolicy: {
@@ -195,7 +202,7 @@ export function curationProblems(featured: FeaturedScientist[], manifest: ImageM
     if (s.experience.reveal.sourceRefs.length === 0) problems.push(`${s.id}: reveal references no source`);
     for (const ref of s.experience.reveal.sourceRefs) if (!sources.has(ref)) problems.push(`${s.id}: reveal references missing source ${ref}`);
     const entry = byManifest.get(s.id);
-    if (!entry) problems.push(`${s.id}: missing from image manifest`);
+    if (!entry && s.photo?.src) problems.push(`${s.id}: photo in use but missing from image manifest`);
     if (s.photo && entry && s.photo.usageStatus !== entry.usageStatus) {
       problems.push(`${s.id}: photo status ${s.photo.usageStatus} differs from manifest ${entry.usageStatus}`);
     }

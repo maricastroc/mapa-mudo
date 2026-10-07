@@ -13,7 +13,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const publicDir = join(root, "public");
 
 test("the curated package parses and has no referential problems", () => {
-  assert.equal(FEATURED.length, 20);
+  assert.equal(FEATURED.length, rawFeatured.featuredScientists.length);
   assert.deepEqual(curationProblems(FEATURED, IMAGE_MANIFEST), []);
 });
 
@@ -96,5 +96,13 @@ test("components, engine and layout never mention a featured scientist by name",
       const source = readFileSync(join(folder, file), "utf8");
       for (const name of names) assert.equal(source.includes(name), false, `${file} mentions ${name}`);
     }
+  }
+});
+
+test("names still pending identity review never reach the map or the discovery", () => {
+  const pending = (rawFeatured as { pendingIdentityReview?: { id: string }[] }).pendingIdentityReview ?? [];
+  for (const p of pending) {
+    assert.equal(FEATURED.some((s) => s.id === p.id), false, p.id);
+    assert.equal(CATALOG.known.some((s) => s.id === p.id), false, p.id);
   }
 });

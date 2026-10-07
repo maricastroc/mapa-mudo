@@ -103,7 +103,7 @@ export type ImageManifestEntry = {
 };
 
 export type CurationInfo = {
-  version: number;
+  version: string;
   theme: string;
   status: string;
   reviewPolicy: { meaning: string; institutionalApprovalRequired: boolean };
