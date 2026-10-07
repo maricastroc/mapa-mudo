@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type RefObject } from "react";
 import type { ScientistProfile } from "@/content/scientists/profile";
-import { PHOTO_CLASS } from "./PortraitPhoto";
+import { markPhotoMissing, PHOTO_CLASS, useAvailablePhoto } from "./PortraitPhoto";
 import { portraitPlacement } from "./scenes";
 import type { Screen } from "./screen";
 import { widestWordInEm } from "./typography";
@@ -215,12 +215,13 @@ function ProfileBody({ profile }: { profile: ScientistProfile }) {
 }
 
 function CompactPortrait({ portrait }: { portrait: ScientistProfile["portrait"] }) {
+  const src = useAvailablePhoto(portrait?.src);
   return (
     <div className="relative size-[104px] shrink-0">
       <span aria-hidden="true" className="absolute -inset-[9px] rounded-full border-[1.5px] border-dashed border-accent" />
       <div className="relative size-full overflow-hidden rounded-full border-2 border-ink bg-paper">
-        {portrait?.src ? (
-          <Image src={portrait.src} alt={portrait.alt} fill sizes="112px" className={PHOTO_CLASS} />
+        {portrait && src ? (
+          <Image src={src} alt={portrait.alt} fill sizes="112px" className={PHOTO_CLASS} onError={() => markPhotoMissing(src)} />
         ) : (
           <svg aria-hidden="true" viewBox="0 0 100 100" className="size-full">
             <g fill="none" stroke="var(--terrain-line-index)" strokeWidth={1.2}>

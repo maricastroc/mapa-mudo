@@ -118,7 +118,7 @@ test("the sheet holds 50 scientists with every summit at least the minimum spaci
   const points = sheetPoints(big, EMPTY_SHEET, participations);
   assert.equal(points.length, 50);
   for (const p of points) {
-    const underTitle = p.x <= 420 && p.y <= 260;
+    const underTitle = p.x <= 500 && p.y <= 310;
     const underAction = p.x <= 420 && p.y >= 770;
     assert.equal(underTitle || underAction, false, `${p.key} sits under the map's title block or action at ${p.x.toFixed(0)},${p.y.toFixed(0)}`);
   }

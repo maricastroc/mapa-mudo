@@ -25,8 +25,10 @@ export const SCALE_STOPS = [
   { z: 4096, scale: 1, stage: "pessoa" },
 ] as const;
 
+export const LEVELS_PER_MENTION = 8;
+
 export function toFieldPoint(p: SheetPoint) {
-  return { id: p.scientistId ?? p.key, x: p.x, y: p.y, mentions: p.mentions };
+  return { id: p.scientistId ?? p.key, x: p.x, y: p.y, mentions: p.mentions * LEVELS_PER_MENTION };
 }
 
 export function discoveryGeometry(
@@ -74,6 +76,7 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
     settle: 0,
     settleFrom: null,
     highlightSettles: false,
+    minInterval: 0,
     ...scene,
   };
 }
@@ -104,6 +107,8 @@ export const NEW_CONTOUR_RADIUS = 112;
 export const CONTRIBUTION_TIMING = { growth: 2600, growthFor: 1800, settle: 5900, settleFor: 1300 };
 
 export const COLLECTIVE_SETTLE = { delay: 4200, duration: 1600 };
+
+const SHEET_MIN_INTERVAL = LEVELS_PER_MENTION;
 
 export function contributionZoom(ringRadius: number) {
   return Math.min(80, Math.max(2.5, NEW_CONTOUR_RADIUS / Math.max(ringRadius, 1e-3)));
@@ -156,11 +161,17 @@ export function sceneFor(
   const step: Step = state.step;
   switch (step) {
     case "opening":
-      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 900, 0) });
+      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 900, 0), minInterval: SHEET_MIN_INTERVAL });
       timings = { camera: t(0, 2600), lens: t(0, 500), portrait: t(0, 1400), strata: NO_TIMING, intervalLock: t(0, 1200) };
       break;
     case "noName":
-      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 110, 1), lensInk: 0.5 });
+      scene = withDefaults({
+        ...fixed,
+        camera: sheet,
+        lens: circle(summitOnScreen(), 110, 1),
+        lensInk: 0.5,
+        minInterval: SHEET_MIN_INTERVAL,
+      });
       timings = { lens: t(350, 1300), lensInk: t(900, 800) };
       break;
     case "clue1": {
@@ -235,7 +246,7 @@ export function sceneFor(
       break;
     }
     case "askAgain":
-      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 70, 0) });
+      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 70, 0), minInterval: SHEET_MIN_INTERVAL });
       timings = {
         camera: t(250, 3000),
         portrait: t(0, 1500),
@@ -258,7 +269,7 @@ export function sceneFor(
         camera: camera(summit, contributionZoom(ring), a),
         lens: circle(a, 120, 0),
         intervalLock: 1,
-        lockedInterval: 0,
+        lockedInterval: Math.log2(LEVELS_PER_MENTION),
         highlight: id,
         newContour: id,
         settle: 1,
@@ -284,6 +295,7 @@ export function sceneFor(
         settle: 1,
         settleFrom: 0,
         highlightSettles: true,
+        minInterval: SHEET_MIN_INTERVAL,
       });
       timings = {
         camera: t(0, 2800),

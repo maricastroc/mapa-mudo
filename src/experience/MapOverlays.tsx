@@ -9,9 +9,9 @@ import { cellExtremes, traceContours } from "@/map/contours";
 import { MapAnchor, useMapView } from "@/map/MapCanvas";
 import { toScreen, type Camera } from "@/map/mapRenderer";
 import type { SheetPoint } from "@/participation/sheetLayout";
-import { PHOTO_CLASS } from "./PortraitPhoto";
+import { markPhotoMissing, PHOTO_CLASS, useAvailablePhoto } from "./PortraitPhoto";
 import { labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
-import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
+import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, toFieldPoint, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { ArrowIcon, TriangleMarker } from "./ui";
 
@@ -20,7 +20,7 @@ const PORTRAIT_TOOLTIP = "portrait-name";
 
 export function mapPosition(field: TerrainField, p: SheetPoint) {
   if (!p.scientistId || p.mentions <= 0) return { x: p.x, y: p.y };
-  return field.summit({ id: p.scientistId, x: p.x, y: p.y, mentions: p.mentions });
+  return field.summit(toFieldPoint(p));
 }
 
 function visible(on: boolean) {
@@ -406,6 +406,7 @@ export function PortraitMedallion({
   onOpen: () => void;
 }) {
   const paths = usePortraitContourPaths(field);
+  const src = useAvailablePhoto(photo?.src);
   const active = step === "askAgain";
   return (
     <div aria-hidden={!active} inert={!active} className={visible(active)}>
@@ -423,9 +424,9 @@ export function PortraitMedallion({
             aria-hidden="true"
             className="absolute -inset-[7px] rounded-full border-[1.5px] border-dashed border-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
           />
-          {photo?.src ? (
+          {src ? (
             <span className="relative block size-[calc(var(--u)*84px)] overflow-hidden rounded-full border-2 border-accent bg-paper">
-              <Image src={photo.src} alt="" fill sizes="96px" className={PHOTO_CLASS} />
+              <Image src={src} alt="" fill sizes="96px" className={PHOTO_CLASS} onError={() => markPhotoMissing(src)} />
             </span>
           ) : (
             <svg viewBox="0 0 100 100" className="block size-[calc(var(--u)*84px)] rounded-full border-2 border-accent bg-paper">
@@ -474,19 +475,20 @@ export function SummitPortrait({
   point: SheetPoint | undefined;
   photo: ScientistPhoto | null;
 }) {
+  const src = useAvailablePhoto(photo?.src);
   if (!point || !point.scientistId) return null;
   const summit = mapPosition(field, point);
   const active = step === "nameSaid";
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={summit.x} y={summit.y}>
-        {photo?.src ? (
+        {src ? (
           <span
             key={active ? point.key : "idle"}
             className="fade-in absolute block size-[calc(var(--u)*88px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-2 border-ink bg-paper"
             style={{ animationDelay: "900ms" }}
           >
-            <Image src={photo.src} alt="" fill sizes="96px" className={PHOTO_CLASS} />
+            <Image src={src} alt="" fill sizes="96px" className={PHOTO_CLASS} onError={() => markPhotoMissing(src)} />
           </span>
         ) : (
           <span className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[7px]">
@@ -526,7 +528,7 @@ export function SaidNameLabel({
   if (!point || !point.name || !point.scientistId) return null;
   const summit = mapPosition(field, point);
   const mentions = point.mentions;
-  const { elongation } = field.summit({ id: point.scientistId, x: point.x, y: point.y, mentions });
+  const { elongation } = field.summit(toFieldPoint(point));
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={summit.x} y={summit.y}>

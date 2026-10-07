@@ -28,7 +28,7 @@ import {
   lensVariantFor,
 } from "./MapOverlays";
 import { PLANE_LABELS, PlaneContent, mapDescription, type Commands, type PlaneContext } from "./Planes";
-import { discoveryGeometry, restCameraFor, sceneFor, toFieldPoint } from "./scenes";
+import { discoveryGeometry, LEVELS_PER_MENTION, restCameraFor, sceneFor, toFieldPoint } from "./scenes";
 import { useReducedMotion, useScreen } from "./screen";
 import { collectiveObstacles } from "./collectiveLayout";
 import { Credits } from "./Credits";
@@ -72,7 +72,7 @@ function LiveExperience() {
   const screen = useScreen();
   const reducedMotion = useReducedMotion();
   const [state, dispatch] = useReducer(EXPERIENCE.reduce, undefined, restoredState);
-  const [field] = useState(() => new TerrainField(initialFieldPoints(INITIAL_PARTICIPATIONS)));
+  const [field] = useState(() => new TerrainField(initialFieldPoints(INITIAL_PARTICIPATIONS), LEVELS_PER_MENTION));
   const points = useMemo(() => sheetPoints(CATALOG, SHEET_LAYOUT, state.participations), [state.participations]);
   const discovery = useMemo(
     () =>

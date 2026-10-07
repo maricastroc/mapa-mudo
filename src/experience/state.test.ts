@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { CATALOG } from "../content/scientists/catalog.ts";
 import { FEATURED } from "../content/scientists/featured.ts";
+import { KNOWN_FIXTURES, LAYOUT_FIXTURE, PARTICIPATIONS_FIXTURE } from "../content/scientists/fixtures.ts";
+import type { Catalog } from "../content/scientists/types.ts";
 import { createMatcher, isValidAnswer } from "../content/scientists/matcher.ts";
 import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "../participation/source.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
@@ -14,6 +16,13 @@ function run(actions: Action[], from: State = experience.initialState()) {
   return actions.reduce(experience.reduce, from);
 }
 
+const WITH_KNOWN: Catalog = { featured: FEATURED, known: KNOWN_FIXTURES };
+const withKnown = createExperience(WITH_KNOWN, PARTICIPATIONS_FIXTURE);
+
+function runWithKnown(actions: Action[], from: State = withKnown.initialState()) {
+  return actions.reduce(withKnown.reduce, from);
+}
+
 const DISCOVERY_PATH: Action[] = [
   { type: "dontKnow" },
   { type: "approach" },
@@ -24,22 +33,22 @@ const DISCOVERY_PATH: Action[] = [
 ];
 
 test("contract: featured is not the universe of valid answers", () => {
-  const knownOnly = CATALOG.known.find((k) => k.canonicalName === "Celina Brandão");
+  const knownOnly = WITH_KNOWN.known.find((k) => k.canonicalName === "Celina Brandão");
   assert.ok(knownOnly);
   assert.equal(
-    CATALOG.featured.some((f) => f.id === knownOnly.id),
+    WITH_KNOWN.featured.some((f) => f.id === knownOnly.id),
     false,
   );
-  const result = createMatcher(CATALOG)("celina brandao");
+  const result = createMatcher(WITH_KNOWN)("celina brandao");
   assert.equal(result.status, "known");
   assert.equal(isValidAnswer(result), true);
 
-  const state = run([{ type: "name", text: "Celina Brandão" }]);
+  const state = runWithKnown([{ type: "name", text: "Celina Brandão" }]);
   assert.equal(state.step, "nameSaid");
   assert.equal(state.saidId, knownOnly.id);
   assert.equal(state.participations[knownOnly.id], 1);
 
-  const onMap = sheetPoints(CATALOG, SHEET_LAYOUT, state.participations).find((p) => p.scientistId === knownOnly.id);
+  const onMap = sheetPoints(WITH_KNOWN, LAYOUT_FIXTURE, state.participations).find((p) => p.scientistId === knownOnly.id);
   assert.ok(onMap);
   assert.equal(onMap.mentions, 1);
   assert.equal(onMap.featured, false);
@@ -73,24 +82,24 @@ test("scenario 1: a featured name said spontaneously counts without forcing the 
 });
 
 test("scenario 2: a known-only name counts and reaches the collective map", () => {
-  const state = run([{ type: "name", text: "Raimunda Nogueira" }, { type: "seeMap" }]);
+  const state = runWithKnown([{ type: "name", text: "Raimunda Nogueira" }, { type: "seeMap" }]);
   assert.equal(state.step, "collective");
-  assert.equal(state.participations.p001, INITIAL_PARTICIPATIONS.p001 + 1);
+  assert.equal(state.participations.p001, PARTICIPATIONS_FIXTURE.p001 + 1);
 });
 
 test("scenario 3: an ambiguous answer waits for confirmation and can be resolved or rejected", () => {
-  const asked = run([{ type: "name", text: "Ana Luísa" }]);
+  const asked = runWithKnown([{ type: "name", text: "Ana Luísa" }]);
   assert.equal(asked.step, "opening");
   assert.ok(asked.response?.kind === "confirm");
   assert.ok(asked.response.candidates.length >= 2);
-  assert.deepEqual(asked.participations, INITIAL_PARTICIPATIONS);
+  assert.deepEqual(asked.participations, PARTICIPATIONS_FIXTURE);
 
   const target = asked.response.candidates[1].id;
-  const confirmed = run([{ type: "confirm", id: target }], asked);
+  const confirmed = runWithKnown([{ type: "confirm", id: target }], asked);
   assert.equal(confirmed.step, "nameSaid");
-  assert.equal(confirmed.participations[target], (INITIAL_PARTICIPATIONS[target] ?? 0) + 1);
+  assert.equal(confirmed.participations[target], (PARTICIPATIONS_FIXTURE[target] ?? 0) + 1);
 
-  const rejected = run([{ type: "reject" }], asked);
+  const rejected = runWithKnown([{ type: "reject" }], asked);
   assert.equal(rejected.step, "opening");
   assert.deepEqual(rejected.response, { kind: "notFound", text: "Ana Luísa" });
 });
@@ -221,4 +230,22 @@ test("restart brings the participations back to the initial counts, dropping wha
   assert.ok((said.participations[FEATURED[1].id] ?? 0) > (INITIAL_PARTICIPATIONS[FEATURED[1].id] ?? 0));
   const restarted = run([{ type: "restart" }], said);
   assert.deepEqual(restarted.participations, INITIAL_PARTICIPATIONS);
+});
+
+test("the map can be visited from the opening without counting anything, and the visitor comes back to say a name", () => {
+  const map = run([{ type: "seeMap" }]);
+  assert.equal(map.step, "collective");
+  assert.equal(map.saidId, null);
+  assert.deepEqual(map.participations, INITIAL_PARTICIPATIONS);
+  const back = run([{ type: "anotherName" }], map);
+  assert.equal(back.step, "opening");
+  assert.equal(run([{ type: "dontKnow" }, { type: "seeMap" }]).step, "noName");
+});
+
+test("the installation map only names scientists from the curated package", () => {
+  const curated = new Set(FEATURED.map((s) => s.id));
+  assert.ok(CATALOG.known.every((k) => !k.fictional));
+  const points = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS);
+  assert.ok(points.every((p) => p.scientistId === null || curated.has(p.scientistId)));
+  assert.ok(points.filter((p) => p.mentions > 0).every((p) => p.name !== null && curated.has(p.scientistId ?? "")));
 });

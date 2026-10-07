@@ -22,6 +22,7 @@ export type Scene = {
   settle: number;
   settleFrom: number | null;
   highlightSettles: boolean;
+  minInterval: number;
 };
 
 export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle";
@@ -290,6 +291,7 @@ export class MapRenderer {
     this.scene.highlight = target.scene.highlight;
     this.scene.newContour = target.scene.newContour;
     this.scene.highlightSettles = target.scene.highlightSettles;
+    this.scene.minInterval = target.scene.minInterval;
     if (instant) this.smoothedLevelExp = null;
     this.wake();
   }
@@ -432,7 +434,10 @@ export class MapRenderer {
       }
     }
 
-    const targetExp = Math.log2(Math.max(1e-9, vmax - Math.max(vmin, wT > 0.5 ? 0 : vmin)) / scene.density);
+    const targetExp = Math.max(
+      Math.log2(Math.max(1e-9, vmax - Math.max(vmin, wT > 0.5 ? 0 : vmin)) / scene.density),
+      Math.log2(Math.max(1e-9, scene.minInterval)),
+    );
     if (this.smoothedLevelExp === null || this.reducedMotion) this.smoothedLevelExp = targetExp;
     else this.smoothedLevelExp += (targetExp - this.smoothedLevelExp) * 0.16;
     const settling = Math.abs(targetExp - this.smoothedLevelExp) > 0.004;

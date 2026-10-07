@@ -131,3 +131,22 @@ test("a peak born at the fair keeps its earlier contours closed as it grows, exc
     }
   }
 });
+
+test("with several levels per mention, each mention raises a peak born at the fair by exactly one step", () => {
+  const step = 8;
+  const base = fixtureField();
+  const field = new TerrainField(
+    base.peaks.map((p) => ({ id: p.id, x: p.cx, y: p.cy, mentions: (FIXTURE_PARTICIPATIONS[p.id] ?? 0) * step })),
+    step,
+  );
+  const point = { id: "stepped", x: 720, y: 560, mentions: step };
+  const peak = field.addPeak(point);
+  assert.equal(peak.baseLevel % step, 0);
+  for (let mentions = 1; mentions <= 4; mentions++) {
+    field.setAmplitude(peak.id, peak.baseAmp + (mentions - 1) * step, 1);
+    const top = field.terrain(peak.summitX, peak.summitY, SHEET_OCTAVES, field.peaks);
+    const level = peak.baseLevel + mentions * step;
+    assert.ok(top > level && top < level + step, `${mentions}: top ${top.toFixed(2)} for level ${level}`);
+    ringHolds(field, peak.id, mentions * step, field.growthRadius({ ...point, mentions: mentions * step }));
+  }
+});

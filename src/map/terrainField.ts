@@ -86,7 +86,10 @@ export class TerrainField {
 
   private readonly predicted = new Map<string, Peak>();
 
-  constructor(points: FieldPoint[]) {
+  readonly step: number;
+
+  constructor(points: FieldPoint[], step = 1) {
+    this.step = step;
     this.peaks = points.filter((p) => p.mentions > 0).map((p) => this.createPeak(p));
     for (const p of this.peaks) this.byId.set(p.id, p);
     const mentions = new Map(points.map((p) => [p.id, p.mentions]));
@@ -94,7 +97,7 @@ export class TerrainField {
   }
 
   private createPeak(p: FieldPoint): Peak {
-    const sigma = 32 + 0.12 * p.mentions;
+    const sigma = 32 + 0.12 * (p.mentions / this.step);
     const angle = hash(p.id) * Math.PI;
     const stretch = 0.82 + hash(p.id + "e") * 0.42;
     return {
@@ -129,8 +132,8 @@ export class TerrainField {
       }
       for (const p of targets) {
         const current = this.terrain(p.summitX, p.summitY, SHEET_OCTAVES, this.peaks);
-        if (pass === 0) p.baseLevel = Math.max(0, Math.round(current - p.amp));
-        p.amp += p.baseLevel + (mentions.get(p.id) ?? 0) + 0.5 - current;
+        if (pass === 0) p.baseLevel = Math.max(0, Math.round((current - p.amp) / this.step) * this.step);
+        p.amp += p.baseLevel + (mentions.get(p.id) ?? 0) + this.step / 2 - current;
       }
     }
     for (const p of targets) {
@@ -142,13 +145,14 @@ export class TerrainField {
   private predict(point: FieldPoint) {
     const ready = this.predicted.get(point.id);
     if (ready) return ready;
-    const fresh = this.createPeak({ ...point, mentions: 1 });
+    const fresh = this.createPeak({ ...point, mentions: this.step });
     fresh.flattens = true;
-    fresh.baseLevel = Math.max(0, Math.floor(this.terrain(fresh.cx, fresh.cy, SHEET_OCTAVES, this.peaks)));
-    fresh.plateau = fresh.baseLevel + PLATEAU_LIFT;
-    fresh.amp = (fresh.baseLevel + 1 - fresh.plateau) / NEW_RING_GAUSS;
+    const ground = this.terrain(fresh.cx, fresh.cy, SHEET_OCTAVES, this.peaks);
+    fresh.baseLevel = Math.max(0, Math.floor(ground / this.step) * this.step);
+    fresh.plateau = fresh.baseLevel + PLATEAU_LIFT * this.step;
+    fresh.amp = (fresh.baseLevel + this.step - fresh.plateau) / NEW_RING_GAUSS;
     fresh.baseAmp = fresh.amp;
-    fresh.baseMentions = 1;
+    fresh.baseMentions = this.step;
     this.peaks.push(fresh);
     const [x, y] = this.climb(fresh);
     this.peaks.pop();
@@ -167,7 +171,7 @@ export class TerrainField {
   growthRadius(point: FieldPoint) {
     const p = this.byId.get(point.id) ?? this.predict(point);
     const amp = Math.max(1e-6, p.baseAmp + (point.mentions - p.baseMentions));
-    const below = p.flattens ? p.plateau + amp - (p.baseLevel + point.mentions) : 0.5;
+    const below = p.flattens ? p.plateau + amp - (p.baseLevel + point.mentions) : this.step / 2;
     const g = Math.min(0.99999, Math.max(0.02, 1 - below / amp));
     return Math.sqrt(2 * Math.log(1 / g)) / Math.sqrt(2 * p.k);
   }

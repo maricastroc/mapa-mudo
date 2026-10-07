@@ -3,7 +3,7 @@ import { KNOWN_FIXTURES } from "./fixtures.ts";
 import { KNOWN } from "./known.ts";
 import type { Catalog, FeaturedScientist, KnownScientist, ScientistSource } from "./types.ts";
 
-export const USE_ILLUSTRATIVE_FIXTURES = true;
+export const USE_ILLUSTRATIVE_FIXTURES = false;
 
 export const CATALOG: Catalog = {
   featured: FEATURED,

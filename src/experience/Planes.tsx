@@ -119,7 +119,9 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
   return (
     <Stage screen={screen}>
       <SheetHeader>
-        {again ? "FOLHA 01 — MAPA MUDO · 1 PONTO ESPERANDO NOME" : "FOLHA 01 — CIÊNCIA DELAS · MAPA MUDO · RELEVO ILUSTRATIVO"}
+        {again
+          ? "FOLHA 01 — MAPA MUDO · 1 PONTO ESPERANDO NOME"
+          : `FOLHA 01 — CIÊNCIA DELAS · MAPA MUDO${context.illustrative ? " · RELEVO ILUSTRATIVO" : ""}`}
       </SheetHeader>
       <div className="absolute inset-0 transition-transform duration-500 compact:contents" style={lift}>
         <Heading className="display absolute top-[228px] left-[64px] text-[150px] leading-none compact:static compact:text-[60px]">
@@ -137,7 +139,14 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
           <Actions
             speak={{ label: "Falar", accent: again }}
             type
-            extras={again ? [{ label: "Ver de novo", onClick: commands.seeAgain }] : [{ label: "Não sei", onClick: commands.dontKnow }]}
+            extras={
+              again
+                ? [{ label: "Ver de novo", onClick: commands.seeAgain }]
+                : [
+                    { label: "Não sei", onClick: commands.dontKnow },
+                    { label: "Ver o mapa", arrow: true, onClick: commands.seeMap },
+                  ]
+            }
             speech={context.speech}
             response={state.response}
             reducedMotion={reducedMotion}
@@ -384,7 +393,7 @@ function NameSaid({ state, screen, commands, context }: PlaneProps) {
 function LegendMark({ kind }: { kind: "named" | "silent" | "relief" }) {
   if (kind === "relief") {
     return (
-      <svg aria-hidden="true" viewBox="0 0 16 12" className="h-3 w-4 overflow-visible">
+      <svg aria-hidden="true" viewBox="0 0 16 12" className="h-[15px] w-5 overflow-visible compact:h-3 compact:w-4">
         <g fill="none" stroke="var(--terrain-line-index)" strokeWidth={1}>
           <ellipse cx={8} cy={6} rx={7.5} ry={5.5} />
           <ellipse cx={8} cy={6} rx={4.8} ry={3.4} />
@@ -395,7 +404,11 @@ function LegendMark({ kind }: { kind: "named" | "silent" | "relief" }) {
   }
   const filled = kind === "named";
   return (
-    <svg aria-hidden="true" viewBox="0 0 10 9" className={`h-[9px] w-[10px] overflow-visible ${filled ? "" : "opacity-55"}`}>
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 10 9"
+      className={`h-[12px] w-[13px] overflow-visible compact:h-[9px] compact:w-[10px] ${filled ? "" : "opacity-55"}`}
+    >
       <path d="M5 0.8 L9.3 8.2 L0.7 8.2 Z" fill={filled ? "var(--ink)" : "none"} stroke={filled ? "var(--ink)" : "var(--ink-soft)"} strokeWidth={1.1} />
     </svg>
   );
@@ -411,13 +424,15 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
   return (
     <Stage screen={screen}>
       <div
-        className="fade-in absolute flex flex-col border-[1.5px] border-ink bg-paper px-4 pt-3 pb-3.5 compact:static compact:w-full"
+        className="fade-in absolute flex flex-col border-[1.5px] border-ink bg-paper px-6 pt-5 pb-5 compact:static compact:w-full compact:px-4 compact:pt-3 compact:pb-3.5"
         style={screen.compact ? undefined : { left: CARTOUCHE.x, top: CARTOUCHE.y, width: CARTOUCHE.w }}
       >
-        <p className="font-notation text-[11px] tracking-[0.08em] text-ink-soft">FOLHA 01 · CIÊNCIA DELAS</p>
-        <Heading className="mt-1 text-[21px] leading-[1.1] font-bold tracking-[0.05em] uppercase">Mapa dos nomes ditos</Heading>
-        <span aria-hidden="true" className="mt-3 block border-t border-ink/30" />
-        <dl className="mt-2.5 grid grid-cols-[16px_1fr] items-center gap-x-2.5 gap-y-1.5 font-notation text-[11px] tracking-[0.03em] text-ink">
+        <p className="font-notation text-[15px] tracking-[0.08em] text-ink-soft compact:text-[12px]">FOLHA 01 · CIÊNCIA DELAS</p>
+        <Heading className="mt-1.5 text-[30px] leading-[1.08] font-bold tracking-[0.03em] whitespace-nowrap uppercase compact:text-[22px] compact:whitespace-normal">
+          Mapa dos nomes ditos
+        </Heading>
+        <span aria-hidden="true" className="mt-4 block border-t border-ink/30 compact:mt-3" />
+        <dl className="mt-3.5 grid grid-cols-[20px_1fr] items-center gap-x-3 gap-y-2 font-notation text-[16px] tracking-[0.02em] text-ink compact:mt-2.5 compact:gap-y-1.5 compact:text-[12px]">
           <dt className="flex justify-center">
             <LegendMark kind="named" />
             <span className="sr-only">Triângulo cheio</span>
@@ -438,7 +453,9 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
           </dt>
           <dd className="text-ink-soft">relevo: quanto mais dito, mais alto</dd>
         </dl>
-        {notices.length > 0 && <p className="mt-2.5 font-notation text-[10px] tracking-[0.03em] text-ink-soft">{notices.join(" · ")}</p>}
+        {notices.length > 0 && (
+          <p className="mt-3 font-notation text-[13px] tracking-[0.03em] text-ink-soft compact:text-[11px]">{notices.join(" · ")}</p>
+        )}
       </div>
       {said && (
         <p className="sr-only" role="status">
@@ -450,7 +467,7 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
         style={screen.compact ? undefined : { left: NEXT_ACTION.x, top: NEXT_ACTION.y }}
       >
         <Button variant="primary" arrow onClick={commands.anotherName}>
-          Diga outro nome
+          {said ? "Diga outro nome" : "Diga um nome"}
         </Button>
       </div>
     </Stage>

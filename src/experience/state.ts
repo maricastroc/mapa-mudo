@@ -213,7 +213,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
         };
       }
       case "seeMap":
-        return state.step === "nameSaid" ? goTo(state, "collective") : state;
+        return state.step === "nameSaid" || state.step === "opening" ? goTo(state, "collective") : state;
       case "anotherName":
         return goTo(state, "opening", { saidId: null, alreadySaid: false, discoveryId: null, profileReturn: null });
       case "restart":

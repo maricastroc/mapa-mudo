@@ -1,7 +1,7 @@
 import type { Box } from "./mapLabels";
 import type { Screen } from "./screen";
 
-export const CARTOUCHE = { x: 36, y: 30, w: 330, h: 186 };
+export const CARTOUCHE = { x: 36, y: 30, w: 470, h: 236 };
 
 export const NEXT_ACTION = { x: 36, y: 800, w: 330, h: 64 };
 

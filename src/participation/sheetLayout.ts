@@ -21,7 +21,7 @@ export type SheetPoint = {
 const PLACEMENT_BOUNDS = { x0: 90, x1: 1350, y0: 210, y1: 840 };
 
 const MARGIN_RESERVES = [
-  { x0: 0, y0: 0, x1: 420, y1: 260 },
+  { x0: 0, y0: 0, x1: 500, y1: 310 },
   { x0: 0, y0: 770, x1: 420, y1: 900 },
 ];
 
