@@ -20,6 +20,8 @@ export type Scene = {
   highlight: string | null;
   newContour: string | null;
   settle: number;
+  settleFrom: number | null;
+  highlightSettles: boolean;
 };
 
 export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle";
@@ -271,7 +273,7 @@ export class MapRenderer {
       intervalLock: transition(this.scene.intervalLock, target.scene.intervalLock, "intervalLock"),
       lockedInterval: transition(this.scene.lockedInterval, target.scene.lockedInterval, "intervalLock"),
       density: transition(this.scene.density, target.scene.density, "density"),
-      settle: transition(this.scene.settle, target.scene.settle, "settle"),
+      settle: transition(target.scene.settleFrom ?? this.scene.settle, target.scene.settle, "settle"),
     };
     const present = new Set<string>();
     for (const r of target.relief) {
@@ -286,6 +288,7 @@ export class MapRenderer {
     this.targetMentions = Object.fromEntries(target.relief.map((r) => [r.id, r.mentions]));
     this.scene.highlight = target.scene.highlight;
     this.scene.newContour = target.scene.newContour;
+    this.scene.highlightSettles = target.scene.highlightSettles;
     if (instant) this.smoothedLevelExp = null;
     this.wake();
   }
@@ -542,13 +545,14 @@ export class MapRenderer {
         const gy = sy / cell;
         const limit = ((5.2 / Math.sqrt(2 * p.k)) * scale) / cell;
         const ink = mix(this.colors.ink, this.colors.ink, 0);
+        const emphasis = scene.highlightSettles ? 1 - clamp(scene.settle, 0, 1) : 1;
         for (const level of levels) {
           const rings = level.lines.filter((l) => {
             if (!l.closed) return false;
             const c = bounds(l.pts);
             return c.x1 - c.x0 < limit && c.y1 - c.y0 < limit && contains(l.pts, gx, gy);
           });
-          if (rings.length) paint({ ...level, lines: rings }, ink, Math.max(0.55, level.alpha) * 0.85, thin * (1.1 + 0.6 * level.index));
+          if (rings.length && emphasis > 0.01) paint({ ...level, lines: rings }, ink, emphasis * Math.max(0.55, level.alpha) * 0.85, thin * (1.1 + 0.6 * level.index));
         }
       }
     }

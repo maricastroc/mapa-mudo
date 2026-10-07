@@ -127,6 +127,28 @@ body {
   animation: fade-in 700ms ease-out both;
 }
 
+.map-label {
+  text-shadow:
+    0 0 2px var(--paper),
+    0 0 2px var(--paper),
+    0 0 4px var(--paper),
+    0 0 6px var(--paper);
+}
+
+@keyframes settle-out {
+  60% {
+    opacity: 0;
+    max-width: 3em;
+  }
+  to {
+    opacity: 0;
+    max-width: 0;
+    margin-left: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 .settled .fade-in {
   animation: none;
 }

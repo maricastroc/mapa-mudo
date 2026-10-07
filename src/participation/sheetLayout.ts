@@ -19,6 +19,10 @@ export type SheetPoint = {
 };
 
 const PLACEMENT_BOUNDS = { x0: 90, x1: 1350, y0: 210, y1: 840 };
+
+export function wasOnMapBeforeMention(point: SheetPoint) {
+  return point.featured || point.mentions > 1;
+}
 const MIN_SPACING = 80;
 
 function hash(text: string, seed: number) {

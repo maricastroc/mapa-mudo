@@ -1,16 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, type CSSProperties } from "react";
 import { Tooltip } from "react-tooltip";
 import type { ScientistPhoto } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
 import { cellExtremes, traceContours } from "@/map/contours";
 import { MapAnchor, useMapView } from "@/map/MapCanvas";
-import { toScreen } from "@/map/mapRenderer";
+import { toScreen, type Camera } from "@/map/mapRenderer";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import { PHOTO_CLASS } from "./PortraitPhoto";
-import { NEW_CONTOUR_RADIUS, SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
+import { labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
+import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { ArrowIcon, TriangleMarker } from "./ui";
 
@@ -26,8 +27,108 @@ function visible(on: boolean) {
   return `transition-opacity duration-700 ${on ? "opacity-100" : "opacity-0"}`;
 }
 
-function nameSize(mentions: number) {
-  return 10 + 1.85 * Math.sqrt(mentions);
+type LabelView = { W: number; H: number; fit: number; camera: Camera };
+
+function SummitMark({ filled, unit }: { filled: boolean; unit: number }) {
+  const size = 10 * Math.max(0.9, unit);
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 10 9"
+      width={size}
+      height={size * 0.9}
+      className={`absolute -translate-x-1/2 -translate-y-[60%] overflow-visible ${filled ? "" : "opacity-55"}`}
+    >
+      <path d="M5 0.8 L9.3 8.2 L0.7 8.2 Z" fill={filled ? "var(--ink)" : "none"} stroke={filled ? "var(--ink)" : "var(--ink-soft)"} strokeWidth={1.1} />
+    </svg>
+  );
+}
+
+function labelPosition(placement: LabelPlacement, x: number, y: number): CSSProperties {
+  const top = placement.box.y0 - y;
+  if (placement.side === "north" || placement.side === "south") return { top, left: 0, transform: "translateX(-50%)" };
+  if (placement.side === "west" || placement.side === "northwest" || placement.side === "southwest") return { top, right: x - placement.box.x1 };
+  return { top, left: placement.box.x0 - x };
+}
+
+function CollectiveMarkers({
+  field,
+  points,
+  saidId,
+  view,
+  unit,
+  obstacles,
+}: {
+  field: TerrainField;
+  points: SheetPoint[];
+  saidId: string | null;
+  view: LabelView;
+  unit: number;
+  obstacles: Box[];
+}) {
+  const layout = useMemo(() => {
+    const items = points.map((p) => {
+      const position = mapPosition(field, p);
+      const [sx, sy] = toScreen(view, position.x, position.y);
+      return { p, position, sx, sy, named: p.name !== null && p.mentions > 0 };
+    });
+    const fonts = new Map<string, number>();
+    const labels = items
+      .filter((i) => i.named)
+      .map(({ p, sx, sy }) => {
+        const said = p.scientistId !== null && p.scientistId === saidId;
+        const font = labelFontSize(p.mentions, unit);
+        fonts.set(p.key, font);
+        return { key: p.key, x: sx, y: sy, ...labelSize(p.name ?? "", p.mentions, font, said ? 2 : 0), priority: said ? Number.POSITIVE_INFINITY : p.mentions };
+      });
+    const placements = placeLabels({
+      labels,
+      markers: items.map((i) => ({ key: i.p.key, x: i.sx, y: i.sy, named: i.named })),
+      obstacles,
+      bounds: { x0: 10, y0: 10, x1: view.W - 10, y1: view.H - 10 },
+    });
+    const order = new Map([...labels].sort((a, b) => b.priority - a.priority).map((l, i) => [l.key, i]));
+    return { items, fonts, placements, order };
+  }, [field, points, saidId, view, unit, obstacles]);
+
+  return (
+    <>
+      {layout.items.map(({ p, position, sx, sy, named }) => {
+        const said = p.scientistId !== null && p.scientistId === saidId;
+        const placement = layout.placements.get(p.key);
+        const font = layout.fonts.get(p.key) ?? 13;
+        return (
+          <MapAnchor key={p.key} x={position.x} y={position.y} className={said ? "z-10" : undefined}>
+            <SummitMark filled={named} unit={unit} />
+            {named && placement && (
+              <span
+                className="map-label fade-in absolute flex items-baseline whitespace-nowrap leading-[1.25]"
+                style={{ ...labelPosition(placement, sx, sy), animationDelay: `${700 + (layout.order.get(p.key) ?? 0) * 45}ms` }}
+              >
+                <span className={`tracking-[0.08em] text-ink uppercase ${said ? "font-bold" : "font-semibold"}`} style={{ fontSize: font }}>
+                  {p.name}
+                </span>
+                <span className="ml-[0.45em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
+                  {p.mentions}
+                </span>
+                {said && (
+                  <span
+                    className="ml-[0.4em] max-w-[3em] overflow-hidden bg-accent px-[0.3em] font-notation font-medium text-ink [text-shadow:none]"
+                    style={{
+                      fontSize: font * 0.74,
+                      animation: `settle-out ${COLLECTIVE_SETTLE.duration}ms ease ${COLLECTIVE_SETTLE.delay}ms forwards`,
+                    }}
+                  >
+                    +1
+                  </span>
+                )}
+              </span>
+            )}
+          </MapAnchor>
+        );
+      })}
+    </>
+  );
 }
 
 export function SheetMarkers({
@@ -36,63 +137,32 @@ export function SheetMarkers({
   points,
   discoveryId,
   saidId,
-  saidPhoto,
+  view,
+  unit,
+  obstacles,
 }: {
   step: Step;
   field: TerrainField;
   points: SheetPoint[];
   discoveryId: string | null;
   saidId: string | null;
-  saidPhoto: ScientistPhoto | null;
+  view: LabelView;
+  unit: number;
+  obstacles: Box[];
 }) {
   const onSheet = SHEET_STEPS.includes(step);
-  const rank = new Map([...points].sort((a, b) => b.mentions - a.mentions).map((p, i) => [p.key, i]));
+  if (step === "collective") {
+    return (
+      <div aria-hidden="true" className={visible(onSheet)}>
+        <CollectiveMarkers field={field} points={points} saidId={saidId} view={view} unit={unit} obstacles={obstacles} />
+      </div>
+    );
+  }
   return (
     <div aria-hidden="true" className={visible(onSheet)}>
       {points.map((p) => {
         const { x, y } = mapPosition(field, p);
-        const named = step === "collective" && p.name !== null && p.mentions > 0;
         const reserved = p.scientistId !== null && p.scientistId === discoveryId && (step === "noName" || step === "askAgain");
-        if (named) {
-          const highlighted = p.scientistId === saidId;
-          const anchored = highlighted && Boolean(saidPhoto?.src);
-          return (
-            <MapAnchor key={p.key} x={x} y={y} className={highlighted ? "z-10" : undefined}>
-              {highlighted &&
-                [0, 800, 1600].map((delay) => (
-                  <span
-                    key={delay}
-                    className="ripple absolute -top-[calc(var(--u)*70px)] -left-[calc(var(--u)*70px)] block size-[calc(var(--u)*140px)] rounded-full border-2 border-accent"
-                    style={{ animationDelay: `${2400 + delay}ms`, animationDuration: "2600ms", animationIterationCount: 2, animationFillMode: "both" }}
-                  />
-                ))}
-              {anchored && saidPhoto?.src && (
-                <span className="fade-in absolute block size-[calc(var(--u)*56px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-2 border-ink bg-paper">
-                  <Image src={saidPhoto.src} alt="" fill sizes="64px" className={PHOTO_CLASS} />
-                </span>
-              )}
-              <div
-                className={`fade-in relative flex -translate-x-1/2 flex-col items-center whitespace-nowrap ${
-                  anchored ? "-translate-y-[calc(100%+var(--u)*34px)]" : "-translate-y-1/2"
-                }`}
-                style={{ animationDelay: `${600 + (rank.get(p.key) ?? 0) * 70}ms` }}
-              >
-                <span
-                  className={`px-[0.18em] leading-[1.1] font-bold tracking-[0.03em] text-ink uppercase ${highlighted ? "bg-accent" : "bg-paper"}`}
-                  style={{ fontSize: `calc(var(--u) * ${nameSize(p.mentions).toFixed(1)}px)` }}
-                >
-                  {p.name}
-                </span>
-                <span
-                  className={`px-1 font-notation text-[calc(var(--u)*12px)] leading-tight ${highlighted ? "bg-accent font-medium text-ink" : "bg-paper text-ink-soft"}`}
-                >
-                  {p.mentions}
-                  {highlighted && " · +1"}
-                </span>
-              </div>
-            </MapAnchor>
-          );
-        }
         return (
           <MapAnchor key={p.key} x={x} y={y}>
             <div

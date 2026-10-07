@@ -72,6 +72,8 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
     highlight: null,
     newContour: null,
     settle: 0,
+    settleFrom: null,
+    highlightSettles: false,
     ...scene,
   };
 }
@@ -100,6 +102,8 @@ export function portraitPlacement(screen: Screen) {
 export const NEW_CONTOUR_RADIUS = 112;
 
 export const CONTRIBUTION_TIMING = { growth: 2600, growthFor: 1800, settle: 5900, settleFor: 1300 };
+
+export const COLLECTIVE_SETTLE = { delay: 4200, duration: 1600 };
 
 export function contributionZoom(ringRadius: number) {
   return Math.min(80, Math.max(2.5, NEW_CONTOUR_RADIUS / Math.max(ringRadius, 1e-3)));
@@ -258,6 +262,7 @@ export function sceneFor(
         highlight: id,
         newContour: id,
         settle: 1,
+        settleFrom: 0,
       });
       timings = {
         camera: t(0, 2300),
@@ -275,8 +280,18 @@ export function sceneFor(
         camera: sheet,
         lens: circle(summitOnScreen(), 70, 0),
         highlight: state.saidId,
+        newContour: state.saidId,
+        settle: 1,
+        settleFrom: 0,
+        highlightSettles: true,
       });
-      timings = { camera: t(0, 2800), intervalLock: t(0, 1600), lens: t(0, 500), lensInk: t(0, 500) };
+      timings = {
+        camera: t(0, 2800),
+        intervalLock: t(0, 1600),
+        lens: t(0, 500),
+        lensInk: t(0, 500),
+        settle: t(COLLECTIVE_SETTLE.delay, COLLECTIVE_SETTLE.duration),
+      };
       break;
   }
 

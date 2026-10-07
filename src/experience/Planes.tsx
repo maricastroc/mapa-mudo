@@ -5,11 +5,12 @@ import { shownSources } from "@/content/scientists/catalog";
 import { scientistProfile } from "@/content/scientists/profile";
 import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
 import type { DiscoveryScenery, FeaturedScientist } from "@/content/scientists/types";
-import type { SheetPoint } from "@/participation/sheetLayout";
+import { wasOnMapBeforeMention, type SheetPoint } from "@/participation/sheetLayout";
 import { Actions, type ResponseHandlers } from "./Actions";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
 import { ProfilePlane } from "./ProfilePlane";
+import { CARTOUCHE, NEXT_ACTION } from "./collectiveLayout";
 import { CONTRIBUTION_TIMING } from "./scenes";
 import { sceneryFor } from "./scenery";
 import { widestWordInEm } from "./typography";
@@ -317,7 +318,7 @@ function HumanScale({ state, screen, commands, context }: PlaneProps) {
 
 function NameSaid({ state, screen, commands, context }: PlaneProps) {
   const said = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
-  const first = (said?.mentions ?? 1) <= 1;
+  const first = said ? !wasOnMapBeforeMention(said) : true;
   const ready = CONTRIBUTION_TIMING.settle + CONTRIBUTION_TIMING.settleFor - 400;
   return (
     <Stage screen={screen}>
@@ -351,31 +352,74 @@ function NameSaid({ state, screen, commands, context }: PlaneProps) {
   );
 }
 
+function LegendMark({ kind }: { kind: "named" | "silent" | "relief" }) {
+  if (kind === "relief") {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 16 12" className="h-3 w-4 overflow-visible">
+        <g fill="none" stroke="var(--terrain-line-index)" strokeWidth={1}>
+          <ellipse cx={8} cy={6} rx={7.5} ry={5.5} />
+          <ellipse cx={8} cy={6} rx={4.8} ry={3.4} />
+          <ellipse cx={8} cy={6} rx={2} ry={1.4} />
+        </g>
+      </svg>
+    );
+  }
+  const filled = kind === "named";
+  return (
+    <svg aria-hidden="true" viewBox="0 0 10 9" className={`h-[9px] w-[10px] overflow-visible ${filled ? "" : "opacity-55"}`}>
+      <path d="M5 0.8 L9.3 8.2 L0.7 8.2 Z" fill={filled ? "var(--ink)" : "none"} stroke={filled ? "var(--ink)" : "var(--ink-soft)"} strokeWidth={1.1} />
+    </svg>
+  );
+}
+
 function Collective({ state, screen, commands, context }: PlaneProps) {
   const named = context.points.filter((p) => p.name !== null && p.mentions > 0);
   const silentCount = context.points.length - named.length;
   const said = named.find((p) => p.scientistId === state.saidId);
-  const notices = [named.some((p) => p.fictional) ? "NOMES FICTÍCIOS" : null, context.illustrative ? "COTAS ILUSTRATIVAS" : null].filter(
+  const notices = [named.some((p) => p.fictional) ? "nomes fictícios" : null, context.illustrative ? "cotas ilustrativas" : null].filter(
     (n): n is string => n !== null,
   );
   return (
     <Stage screen={screen}>
-      <div className="fade-in absolute top-[30px] left-[36px] flex flex-col gap-1 border-[1.5px] border-ink bg-paper px-4 pt-3 pb-3.5 compact:static">
-        <p className="font-notation text-[11px] tracking-[0.08em] text-ink-soft">FOLHA 01</p>
-        <Heading className="text-[22px] leading-[1.1] font-bold tracking-[0.04em] uppercase">Mapa dos nomes ditos</Heading>
-        <p className="font-notation text-[11px] text-ink-soft">relevo: quanto mais dito, mais alto</p>
+      <div
+        className="fade-in absolute flex flex-col border-[1.5px] border-ink bg-paper px-4 pt-3 pb-3.5 compact:static compact:w-full"
+        style={screen.compact ? undefined : { left: CARTOUCHE.x, top: CARTOUCHE.y, width: CARTOUCHE.w }}
+      >
+        <p className="font-notation text-[11px] tracking-[0.08em] text-ink-soft">FOLHA 01 · CIÊNCIA DELAS</p>
+        <Heading className="mt-1 text-[21px] leading-[1.1] font-bold tracking-[0.05em] uppercase">Mapa dos nomes ditos</Heading>
+        <span aria-hidden="true" className="mt-3 block border-t border-ink/30" />
+        <dl className="mt-2.5 grid grid-cols-[16px_1fr] items-center gap-x-2.5 gap-y-1.5 font-notation text-[11px] tracking-[0.03em] text-ink">
+          <dt className="flex justify-center">
+            <LegendMark kind="named" />
+            <span className="sr-only">Triângulo cheio</span>
+          </dt>
+          <dd>
+            {named.length} {named.length === 1 ? "nome dito" : "nomes ditos"} · cota = menções
+          </dd>
+          <dt className="flex justify-center">
+            <LegendMark kind="silent" />
+            <span className="sr-only">Triângulo vazado</span>
+          </dt>
+          <dd className="text-ink-soft">
+            {silentCount} {silentCount === 1 ? "ponto ainda mudo" : "pontos ainda mudos"}
+          </dd>
+          <dt className="flex justify-center">
+            <LegendMark kind="relief" />
+            <span className="sr-only">Curvas de nível</span>
+          </dt>
+          <dd className="text-ink-soft">relevo: quanto mais dito, mais alto</dd>
+        </dl>
+        {notices.length > 0 && <p className="mt-2.5 font-notation text-[10px] tracking-[0.03em] text-ink-soft">{notices.join(" · ")}</p>}
       </div>
-      <p className="fade-in absolute top-[74px] right-[48px] font-notation text-[11px] tracking-[0.06em] text-ink-soft compact:static">
-        <PaperStrip className="px-2 py-1">
-          {[`${named.length} NOMES DITOS`, `${silentCount} PONTOS AINDA MUDOS`, ...notices].join(" · ")}
-        </PaperStrip>
-      </p>
       {said && (
         <p className="sr-only" role="status">
-          {said.name} agora tem {said.mentions} menções no mapa coletivo.
+          {said.name} agora tem {said.mentions} {said.mentions === 1 ? "menção" : "menções"} no mapa coletivo.
         </p>
       )}
-      <div className="fade-in absolute bottom-[36px] left-[36px] [animation-delay:2600ms] compact:static">
+      <div
+        className="fade-in absolute [animation-delay:2600ms] compact:static"
+        style={screen.compact ? undefined : { left: NEXT_ACTION.x, top: NEXT_ACTION.y }}
+      >
         <Button variant="primary" arrow onClick={commands.anotherName}>
           Diga outro nome
         </Button>
@@ -463,6 +507,6 @@ export function mapDescription(state: State, context: PlaneContext) {
     case "nameSaid":
       return `Aproximação ao relevo de ${name}: uma nova curva de nível surge ao redor do topo e depois se integra às demais.`;
     case "collective":
-      return "Mapa dos nomes ditos: cada nome no topo do seu relevo; quanto mais dito, mais alto e maior.";
+      return `Mapa dos nomes ditos: cada nome marca o topo do seu relevo; quanto mais dito, mais alto o relevo.${name ? ` A curva nova de ${name} aparece destacada e depois se integra ao mapa.` : ""}`;
   }
 }

@@ -23,6 +23,7 @@ import {
 import { PLANE_LABELS, PlaneContent, mapDescription, type Commands, type PlaneContext } from "./Planes";
 import { discoveryGeometry, restCameraFor, sceneFor, toFieldPoint } from "./scenes";
 import { useReducedMotion, useScreen } from "./screen";
+import { collectiveObstacles } from "./collectiveLayout";
 import { Credits } from "./Credits";
 import { PortraitButton, PortraitPhoto } from "./PortraitPhoto";
 import { sceneryFor } from "./scenery";
@@ -106,6 +107,8 @@ export function Experience() {
   );
 
   const unit = screen.compact ? 0.72 : screen.fit;
+  const labelView = useMemo(() => ({ W: screen.W, H: screen.H, fit: screen.fit, camera: rest }), [screen, rest]);
+  const obstacles = useMemo(() => collectiveObstacles(screen, unit), [screen, unit]);
   const contextFor = (step: Step): PlaneContext => ({
     discovery,
     code: geometry.code,
@@ -137,7 +140,9 @@ export function Experience() {
           points={points}
           discoveryId={discovery?.id ?? null}
           saidId={state.saidId}
-          saidPhoto={state.saidId ? (findFeatured(CATALOG, state.saidId)?.photo ?? null) : null}
+          view={labelView}
+          unit={unit}
+          obstacles={obstacles}
         />
         <PlaceNames step={state.step} geometry={geometry} />
         <Transect step={state.step} geometry={geometry} prefix={discovery ? (sceneryFor(discovery).transect?.prefix ?? "") : ""} />

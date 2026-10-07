@@ -6,7 +6,7 @@ import { FEATURED } from "../content/scientists/featured.ts";
 import { FEATURED_FIXTURES } from "../content/scientists/fixtures.ts";
 import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "./source.ts";
 import { chooseDiscovery, recordMention } from "./participations.ts";
-import { autoPosition, sheetPoints, type SheetLayout } from "./sheetLayout.ts";
+import { autoPosition, sheetPoints, wasOnMapBeforeMention, type SheetLayout } from "./sheetLayout.ts";
 
 const catalog: Catalog = {
   featured: FEATURED_FIXTURES,
@@ -84,4 +84,20 @@ test("curated featured scientists get stable, non-overlapping sheet positions", 
       assert.ok(d >= 40, `${featured[i].key} and ${featured[j].key} are ${d.toFixed(0)}px apart`);
     }
   }
+});
+
+test("a point counts as already on the map unless this mention is what created it", () => {
+  const featuredId = FEATURED_FIXTURES[0].id;
+  const once = recordMention({}, featuredId);
+  const featured = sheetPoints(catalog, layout, once).find((p) => p.scientistId === featuredId);
+  assert.ok(featured);
+  assert.equal(wasOnMapBeforeMention(featured), true);
+
+  const created = sheetPoints(catalog, layout, recordMention({}, "k2")).find((p) => p.scientistId === "k2");
+  assert.ok(created);
+  assert.equal(wasOnMapBeforeMention(created), false);
+
+  const again = sheetPoints(catalog, layout, recordMention(recordMention({}, "k2"), "k2")).find((p) => p.scientistId === "k2");
+  assert.ok(again);
+  assert.equal(wasOnMapBeforeMention(again), true);
 });
