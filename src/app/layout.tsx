@@ -17,6 +17,7 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: "Diga um Nome — protótipo",
   description: "Protótipo navegável da experiência Diga um Nome. Conteúdo fictício.",
+  icons: { icon: "/favicon.png", apple: "/favicon.png" },
 };
 
 export const viewport: Viewport = {
