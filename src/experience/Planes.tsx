@@ -1,14 +1,17 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { shownSources } from "@/content/scientists/catalog";
+import { scientistProfile } from "@/content/scientists/profile";
 import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
 import type { DiscoveryScenery, FeaturedScientist } from "@/content/scientists/types";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import { Actions, type ResponseHandlers } from "./Actions";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
+import { ProfilePlane } from "./ProfilePlane";
 import { sceneryFor } from "./scenery";
+import { widestWordInEm } from "./typography";
 import { ArrowIcon, Button, PaperStrip, TriangleMarker } from "./ui";
 
 export type Commands = {
@@ -18,6 +21,8 @@ export type Commands = {
   nextClue: () => void;
   reachHumanScale: () => void;
   continue: () => void;
+  openProfile: () => void;
+  closeProfile: () => void;
   seeAgain: () => void;
   name: (text: string) => void;
   seeMap: () => void;
@@ -142,12 +147,8 @@ function clueSize(index: number, length: number) {
   return Math.min(CLUE_MAX_SIZES[index], Math.max(34, Math.floor(Math.sqrt(334000 / Math.max(length, 1)))));
 }
 
-function wordWidthInEm(word: string) {
-  return [...word.toUpperCase()].reduce((sum, letter) => sum + 0.01 + (letter === "I" ? 0.32 : "MW".includes(letter) ? 0.86 : 0.7), 0);
-}
-
 function nameSize(name: string) {
-  const widest = Math.max(...name.split(" ").map(wordWidthInEm));
+  const widest = widestWordInEm(name);
   return Math.min(104, Math.floor(620 / widest), Math.floor(104 * Math.sqrt(16 / Math.max(name.length, 16))));
 }
 
@@ -249,61 +250,64 @@ function TypedName({ name, delay }: { name: string; delay: number }) {
   );
 }
 
-function HumanScale({ screen, commands, context }: PlaneProps) {
+function HumanScale({ state, screen, commands, context }: PlaneProps) {
+  const [settled] = useState(() => state.previous === "profile");
   const discovery = context.discovery;
   if (!discovery) return null;
   const sources = shownSources(discovery);
   return (
     <Stage screen={screen}>
-      <p className="absolute top-[40px] left-[64px] font-notation text-[14px] font-medium tracking-[0.08em] text-iris-blue compact:static">
-        <PaperStrip className="px-2 py-1">ESCALA 1:1 — ESCALA HUMANA</PaperStrip>
-      </p>
-      <div className="absolute top-[176px] left-[64px] flex w-[620px] flex-col items-start compact:static compact:w-full">
-        <p className="fade-in flex items-center gap-2.5 font-notation text-[14px] tracking-[0.06em] text-ink-soft [animation-delay:1800ms]">
-          <TriangleMarker tone="accent" />
-          PONTO {context.code} · AGORA COM NOME
+      <div className={settled ? "settled contents" : "contents"}>
+        <p className="absolute top-[40px] left-[64px] font-notation text-[14px] font-medium tracking-[0.08em] text-iris-blue compact:static">
+          <PaperStrip className="px-2 py-1">ESCALA 1:1 — ESCALA HUMANA</PaperStrip>
         </p>
-        <Heading
-          className="mt-4 leading-[0.98] font-bold tracking-[0.01em] uppercase compact:text-[44px]"
-          style={screen.compact ? undefined : { fontSize: nameSize(discovery.canonicalName) }}
-        >
-          <span className="sr-only">{discovery.canonicalName}</span>
-          <TypedName name={discovery.canonicalName} delay={2300} />
-        </Heading>
-        <span aria-hidden="true" className="fade-in mt-3 block h-0 w-[540px] border-b-2 border-accent [animation-delay:2000ms] compact:w-full" />
-        <p className="fade-in mt-6 font-primary text-[16px] font-semibold tracking-[0.14em] uppercase [animation-delay:3400ms]">{discovery.field}</p>
-        <p className="fade-in mt-3 text-[40px] leading-[1.1] font-medium [animation-delay:3900ms] compact:text-[24px]">Agora você conhece uma.</p>
-        {discovery.fictional ? (
-          <p className="fade-in mt-6 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
-            {FICTIONAL_NOTICE}
+        <div className="absolute top-[176px] left-[64px] flex w-[620px] flex-col items-start compact:static compact:w-full">
+          <p className="fade-in flex items-center gap-2.5 font-notation text-[14px] tracking-[0.06em] text-ink-soft [animation-delay:1800ms]">
+            <TriangleMarker tone="accent" />
+            PONTO {context.code} · AGORA COM NOME
           </p>
-        ) : (
-          sources.length > 0 && (
-            <div className="fade-in mt-6 flex items-baseline gap-3 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
-              <span className="text-ink-soft">{sources.length > 1 ? "FONTES" : "FONTE"}</span>
-              <ul className="flex flex-col gap-1">
-                {sources.map((source) => (
-                  <li key={source.id}>
-                    <a
-                      href={source.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="pointer-events-auto inline-flex items-center gap-1.5 underline decoration-accent decoration-[1.5px] underline-offset-[3px] hover:bg-accent/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris-blue"
-                    >
-                      {source.label}
-                      <ArrowIcon className="size-3 shrink-0 -rotate-45" />
-                      <span className="sr-only">(abre em nova aba)</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        )}
-        <div className="fade-in mt-7 [animation-delay:4300ms] compact:mt-4">
-          <Button variant="primary" arrow onClick={commands.continue}>
-            Continuar
-          </Button>
+          <Heading
+            className="mt-4 leading-[0.98] font-bold tracking-[0.01em] uppercase compact:text-[44px]"
+            style={screen.compact ? undefined : { fontSize: nameSize(discovery.canonicalName) }}
+          >
+            <span className="sr-only">{discovery.canonicalName}</span>
+            <TypedName name={discovery.canonicalName} delay={2300} />
+          </Heading>
+          <span aria-hidden="true" className="fade-in mt-3 block h-0 w-[540px] border-b-2 border-accent [animation-delay:2000ms] compact:w-full" />
+          <p className="fade-in mt-6 font-primary text-[16px] font-semibold tracking-[0.14em] uppercase [animation-delay:3400ms]">{discovery.field}</p>
+          <p className="fade-in mt-3 text-[40px] leading-[1.1] font-medium [animation-delay:3900ms] compact:text-[24px]">Agora você conhece uma.</p>
+          {discovery.fictional ? (
+            <p className="fade-in mt-6 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
+              {FICTIONAL_NOTICE}
+            </p>
+          ) : (
+            sources.length > 0 && (
+              <div className="fade-in mt-6 flex items-baseline gap-3 border-[1.5px] border-accent px-3 py-2 font-notation text-[12px] tracking-[0.04em] text-ink [animation-delay:3900ms]">
+                <span className="text-ink-soft">{sources.length > 1 ? "FONTES" : "FONTE"}</span>
+                <ul className="flex flex-col gap-1">
+                  {sources.map((source) => (
+                    <li key={source.id}>
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="pointer-events-auto inline-flex items-center gap-1.5 underline decoration-accent decoration-[1.5px] underline-offset-[3px] hover:bg-accent/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris-blue"
+                      >
+                        {source.label}
+                        <ArrowIcon className="size-3 shrink-0 -rotate-45" />
+                        <span className="sr-only">(abre em nova aba)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          )}
+          <div className="fade-in mt-7 [animation-delay:4300ms] compact:mt-4">
+            <Button variant="primary" arrow onClick={commands.continue}>
+              Continuar
+            </Button>
+          </div>
         </div>
       </div>
     </Stage>
@@ -389,6 +393,17 @@ export function PlaneContent({ step, ...props }: PlaneProps & { step: Step }) {
       return <Clue {...props} index={2} />;
     case "humanScale":
       return <HumanScale {...props} />;
+    case "profile":
+      return props.context.discovery ? (
+        <ProfilePlane
+          profile={scientistProfile(props.context.discovery)}
+          code={props.context.code}
+          screen={props.screen}
+          returnTo={props.state.profileReturn === "askAgain" ? "map" : "portrait"}
+          onBack={props.commands.closeProfile}
+          onContinue={props.commands.continue}
+        />
+      ) : null;
     case "nameSaid":
       return <NameSaid {...props} />;
     case "collective":
@@ -403,6 +418,7 @@ export const PLANE_LABELS: Record<Step, string> = {
   clue2: "Pista 2 de 3",
   clue3: "Pista 3 de 3",
   humanScale: "Escala humana",
+  profile: "Perfil da cientista",
   askAgain: "Diga um nome, de novo",
   nameSaid: "Nome dito",
   collective: "Mapa coletivo dos nomes",
@@ -433,6 +449,8 @@ export function mapDescription(state: State, context: PlaneContext) {
       return context.discovery?.photo?.src
         ? `Escala 1:1: dentro do círculo, a fotografia de ${context.discovery.canonicalName}, cercada pelas curvas de nível do seu retrato.`
         : "Escala 1:1: as curvas de nível desenham o busto de uma pessoa.";
+    case "profile":
+      return `Escala 1:1: o retrato de ${context.discovery?.canonicalName ?? "uma cientista"} continua à direita enquanto a ficha dela é lida.`;
     case "askAgain":
       return `Mapa mudo inteiro. O ${point} agora mostra o retrato de ${context.discovery?.canonicalName ?? "uma cientista"}, esperando que o nome seja dito.`;
     case "nameSaid":

@@ -10,6 +10,7 @@ export type Step =
   | "clue2"
   | "clue3"
   | "humanScale"
+  | "profile"
   | "askAgain"
   | "nameSaid"
   | "collective";
@@ -38,6 +39,7 @@ export type State = {
   response: Response | null;
   reviewQueue: PendingScientistSubmission[];
   discoveryCursor: number;
+  profileReturn: Step | null;
 };
 
 export type Action =
@@ -47,6 +49,8 @@ export type Action =
   | { type: "nextClue" }
   | { type: "reachHumanScale" }
   | { type: "continue" }
+  | { type: "openProfile" }
+  | { type: "closeProfile" }
   | { type: "seeAgain" }
   | { type: "name"; text: string }
   | { type: "confirm"; id: string }
@@ -122,6 +126,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
     response: null,
     reviewQueue: [],
     discoveryCursor: 0,
+    profileReturn: null,
   });
 
   const goTo = (state: State, step: Step, extra: Partial<State> = {}): State => ({
@@ -170,8 +175,13 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
       case "reachHumanScale":
         return CLUE_STEPS.includes(state.step) ? goTo(state, "humanScale") : state;
       case "continue":
-        if (state.step !== "humanScale" || !state.discoveryId) return state;
+        if ((state.step !== "humanScale" && state.step !== "profile") || !state.discoveryId) return state;
         return state.alreadySaid ? say(state, state.discoveryId) : goTo(state, "askAgain");
+      case "openProfile":
+        if ((state.step !== "humanScale" && state.step !== "askAgain") || !state.discoveryId) return state;
+        return goTo(state, "profile", { profileReturn: state.step });
+      case "closeProfile":
+        return state.step === "profile" ? goTo(state, state.profileReturn ?? "humanScale", { profileReturn: null }) : state;
       case "seeAgain":
         return state.step === "askAgain" && state.discoveryId ? goTo(state, "humanScale") : state;
       case "name": {
@@ -205,7 +215,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
       case "seeMap":
         return state.step === "nameSaid" ? goTo(state, "collective") : state;
       case "anotherName":
-        return goTo(state, "opening", { saidId: null, alreadySaid: false, discoveryId: null });
+        return goTo(state, "opening", { saidId: null, alreadySaid: false, discoveryId: null, profileReturn: null });
       case "restart":
         return {
           ...initialState(),

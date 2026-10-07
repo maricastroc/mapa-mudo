@@ -64,6 +64,7 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
   return {
     strata: 0,
     portrait: 0,
+    portraitMask: 0,
     lensInk: 0,
     intervalLock: 0,
     lockedInterval: 0,
@@ -79,6 +80,20 @@ const RULER_GAP = 24;
 
 function scaleRulerBottom(u: number) {
   return 36 * u + 88;
+}
+
+export function portraitPlacement(screen: Screen) {
+  const { W, H, fit, ox, oy, compact } = screen;
+  if (compact) {
+    const u = Math.min(W, H) / 640;
+    const d = Math.max(140, Math.min(460 * u, 0.38 * H - 74));
+    return { x: 0.5 * W, y: 48 + d / 2, d };
+  }
+  const d = 560 * fit;
+  const x = ox + 980 * fit;
+  const y = oy + 470 * fit;
+  const top = y - d / 2 - FRAME_TICK * fit;
+  return { x, y: y + Math.max(0, scaleRulerBottom(fit) + RULER_GAP - top), d };
 }
 
 const NEW_RING_SCREEN_RADIUS = 210;
@@ -124,14 +139,10 @@ export function sceneFor(
     return [sheet.ax * W + (geometry.summit.x - sheet.x) * e, sheet.ay * H + (geometry.summit.y - sheet.y) * e];
   };
   const frame = (center: [number, number], d: number) => ({ x: center[0], y: center[1], r: ((d * u) / 2) * 0.97 });
-  const humanDiameter = compact ? 460 : 560;
+  const placement = portraitPlacement(screen);
+  const humanDiameter = placement.d / u;
   const silhouetteDiameter = compact ? 300 : 380;
-  const portraitAt = ((): [number, number] => {
-    const [x, y] = at(980, 470, 0.5, 0.3);
-    if (compact) return [x, y];
-    const top = y - (humanDiameter / 2 + FRAME_TICK) * u;
-    return [x, y + Math.max(0, scaleRulerBottom(u) + RULER_GAP - top)];
-  })();
+  const portraitAt: [number, number] = [placement.x, placement.y];
   const fixed = { portraitFrame: frame(portraitAt, humanDiameter) };
   const approaching = { portraitFrame: frame(portraitAt, silhouetteDiameter) };
   const t = (delay: number, duration: number): Timing => ({ delay, duration });
@@ -185,12 +196,20 @@ export function sceneFor(
         lens: circle(a, silhouetteDiameter, 1),
         lensInk: 1,
         portrait: 1,
+        portraitMask: 1,
         density: 26,
       });
-      timings = { camera: t(0, 2700), portrait: t(900, 2200), density: t(900, 2200), lens: t(700, 1500) };
+      timings = {
+        camera: t(0, 2700),
+        portrait: t(900, 2200),
+        portraitMask: NO_TIMING,
+        density: t(900, 2200),
+        lens: t(700, 1500),
+      };
       break;
     }
-    case "humanScale": {
+    case "humanScale":
+    case "profile": {
       const a = portraitAt;
       scene = withDefaults({
         ...fixed,
@@ -201,7 +220,14 @@ export function sceneFor(
         portrait: 1,
         density: 30,
       });
-      timings = { camera: t(0, 2600), portrait: t(400, 2400), strata: NO_TIMING, density: t(400, 2400), lens: t(300, 1900) };
+      timings = {
+        camera: t(0, 2600),
+        portrait: t(400, 2400),
+        portraitMask: t(600, 2200),
+        strata: NO_TIMING,
+        density: t(400, 2400),
+        lens: t(300, 1900),
+      };
       break;
     }
     case "askAgain":

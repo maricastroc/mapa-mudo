@@ -10,6 +10,7 @@ export type Scene = {
   camera: Camera;
   strata: number;
   portrait: number;
+  portraitMask: number;
   lens: Lens;
   lensInk: number;
   intervalLock: number;
@@ -20,7 +21,7 @@ export type Scene = {
   newContour: string | null;
 };
 
-export type Channel = "camera" | "strata" | "portrait" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks";
+export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks";
 export type Timing = { delay: number; duration: number };
 export type ReliefPoint = { id: string; x: number; y: number; mentions: number };
 export type SceneTarget = { scene: Scene; timings: Partial<Record<Channel, Timing>>; relief: ReliefPoint[] };
@@ -37,7 +38,7 @@ export type View = {
 type Frame = Scene["portraitFrame"];
 type RGB = [number, number, number];
 type Transition<T> = { from: T; to: T; start: number; duration: number };
-type ScalarChannel = "strata" | "portrait" | "lensInk" | "intervalLock" | "lockedInterval" | "density";
+type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density";
 type ContourLevel = { value: number; alpha: number; index: number; coastline: boolean; lines: Polyline[] };
 
 export function toScreen(v: { W: number; H: number; fit: number; camera: Camera }, x: number, y: number): [number, number] {
@@ -51,6 +52,7 @@ export function sheetFit(W: number, H: number) {
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp = (x: number, a: number, b: number) => (x < a ? a : x > b ? b : x);
+
 
 function progress<T>(tr: Transition<T>, now: number) {
   if (tr.duration <= 0) return now >= tr.start ? 1 : 0;
@@ -168,8 +170,11 @@ export class MapRenderer {
   private currentView: View;
   private T = new Float64Array(0);
   private V = new Float64Array(0);
+  private G = new Float64Array(0);
   private cmin = new Float32Array(0);
   private cmax = new Float32Array(0);
+  private gmin = new Float32Array(0);
+  private gmax = new Float32Array(0);
   private waterImage: ImageData | null = null;
   private destroyed = false;
   reducedMotion = false;
@@ -196,6 +201,7 @@ export class MapRenderer {
     this.scalars = {
       strata: still(this.scene.strata),
       portrait: still(this.scene.portrait),
+      portraitMask: still(this.scene.portraitMask),
       lensInk: still(this.scene.lensInk),
       intervalLock: still(this.scene.intervalLock),
       lockedInterval: still(this.scene.lockedInterval),
@@ -258,6 +264,7 @@ export class MapRenderer {
     this.scalars = {
       strata: transition(this.scene.strata, target.scene.strata, "strata"),
       portrait: transition(this.scene.portrait, target.scene.portrait, "portrait"),
+      portraitMask: transition(this.scene.portraitMask, target.scene.portraitMask, "portraitMask"),
       lensInk: transition(this.scene.lensInk, target.scene.lensInk, "lensInk"),
       intervalLock: transition(this.scene.intervalLock, target.scene.intervalLock, "intervalLock"),
       lockedInterval: transition(this.scene.lockedInterval, target.scene.lockedInterval, "intervalLock"),
@@ -358,8 +365,11 @@ export class MapRenderer {
     if (this.T.length !== n) {
       this.T = new Float64Array(n);
       this.V = new Float64Array(n);
+      this.G = new Float64Array(n);
       this.cmin = new Float32Array((cols - 1) * (rows - 1));
       this.cmax = new Float32Array((cols - 1) * (rows - 1));
+      this.gmin = new Float32Array((cols - 1) * (rows - 1));
+      this.gmax = new Float32Array((cols - 1) * (rows - 1));
       this.waterImage = null;
     }
     const T = this.T;
@@ -370,11 +380,15 @@ export class MapRenderer {
     const octaves = clamp(Math.log2(250 / (2.2 * worldCell)), 1, 22);
     const r = clamp(scene.portrait, 0, 1);
     const e = clamp(scene.strata, 0, 1);
+    const mask = clamp(scene.portraitMask, 0, 1);
+    const ground = mask > 0.002;
     const wT = (1 - e) * (1 - r);
     const wE = e * (1 - r);
-    const wR = r;
+    const groundT = ground ? 1 - e : wT;
+    const pf = scene.portraitFrame;
+    const G = this.G;
 
-    if (wT > 0.002) {
+    if (groundT > 0.002) {
       const x1 = ox + (cols * cell) / scale;
       const y1 = oy + (rows * cell) / scale;
       const active: Peak[] = this.field.activePeaks(ox, oy, x1, y1);
@@ -393,7 +407,6 @@ export class MapRenderer {
     }
     const fmin = this.terrainRange.min;
     const famp = Math.max(1e-6, this.terrainRange.max - this.terrainRange.min);
-    const pf = scene.portraitFrame;
     let vmin = Infinity;
     let vmax = -Infinity;
     for (let j = 0; j < rows; j++) {
@@ -401,10 +414,12 @@ export class MapRenderer {
       for (let i = 0; i < cols; i++) {
         const sx = i * cell;
         const k = j * cols + i;
+        const strata = e > 0.002 && (wE > 0.002 || ground) ? fmin + famp * this.field.strata((sx - W / 2) / H, sy / H) : 0;
         let v = wT > 0.002 ? wT * T[k] : 0;
-        if (wE > 0.002) v += wE * (fmin + famp * this.field.strata((sx - W / 2) / H, sy / H));
-        if (wR > 0.002) v += wR * (fmin + famp * this.field.portrait((sx - pf.x) / pf.r, (sy - pf.y) / pf.r));
+        if (wE > 0.002) v += wE * strata;
+        if (r > 0.002) v += r * (fmin + famp * this.field.portrait((sx - pf.x) / pf.r, (sy - pf.y) / pf.r));
         V[k] = v;
+        if (ground) G[k] = (1 - e) * T[k] + e * strata;
         if (v < vmin) vmin = v;
         if (v > vmax) vmax = v;
       }
@@ -468,18 +483,45 @@ export class MapRenderer {
       ctx.stroke();
     };
 
-    for (const level of levels) {
-      const color = level.coastline
-        ? mix(this.colors.indexLine, this.colors.indexLine, 0)
-        : mix(this.colors.line, this.colors.indexLine, level.index);
-      paint(level, color, level.alpha * (0.85 + 0.15 * level.index), thin * (0.9 + 0.8 * level.index) * (level.coastline ? 1.3 : 1));
+    const lens = scene.lens;
+    const lensShape = () => ctx.roundRect(lens.x - lens.w / 2, lens.y - lens.h / 2, lens.w, lens.h, Math.min(lens.r, lens.w / 2, lens.h / 2));
+    const paintLevels = (opacity: number) => {
+      for (const level of levels) {
+        const color = level.coastline
+          ? mix(this.colors.indexLine, this.colors.indexLine, 0)
+          : mix(this.colors.line, this.colors.indexLine, level.index);
+        paint(level, color, opacity * level.alpha * (0.85 + 0.15 * level.index), thin * (0.9 + 0.8 * level.index) * (level.coastline ? 1.3 : 1));
+      }
+    };
+
+    if (ground) {
+      cellExtremes(G, cols, rows, this.gmin, this.gmax);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, W, H);
+      lensShape();
+      ctx.clip("evenodd");
+      for (const level of levels) {
+        const lines = traceContours(G, cols, rows, level.value, this.gmin, this.gmax);
+        const color = mix(this.colors.line, this.colors.indexLine, level.index);
+        paint({ ...level, lines }, color, mask * level.alpha * (0.85 + 0.15 * level.index), thin * (0.9 + 0.8 * level.index));
+      }
+      if (mask < 0.998) paintLevels(1 - mask);
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath();
+      lensShape();
+      ctx.clip();
+      paintLevels(1);
+      ctx.restore();
+    } else {
+      paintLevels(1);
     }
 
-    const lens = scene.lens;
     if (lens.o > 0.01 && scene.lensInk > 0.01) {
       ctx.save();
       ctx.beginPath();
-      ctx.roundRect(lens.x - lens.w / 2, lens.y - lens.h / 2, lens.w, lens.h, Math.min(lens.r, lens.w / 2, lens.h / 2));
+      lensShape();
       ctx.clip();
       const ink = mix(this.colors.ink, this.colors.ink, 0);
       for (const level of levels) {

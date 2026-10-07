@@ -172,3 +172,45 @@ test("the collective map accepts every featured scientist once mentioned", () =>
     assert.equal(point.name, s.canonicalName);
   }
 });
+
+test("the profile opens only from the human scale and closes back to it without counting", () => {
+  const atHumanScale = run(DISCOVERY_PATH.slice(0, 5));
+  assert.equal(atHumanScale.step, "humanScale");
+  assert.equal(run([{ type: "openProfile" }], experience.initialState()).step, "opening");
+
+  const profile = run([{ type: "openProfile" }], atHumanScale);
+  assert.equal(profile.step, "profile");
+  assert.equal(profile.discoveryId, atHumanScale.discoveryId);
+  assert.deepEqual(profile.participations, INITIAL_PARTICIPATIONS);
+  assert.equal(run([{ type: "name", text: "Raimunda Nogueira" }], profile).step, "profile");
+
+  const back = run([{ type: "closeProfile" }], profile);
+  assert.equal(back.step, "humanScale");
+  assert.deepEqual(back.participations, INITIAL_PARTICIPATIONS);
+});
+
+test("continuing from the profile behaves like continuing from the human scale", () => {
+  const profile = run([...DISCOVERY_PATH.slice(0, 5), { type: "openProfile" }]);
+  assert.equal(run([{ type: "continue" }], profile).step, "askAgain");
+
+  const recognized = run([{ type: "dontKnow" }, { type: "approach" }]);
+  const discovery = FEATURED.find((s) => s.id === recognized.discoveryId);
+  assert.ok(discovery);
+  const revealed = run([{ type: "name", text: discovery.canonicalName }, { type: "openProfile" }], recognized);
+  assert.equal(revealed.step, "profile");
+  const counted = run([{ type: "continue" }], revealed);
+  assert.equal(counted.step, "nameSaid");
+  assert.equal(counted.participations[discovery.id], (INITIAL_PARTICIPATIONS[discovery.id] ?? 0) + 1);
+});
+
+test("the profile can also be opened from the waiting point on the map and returns there", () => {
+  const asking = run(DISCOVERY_PATH);
+  assert.equal(asking.step, "askAgain");
+  const profile = run([{ type: "openProfile" }], asking);
+  assert.equal(profile.step, "profile");
+  assert.equal(profile.profileReturn, "askAgain");
+  const back = run([{ type: "closeProfile" }], profile);
+  assert.equal(back.step, "askAgain");
+  assert.equal(back.profileReturn, null);
+  assert.deepEqual(back.participations, INITIAL_PARTICIPATIONS);
+});

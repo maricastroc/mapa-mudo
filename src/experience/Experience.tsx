@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useState, type CSSProperties } from "react";
+import { useEffect, useEffectEvent, useMemo, useReducer, useState, type CSSProperties } from "react";
 import { CATALOG } from "@/content/scientists/catalog";
 import type { Participations } from "@/content/scientists/types";
 import { MapCanvas, ZoomPlane } from "@/map/MapCanvas";
@@ -23,7 +23,7 @@ import { PLANE_LABELS, PlaneContent, mapDescription, type Commands, type PlaneCo
 import { discoveryGeometry, restCameraFor, sceneFor, toFieldPoint } from "./scenes";
 import { useReducedMotion, useScreen } from "./screen";
 import { Credits } from "./Credits";
-import { PortraitPhoto } from "./PortraitPhoto";
+import { PortraitButton, PortraitPhoto } from "./PortraitPhoto";
 import { sceneryFor } from "./scenery";
 import { simulatedSpeech } from "./speechSimulation";
 import { createExperience, type Step } from "./state";
@@ -70,11 +70,15 @@ export function Experience() {
     return () => window.clearTimeout(id);
   }, [state.previous, state.stepCount, reducedMotion]);
 
+  const focusCurrentPlane = useEffectEvent(() => {
+    const returning = state.previous === "profile";
+    const target = !returning ? "[data-current-plane] h1" : state.step === "askAgain" ? "[data-medallion-button]" : "[data-portrait-button]";
+    document.querySelector<HTMLElement>(target)?.focus({ preventScroll: true });
+  });
+
   useEffect(() => {
     if (state.stepCount === 0) return;
-    const id = window.requestAnimationFrame(() => {
-      document.querySelector<HTMLElement>("[data-current-plane] h1")?.focus({ preventScroll: true });
-    });
+    const id = window.requestAnimationFrame(() => focusCurrentPlane());
     return () => window.cancelAnimationFrame(id);
   }, [state.stepCount]);
 
@@ -86,6 +90,8 @@ export function Experience() {
       nextClue: () => dispatch({ type: "nextClue" }),
       reachHumanScale: () => dispatch({ type: "reachHumanScale" }),
       continue: () => dispatch({ type: "continue" }),
+      openProfile: () => dispatch({ type: "openProfile" }),
+      closeProfile: () => dispatch({ type: "closeProfile" }),
       seeAgain: () => dispatch({ type: "seeAgain" }),
       name: (text: string) => dispatch({ type: "name", text }),
       seeMap: () => dispatch({ type: "seeMap" }),
@@ -130,13 +136,6 @@ export function Experience() {
         <PortraitPhoto step={state.step} photo={discovery?.photo ?? null} />
         <LensRing variant={lensVariantFor(state.step)} />
         <PointLabel step={state.step} geometry={geometry} />
-        <PortraitMedallion
-          step={state.step}
-          field={field}
-          geometry={geometry}
-          name={discovery?.canonicalName ?? ""}
-          photo={discovery?.photo ?? null}
-        />
         <SaidNameLabel
           step={state.step}
           field={field}
@@ -161,6 +160,20 @@ export function Experience() {
             />
           </ZoomPlane>
         ))}
+        <PortraitMedallion
+          step={state.step}
+          field={field}
+          geometry={geometry}
+          name={discovery?.canonicalName ?? ""}
+          photo={discovery?.photo ?? null}
+          onOpen={commands.openProfile}
+        />
+        <PortraitButton
+          step={state.step}
+          name={discovery?.canonicalName ?? ""}
+          settled={state.previous === "profile"}
+          onOpen={commands.openProfile}
+        />
         <ScaleRuler showTrack={!STEPS_WITHOUT_SCALE_TRACK.includes(state.step)} baseZoom={screen.compact ? 1.7 : 1} />
       </MapCanvas>
       <footer className="pointer-events-none fixed right-2 bottom-0 z-10 flex items-center gap-4 bg-paper/80 pl-3 text-[12px] text-ink-soft">

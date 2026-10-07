@@ -12,7 +12,7 @@ import type { SheetPoint } from "@/participation/sheetLayout";
 import { PHOTO_CLASS } from "./PortraitPhoto";
 import { SCALE_STOPS, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
-import { TriangleMarker } from "./ui";
+import { ArrowIcon, TriangleMarker } from "./ui";
 
 const SHEET_STEPS: Step[] = ["opening", "noName", "askAgain", "collective"];
 const PORTRAIT_TOOLTIP = "portrait-name";
@@ -215,6 +215,7 @@ export function lensVariantFor(step: Step): LensVariant {
     case "clue3":
       return "core";
     case "humanScale":
+    case "profile":
       return "portrait";
     default:
       return "none";
@@ -315,27 +316,37 @@ export function PortraitMedallion({
   geometry,
   name,
   photo,
+  onOpen,
 }: {
   step: Step;
   field: TerrainField;
   geometry: DiscoveryGeometry;
   name: string;
   photo: ScientistPhoto | null;
+  onOpen: () => void;
 }) {
   const paths = usePortraitContourPaths(field);
   const active = step === "askAgain";
   return (
-    <div aria-hidden="true" className={visible(active)}>
+    <div aria-hidden={!active} inert={!active} className={visible(active)}>
       <MapAnchor x={geometry.summit.x} y={geometry.summit.y}>
-        <div
-          data-tooltip-id={active ? PORTRAIT_TOOLTIP : undefined}
+        <button
+          type="button"
+          data-medallion-button
+          data-tooltip-id={PORTRAIT_TOOLTIP}
           data-tooltip-content={name}
-          className={`absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] cursor-default rounded-full ${active ? "pointer-events-auto" : ""}`}
+          onClick={onOpen}
+          aria-label={`Ver perfil de ${name}`}
+          className={`group absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] cursor-pointer rounded-full outline-none ${active ? "pointer-events-auto" : ""}`}
         >
+          <span
+            aria-hidden="true"
+            className="absolute -inset-[7px] rounded-full border-[1.5px] border-dashed border-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+          />
           {photo?.src ? (
-            <div className="relative size-[calc(var(--u)*84px)] overflow-hidden rounded-full border-2 border-accent bg-paper">
+            <span className="relative block size-[calc(var(--u)*84px)] overflow-hidden rounded-full border-2 border-accent bg-paper">
               <Image src={photo.src} alt="" fill sizes="96px" className={PHOTO_CLASS} />
-            </div>
+            </span>
           ) : (
             <svg viewBox="0 0 100 100" className="block size-[calc(var(--u)*84px)] rounded-full border-2 border-accent bg-paper">
               <g fill="none" stroke="var(--ink)" strokeWidth={1.1}>
@@ -345,19 +356,28 @@ export function PortraitMedallion({
               </g>
             </svg>
           )}
-        </div>
-        <div className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[11px]">
+        </button>
+        <div aria-hidden="true" className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[11px]">
           <TriangleMarker tone="accent" />
         </div>
       </MapAnchor>
       <Tooltip
         id={PORTRAIT_TOOLTIP}
         place="top"
-        offset={10}
+        offset={12}
         opacity={1}
         disableStyleInjection
-        className="z-20 bg-ink px-2.5 py-1.5 font-primary text-[14px] font-semibold tracking-[0.06em] whitespace-nowrap text-paper uppercase"
+        className="z-20 bg-ink px-3 py-2 text-paper"
         classNameArrow="size-2 rotate-45"
+        render={({ content }) => (
+          <span className="flex flex-col items-start gap-1">
+            <span className="font-primary text-[14px] font-semibold tracking-[0.06em] whitespace-nowrap uppercase">{content}</span>
+            <span className="flex items-center gap-1.5 font-notation text-[11px] tracking-[0.1em] whitespace-nowrap text-accent">
+              VER PERFIL
+              <ArrowIcon className="size-3" />
+            </span>
+          </span>
+        )}
       />
     </div>
   );

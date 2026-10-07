@@ -127,6 +127,10 @@ body {
   animation: fade-in 700ms ease-out both;
 }
 
+.settled .fade-in {
+  animation: none;
+}
+
 .fade-out {
   animation: fade-out 900ms ease-in both;
 }
