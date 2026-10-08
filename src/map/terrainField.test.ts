@@ -160,3 +160,18 @@ test("without island features the sheet shows only the seabed, the same as an em
   }
   assert.ok(field.terrain(720, 560, SHEET_OCTAVES, field.peaks, 1, 1) > 0);
 });
+
+test("a reef's summit is the visible center of the reef, so its marker sits in the middle of the island", () => {
+  const point = { id: "reef", x: 720, y: 560, recall: 0, reef: 6 };
+  const { field, at } = fieldWith([point]);
+  const summit = field.summit(point);
+  assert.ok(Math.abs(at(summit.x, summit.y) - REEF_LAND) < 0.5);
+  const reach = (dx: number, dy: number) => {
+    let r = 0;
+    while (r < 200 && at(summit.x + dx * r, summit.y + dy * r) > 0) r += 0.5;
+    return r;
+  };
+  const distances = [reach(1, 0), reach(-1, 0), reach(0, 1), reach(0, -1)];
+  assert.ok(Math.max(...distances) / Math.min(...distances) < 1.8, distances.join(", "));
+  assert.ok(field.islandRadius(point) >= Math.min(...distances));
+});

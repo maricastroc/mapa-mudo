@@ -505,7 +505,7 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
         style={screen.compact ? undefined : { left: CARTOUCHE.x, top: CARTOUCHE.y, width: CARTOUCHE.w }}
       >
         <p className="font-notation text-[15px] tracking-[0.08em] text-ink-soft compact:text-[12px]">FOLHA 01 · CIÊNCIA DELAS</p>
-        <Heading className="mt-1.5 text-[30px] leading-[1.08] font-bold tracking-[0.03em] whitespace-nowrap uppercase compact:text-[22px] compact:whitespace-normal">
+        <Heading className="mt-1.5 text-[30px] leading-[1.08] font-bold tracking-[0.03em] text-balance uppercase compact:text-[22px]">
           Mapa dos nomes ditos
         </Heading>
         <span aria-hidden="true" className="mt-4 block border-t border-ink/30 compact:mt-3" />

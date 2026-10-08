@@ -1,10 +1,11 @@
 import type { FeaturedScientist } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
 import { SHEET, type Camera, type Channel, type Lens, type Scene, type SceneTarget, type Timing } from "../map/mapRenderer.ts";
+import { trenchBounds } from "../map/trench.ts";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
-import { clearOfCopy, overviewCamera } from "./copyClearance.ts";
+import { clearOfCopy, collectiveCamera, overviewCamera } from "./copyClearance.ts";
 import { sceneryFor } from "./scenery.ts";
 
 export type Point = { x: number; y: number };
@@ -117,6 +118,8 @@ export const CONTRIBUTION_TIMING = { growth: 2600, growthFor: 1800, settle: 5900
 export const COLLECTIVE_SETTLE = { delay: 4200, duration: 1600 };
 
 const SHEET_MIN_INTERVAL = LEVELS_PER_MENTION;
+
+const MARK_CLEARANCE = 24;
 
 export function contributionZoom(ringRadius: number) {
   return Math.min(80, Math.max(2.5, NEW_CONTOUR_RADIUS / Math.max(ringRadius, 1e-3)));
@@ -312,10 +315,19 @@ export function sceneFor(
     }
     case "collective": {
       const returning = state.previous === "profile";
+      const discs = points
+        .filter((p) => p.scientistId !== null)
+        .map((p) => {
+          const fieldPoint = toFieldPoint(p);
+          const named = p.recall + p.reef > 0;
+          const center = named ? field.summit(fieldPoint) : p;
+          return { x: center.x, y: center.y, r: Math.max(MARK_CLEARANCE, named ? field.islandRadius(fieldPoint) : 0) };
+        });
+      const view = collectiveCamera(screen, discs, state.collective.silences > 0 ? [trenchBounds()] : []) ?? sheet;
       scene = withDefaults({
         ...fixed,
-        camera: sheet,
-        lens: circle(summitOnScreen(), 70, 0),
+        camera: view,
+        lens: circle(summitOnScreen(view), 70, 0),
         highlight: state.saidId,
         newContour: state.saidId,
         newContourKind: contributionKind(state),

@@ -35,6 +35,16 @@ export function trenchRing(index: number) {
   return points;
 }
 
+export function trenchBounds() {
+  const ring = trenchRing(0);
+  return {
+    x0: Math.min(...ring.map((p) => p.x)),
+    y0: Math.min(...ring.map((p) => p.y)),
+    x1: Math.max(...ring.map((p) => p.x)),
+    y1: Math.max(...ring.map((p) => p.y)),
+  };
+}
+
 export function trenchDepths(silences: number) {
   return TRENCH_SERIES.filter((value) => value <= silences);
 }

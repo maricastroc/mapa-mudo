@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { CATALOG } from "../content/scientists/catalog.ts";
 import { sheetFit, SHEET, toScreen } from "../map/mapRenderer.ts";
 import { TerrainField } from "../map/terrainField.ts";
-import { EMPTY_COLLECTIVE, REEF_SURFACES_AT } from "../participation/collective.ts";
+import { EMPTY_COLLECTIVE, fromCounts, REEF_SURFACES_AT } from "../participation/collective.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
 import { SHEET_LAYOUT } from "../participation/source.ts";
-import { collidesWithCopy } from "./copyClearance.ts";
-import { discoveryGeometry, LEVELS_PER_MENTION, sceneFor } from "./scenes.ts";
+import { collectiveArea, collidesWithCopy } from "./copyClearance.ts";
+import { discoveryGeometry, LEVELS_PER_MENTION, sceneFor, toFieldPoint } from "./scenes.ts";
 import type { Screen } from "./screen.ts";
 import { createExperience, type Step } from "./state.ts";
 
@@ -20,6 +20,10 @@ const SCREENS = [screenOf(1440, 900), screenOf(1470, 707), screenOf(1280, 720), 
 const experience = createExperience(CATALOG, EMPTY_COLLECTIVE, () => 1000);
 const points = sheetPoints(CATALOG, SHEET_LAYOUT, EMPTY_COLLECTIVE);
 const field = new TerrainField([], LEVELS_PER_MENTION, REEF_SURFACES_AT);
+
+function plainSheet(screen: Screen) {
+  return { x: SHEET.w / 2, y: SHEET.h / 2, z: 1, ax: (screen.ox + (SHEET.w / 2) * screen.fit) / screen.W, ay: (screen.oy + (SHEET.h / 2) * screen.fit) / screen.H };
+}
 
 function sceneAt(step: Step, id: string, screen: Screen) {
   const discovery = CATALOG.featured.find((s) => s.id === id) ?? null;
@@ -45,14 +49,14 @@ test("for every scientist and screen, the selected point and her medallion stay 
 
 test("a point already clear of the copy keeps the plain sheet camera", () => {
   const screen = SCREENS[0];
-  const sheet = sceneAt("collective", "nise-da-silveira", screen).rest;
+  const sheet = plainSheet(screen);
   assert.deepEqual(sceneAt("noName", "nise-da-silveira", screen).rest, sheet);
   assert.deepEqual(sceneAt("askAgain", "nise-da-silveira", screen).rest, sheet);
 });
 
 test("a point under the controls moves the sheet only sideways, never zooming", () => {
   const screen = SCREENS[0];
-  const sheet = sceneAt("collective", "ruth-nussenzweig", screen).rest;
+  const sheet = plainSheet(screen);
   const asking = sceneAt("askAgain", "ruth-nussenzweig", screen).rest;
   assert.notEqual(asking.ax, sheet.ax);
   assert.equal(asking.ay, sheet.ay);
@@ -96,6 +100,30 @@ test("the landing shows the whole sheet at a smaller scale beside the question, 
       const sx = (x - screen.ox) / screen.fit;
       const sy = (y - screen.oy) / screen.fit;
       assert.ok(!LANDING_COPY.some((b) => sx > b.x0 - 6 && sx < b.x1 + 6 && sy > b.y0 - 2 && sy < b.y1 + 10), `${where} under the copy at ${sx.toFixed(0)},${sy.toFixed(0)}`);
+    }
+  }
+});
+
+test("the collective map frames every island beside the left column and on screen, even late in the fair", () => {
+  const busy = fromCounts(
+    { "nise-da-silveira": 64, "marta-vannucci": 20, "vanderlan-bolzani": 12, "maria-augusta-arruda": 8, "lygia-da-veiga-pereira": 10 },
+    Object.fromEntries(CATALOG.featured.map((s) => [s.id, 12])),
+  );
+  const busyPoints = sheetPoints(CATALOG, SHEET_LAYOUT, busy);
+  const busyField = new TerrainField(busyPoints.filter((p) => p.scientistId !== null).map(toFieldPoint), LEVELS_PER_MENTION, REEF_SURFACES_AT);
+  for (const screen of SCREENS) {
+    const state = { ...experience.initialState(), step: "collective" as Step, collective: busy };
+    const { rest } = sceneFor(state, screen, busyField, discoveryGeometry(busyField, null, busyPoints), busyPoints);
+    const area = collectiveArea(screen);
+    const e = rest.z * screen.fit;
+    for (const p of busyPoints.filter((q) => q.scientistId !== null)) {
+      const fp = toFieldPoint(p);
+      const c = busyField.summit(fp);
+      const r = busyField.islandRadius(fp) * e;
+      const [x, y] = toScreen({ W: screen.W, H: screen.H, fit: screen.fit, camera: rest }, c.x, c.y);
+      const where = `${p.key} at ${screen.W}x${screen.H}`;
+      assert.ok(x - r >= area.x0 - 1 && x + r <= area.x1 + 1, `${where} leaves the map area horizontally`);
+      assert.ok(y - r >= area.y0 - 1 && y + r <= area.y1 + 1, `${where} leaves the map area vertically`);
     }
   }
 });

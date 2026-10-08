@@ -201,8 +201,17 @@ export class TerrainField {
     const p = point.recall > 0 || point.reef > 0 ? this.ensure(point) : this.byId.get(point.id);
     const sigma = p ? 1 / Math.sqrt(2 * p.k) : 32;
     const elongation = p ? Math.max(p.ex, p.ey) : 1;
-    if (!p || !p.rock || point.recall <= 0) return { x: point.x, y: point.y, sigma, elongation };
-    return { x: p.summitX, y: p.summitY, sigma, elongation };
+    if (p && p.rock && point.recall > 0) return { x: p.summitX, y: p.summitY, sigma, elongation };
+    if (p && point.reef > 0) return { ...this.unwarp(point.x, point.y), sigma, elongation };
+    return { x: point.x, y: point.y, sigma, elongation };
+  }
+
+  islandRadius(point: FieldPoint) {
+    if (point.recall <= 0 && point.reef <= 0) return 0;
+    const p = this.ensure(point);
+    const shape = this.target(point);
+    const coast = this.coastRadius(p, shape.amp, shape.presence);
+    return Math.max(coast, shape.reef > 0 ? shape.reef + 3 : 0) * Math.max(p.ex, p.ey);
   }
 
   growthRadius(point: FieldPoint) {
@@ -268,6 +277,17 @@ export class TerrainField {
       step *= 0.9;
     }
     return [px, py] as const;
+  }
+
+  private unwarp(x: number, y: number) {
+    let ux = x;
+    let uy = y;
+    for (let i = 0; i < 8; i++) {
+      const [qx, qy] = this.warped(ux, uy);
+      ux += x - qx;
+      uy += y - qy;
+    }
+    return { x: ux, y: uy };
   }
 
   private warped(x: number, y: number) {
