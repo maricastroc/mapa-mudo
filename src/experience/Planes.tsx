@@ -61,7 +61,7 @@ function handlersFrom(c: Commands): ResponseHandlers {
 function Stage({ screen, children }: { screen: Screen; children: ReactNode }) {
   if (screen.compact) {
     return (
-      <div className="absolute inset-x-0 bottom-0 flex max-h-[62%] flex-col items-start gap-3 overflow-y-auto px-4 pt-4 pb-14">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-0 flex max-h-[62%] flex-col items-start gap-3 overflow-y-auto overscroll-contain px-4 pt-4 pb-14">
         {children}
       </div>
     );

@@ -37,7 +37,11 @@ export function Button({ variant = "outline", arrow, children, className, type, 
 }
 
 export function PaperStrip({ children, className }: { children: ReactNode; className?: string }) {
-  return <span className={`box-decoration-clone bg-paper ${className ?? ""}`}>{children}</span>;
+  return (
+    <span className={`box-decoration-clone bg-paper ${className ?? ""}`}>
+      <span className="relative">{children}</span>
+    </span>
+  );
 }
 
 export function TriangleMarker({ tone = "ink", className }: { tone?: "ink" | "accent"; className?: string }) {
