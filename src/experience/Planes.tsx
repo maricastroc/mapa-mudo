@@ -19,7 +19,6 @@ import { ArrowIcon, Button, PaperStrip, TriangleMarker } from "./ui";
 
 export type Commands = {
   dontKnow: () => void;
-  silence: () => void;
   approach: () => void;
   nextClue: () => void;
   reachHumanScale: () => void;
@@ -42,18 +41,16 @@ export type PlaneContext = {
   code: string;
   points: SheetPoint[];
   illustrative: boolean;
-  speech: string | null;
   sharedSilence: number | null;
 };
 
-type PlaneProps = { state: State; screen: Screen; commands: Commands; reducedMotion: boolean; context: PlaneContext };
+type PlaneProps = { state: State; screen: Screen; commands: Commands; context: PlaneContext };
 
 const DISCOVERY_STAGES = ["território", "problema", "pesquisa"] as const;
 
 function handlersFrom(c: Commands): ResponseHandlers {
   return {
     onName: c.name,
-    onSilence: c.silence,
     onConfirm: c.confirm,
     onReject: c.reject,
     onSubmitForReview: c.submitForReview,
@@ -116,7 +113,7 @@ function Heading({ children, className, style }: { children: ReactNode; classNam
   );
 }
 
-function SayAName({ state, screen, commands, reducedMotion, context, again }: PlaneProps & { again: boolean }) {
+function SayAName({ state, screen, commands, context, again }: PlaneProps & { again: boolean }) {
   const actions = useRef<HTMLDivElement>(null);
   const lift = useLift(actions, screen, 120);
   return (
@@ -141,10 +138,8 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
             <PaperStrip className="px-4 py-1.5 compact:px-2">Diga o nome de uma cientista brasileira.</PaperStrip>
           </p>
         )}
-        <div ref={actions} className="absolute top-[618px] left-[52px] compact:static">
+        <div ref={actions} className="absolute top-[618px] left-[68px] compact:static">
           <Actions
-            speak={{ label: "Falar", accent: again }}
-            type
             extras={
               again
                 ? [
@@ -153,9 +148,7 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
                   ]
                 : [{ label: "Não sei", onClick: commands.dontKnow }]
             }
-            speech={context.speech}
             response={state.response}
-            reducedMotion={reducedMotion}
             handlers={handlersFrom(commands)}
           />
         </div>
@@ -192,7 +185,7 @@ function NoName({ screen, commands, context }: PlaneProps) {
         <span className="block w-fit bg-paper px-4 compact:px-2">ENTÃO VAMOS</span>
         <span className="block w-fit bg-paper px-4 compact:px-2">DESCOBRIR UMA.</span>
       </Heading>
-      <div className="fade-in absolute top-[540px] left-[64px] [animation-delay:900ms] compact:static">
+      <div className="fade-in absolute top-[540px] left-[80px] [animation-delay:900ms] compact:static compact:ml-2">
         <Button variant="primary" arrow onClick={commands.approach}>
           Aproximar
         </Button>
@@ -212,7 +205,7 @@ function nameSize(name: string) {
   return Math.min(104, Math.floor(620 / widest), Math.floor(104 * Math.sqrt(16 / Math.max(name.length, 16))));
 }
 
-function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneProps & { index: 0 | 1 | 2 }) {
+function Clue({ state, screen, commands, context, index }: PlaneProps & { index: 0 | 1 | 2 }) {
   const actions = useRef<HTMLDivElement>(null);
   const lift = useLift(actions, screen, 160);
   const discovery = context.discovery;
@@ -240,18 +233,14 @@ function Clue({ state, screen, commands, reducedMotion, context, index }: PlaneP
         )}
       </div>
       {index === 2 && core && <CoreAnnotations research={core} />}
-      <div ref={actions} className="absolute top-[752px] left-[52px] transition-transform duration-500 compact:static" style={lift}>
+      <div ref={actions} className="absolute top-[752px] left-[64px] transition-transform duration-500 compact:static" style={lift}>
         <Actions
-          speak={{ label: "Dizer o nome" }}
-          type
           extras={[
             index < 2
               ? { label: "Outra pista", arrow: true, onClick: commands.nextClue }
               : { label: "Chegar à escala 1:1", arrow: true, onClick: commands.reachHumanScale },
           ]}
-          speech={context.speech}
           response={state.response}
-          reducedMotion={reducedMotion}
           handlers={handlersFrom(commands)}
         />
       </div>
@@ -438,7 +427,7 @@ function NameSaid({ state, screen, commands, context }: PlaneProps) {
         </p>
       </div>
       <div
-        className="fade-in absolute top-[776px] left-[64px] flex flex-wrap items-center gap-4 compact:static compact:gap-2.5"
+        className="fade-in absolute top-[776px] left-[76px] flex flex-wrap items-center gap-4 compact:static compact:gap-2.5 compact:pl-2"
         style={{ animationDelay: `${ready}ms` }}
       >
         {first ? (

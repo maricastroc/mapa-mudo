@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Response } from "./state";
-import { ArrowIcon, Button, MicrophoneIcon } from "./ui";
+import { ArrowIcon, Button } from "./ui";
 
 export type ExtraAction = { label: string; onClick: () => void; arrow?: boolean };
 
 export type ResponseHandlers = {
   onName: (text: string) => void;
-  onSilence: () => void;
   onConfirm: (id: string) => void;
   onReject: () => void;
   onSubmitForReview: () => void;
@@ -16,59 +15,32 @@ export type ResponseHandlers = {
 };
 
 type ActionsProps = {
-  speak?: { label: string; accent?: boolean };
-  type?: boolean;
   extras?: ExtraAction[];
-  speech: string | null;
   response: Response | null;
-  reducedMotion: boolean;
   handlers: ResponseHandlers;
   className?: string;
 };
 
-type InputMode = null | "speak" | "type";
+export function Actions({ extras = [], response, handlers, className }: ActionsProps) {
+  const [typing, setTyping] = useState(false);
 
-export function Actions({ speak, type, extras = [], speech, response, reducedMotion, handlers, className }: ActionsProps) {
-  const [mode, setMode] = useState<InputMode>(null);
-  const effectiveMode: InputMode = mode === "speak" && response ? null : mode;
-
-  const open = (m: InputMode) => {
+  const open = () => {
     handlers.onClear();
-    setMode(m);
-  };
-
-  const clear = () => {
-    if (mode === "speak") setMode(null);
-    handlers.onClear();
+    setTyping(true);
   };
 
   const cancel = () => {
-    setMode(null);
+    setTyping(false);
     handlers.onClear();
   };
 
   return (
     <div className={`pointer-events-auto flex flex-col items-start gap-3 ${className ?? ""}`}>
-      {effectiveMode === null && (
+      {!typing && (
         <div className="flex flex-wrap items-center gap-4 bg-paper p-3 compact:gap-2.5 compact:p-2">
-          {speak && (
-            <button
-              type="button"
-              onClick={() => open("speak")}
-              data-speak={speak.accent ? "accent" : undefined}
-              className="group inline-flex min-h-[76px] cursor-pointer items-center gap-4 rounded-action pr-3 font-primary text-[16px] font-semibold tracking-[0.06em] uppercase compact:min-h-[56px] compact:text-[14px]"
-            >
-              <span className="grid size-[76px] place-items-center rounded-action bg-speak text-on-speak transition-transform group-hover:scale-105 compact:size-[56px]">
-                <MicrophoneIcon />
-              </span>
-              <span>{speak.label}</span>
-            </button>
-          )}
-          {type && (
-            <Button variant="outline" onClick={() => open("type")}>
-              Digitar
-            </Button>
-          )}
+          <Button variant="primary" onClick={open}>
+            Digitar
+          </Button>
           {extras.map((e) => (
             <Button key={e.label} variant="outline" arrow={e.arrow} onClick={e.onClick}>
               {e.label}
@@ -76,23 +48,8 @@ export function Actions({ speak, type, extras = [], speech, response, reducedMot
           ))}
         </div>
       )}
-      {effectiveMode === "speak" && (
-        <Listening
-          speech={speech}
-          accent={speak?.accent ?? false}
-          reducedMotion={reducedMotion}
-          onName={handlers.onName}
-          onSilence={() => {
-            setMode(null);
-            handlers.onSilence();
-          }}
-          onCancel={cancel}
-        />
-      )}
-      {effectiveMode === "type" && (
-        <TypeName onName={handlers.onName} onCancel={cancel} onChange={handlers.onClear} />
-      )}
-      {response && <ResponsePanel response={response} handlers={{ ...handlers, onClear: clear }} />}
+      {typing && <TypeName onName={handlers.onName} onCancel={cancel} onChange={handlers.onClear} />}
+      {response && <ResponsePanel response={response} handlers={handlers} />}
     </div>
   );
 }
@@ -155,12 +112,6 @@ function ResponsePanel({ response, handlers }: { response: Response; handlers: R
           Esse não é o nome deste ponto. Chegue mais perto.
         </p>
       );
-    case "silence":
-      return (
-        <p role="status" className={sentence}>
-          Não ouvimos nenhum nome. Tente de novo.
-        </p>
-      );
     case "noCuration":
       return (
         <p role="status" className={sentence}>
@@ -168,78 +119,6 @@ function ResponsePanel({ response, handlers }: { response: Response; handlers: R
         </p>
       );
   }
-}
-
-function Listening({
-  speech,
-  accent,
-  reducedMotion,
-  onName,
-  onSilence,
-  onCancel,
-}: {
-  speech: string | null;
-  accent: boolean;
-  reducedMotion: boolean;
-  onName: (text: string) => void;
-  onSilence: () => void;
-  onCancel: () => void;
-}) {
-  const [heard, setHeard] = useState("");
-  const [done, setDone] = useState(false);
-  const deliver = useEffectEvent((text: string) => onName(text));
-  const silence = useEffectEvent(() => onSilence());
-
-  useEffect(() => {
-    const ids: number[] = [];
-    const later = (ms: number, fn: () => void) => ids.push(window.setTimeout(fn, ms));
-    if (speech === null) {
-      later(reducedMotion ? 1800 : 3400, silence);
-    } else {
-      const start = reducedMotion ? 600 : 1300;
-      const perLetter = reducedMotion ? 0 : 75;
-      for (let i = 1; i <= speech.length; i++) later(start + i * perLetter, () => setHeard(speech.slice(0, i)));
-      const total = start + speech.length * perLetter;
-      later(total + 250, () => setDone(true));
-      later(total + (reducedMotion ? 600 : 1100), () => deliver(speech));
-    }
-    return () => ids.forEach((id) => window.clearTimeout(id));
-  }, [speech, reducedMotion]);
-
-  return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="flex items-center gap-5 bg-paper p-3 compact:gap-3 compact:p-2" data-speak={accent ? "accent" : undefined}>
-        <span className="relative grid size-[76px] place-items-center compact:size-[56px]" aria-hidden="true">
-          {!done &&
-            [0, 600, 1200].map((delay) => (
-              <span
-                key={delay}
-                className="ripple absolute inset-0 rounded-full border-[1.5px] border-accent"
-                style={{ animationDelay: `${delay}ms` }}
-              />
-            ))}
-          <span className="relative grid size-full place-items-center rounded-action bg-speak text-on-speak">
-            <MicrophoneIcon />
-          </span>
-        </span>
-        <div className="flex min-w-[340px] flex-col gap-1 compact:min-w-0">
-          <p className="font-primary text-[14px] font-semibold tracking-[0.14em] text-ink-soft uppercase">{done ? "Nome ouvido" : "Ouvindo…"}</p>
-          <p aria-live="polite" className="min-h-[1.15em] text-[34px] leading-[1.1] font-semibold tracking-[0.02em] uppercase compact:text-[24px]">
-            {heard}
-            {!done && speech !== null && (
-              <span aria-hidden="true" className="caret-blink ml-0.5 inline-block h-[0.9em] w-[3px] translate-y-[0.1em] bg-accent" />
-            )}
-          </p>
-        </div>
-        <Button variant="outline" onClick={onCancel}>
-          Cancelar
-        </Button>
-      </div>
-      <p className="bg-paper px-2 py-0.5 font-notation text-[12px] tracking-[0.06em] text-ink-soft uppercase">
-        Simulação · a voz ainda não é reconhecida neste protótipo
-      </p>
-    </div>
-  );
 }
 
 function TypeName({

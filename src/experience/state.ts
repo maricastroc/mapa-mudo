@@ -1,8 +1,8 @@
 import { discoverableScientists, findScientist } from "../content/scientists/catalog.ts";
 import { createMatcher } from "../content/scientists/matcher.ts";
 import type { Catalog, PendingScientistSubmission, ScientistMatch } from "../content/scientists/types.ts";
-import { record, type Collective, type CollectiveEvent, type NameKind } from "../participation/collective.ts";
-import { chooseDiscovery } from "../participation/participations.ts";
+import { presenceOf, record, type Collective, type CollectiveEvent, type NameKind } from "../participation/collective.ts";
+import { chooseDiscovery, shuffled } from "../participation/participations.ts";
 
 export type Step =
   | "opening"
@@ -28,7 +28,6 @@ export type Response =
   | { kind: "notFound"; text: string }
   | { kind: "submitted"; text: string }
   | { kind: "otherPoint"; text: string }
-  | { kind: "silence" }
   | { kind: "noCuration" };
 
 export type State = {
@@ -46,13 +45,14 @@ export type State = {
   alreadySaid: boolean;
   response: Response | null;
   reviewQueue: PendingScientistSubmission[];
-  discoveryCursor: number;
+  discoveryOrder: string[];
+  offered: Record<string, number>;
+  seen: string[];
   profileReturn: Step | null;
 };
 
 export type Action =
   | { type: "dontKnow" }
-  | { type: "silence" }
   | { type: "approach" }
   | { type: "nextClue" }
   | { type: "reachHumanScale" }
@@ -118,7 +118,7 @@ export function decide(
   }
 }
 
-export function createExperience(catalog: Catalog, initialCollective: Collective, now: () => number = Date.now) {
+export function createExperience(catalog: Catalog, initialCollective: Collective, now: () => number = Date.now, random: () => number = Math.random) {
   const matchScientist = createMatcher(catalog);
   const discoverable = discoverableScientists(catalog);
   const nameOf = (id: string) => findScientist(catalog, id)?.canonicalName ?? id;
@@ -138,30 +138,56 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
     alreadySaid: false,
     response: null,
     reviewQueue: [],
-    discoveryCursor: 0,
+    discoveryOrder: shuffled(discoverable.map((s) => s.id), random),
+    offered: {},
+    seen: [],
     profileReturn: null,
   });
 
-  const goTo = (state: State, step: Step, extra: Partial<State> = {}): State => ({
-    ...state,
-    ...extra,
-    step,
-    previous: state.step,
-    stepCount: state.stepCount + 1,
-    response: null,
-  });
+  const withSeen = (state: State, ids: string[]): State => {
+    const added = [...new Set(ids)].filter((id) => !state.seen.includes(id));
+    return added.length > 0 ? { ...state, seen: [...state.seen, ...added] } : state;
+  };
+
+  const suggested = (state: State) => (state.response?.kind === "confirm" ? state.response.candidates.map((c) => c.id) : []);
+
+  const settle = (state: State) => withSeen(state, suggested(state));
+
+  const shownAt = (state: State): string[] => {
+    switch (state.step) {
+      case "clue1":
+      case "clue2":
+      case "clue3":
+      case "humanScale":
+      case "profile":
+        return state.discoveryId ? [state.discoveryId] : [];
+      case "nameSaid":
+        return state.saidId ? [state.saidId] : [];
+      case "collective":
+        return state.collective.order.filter((id) => presenceOf(state.collective, id) > 0);
+      default:
+        return [];
+    }
+  };
+
+  const goTo = (state: State, step: Step, extra: Partial<State> = {}): State => {
+    const next = { ...settle(state), ...extra, step, previous: state.step, stepCount: state.stepCount + 1, response: null };
+    return withSeen(next, shownAt(next));
+  };
 
   const remember = (state: State, event: CollectiveEvent) => ({
     collective: record(state.collective, event),
     events: [...state.events, event],
   });
 
-  const say = (state: State, id: string, kind: NameKind): State =>
-    goTo(state, "nameSaid", { saidId: id, saidKind: kind, fresh: false, ...remember(state, { kind, id, at: now() }) });
+  const say = (state: State, id: string, kind: NameKind): State => {
+    const later = kind === "recall" && !state.fresh ? { later: true as const } : {};
+    return goTo(state, "nameSaid", { saidId: id, saidKind: kind, fresh: false, ...remember(state, { kind, id, at: now(), ...later }) });
+  };
 
   const answerKind = (state: State, id: string): NameKind => {
     if (state.step === "askAgain") return id === state.discoveryId ? "discovery" : "recognition";
-    return state.fresh ? "recall" : "recognition";
+    return state.seen.includes(id) ? "recognition" : "recall";
   };
 
   const apply = (state: State, decision: Decision): State => {
@@ -178,14 +204,14 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
   };
 
   const startDiscovery = (state: State): State => {
-    const chosen = chooseDiscovery(discoverable, state.collective, state.discoveryCursor);
+    const chosen = chooseDiscovery(discoverable, state.collective, state.offered, state.discoveryOrder);
     if (!chosen) return { ...state, response: { kind: "noCuration" } };
     const silent = state.step === "opening" && state.fresh;
     return goTo(state, "noName", {
       discoveryId: chosen.id,
-      discoveryCursor: state.discoveryCursor + 1,
+      offered: { ...state.offered, [chosen.id]: (state.offered[chosen.id] ?? 0) + 1 },
       fresh: false,
-      silenceRecorded: silent,
+      silenceRecorded: silent || state.silenceRecorded,
       ...(silent ? remember(state, { kind: "silence", at: now() }) : {}),
     });
   };
@@ -194,8 +220,6 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
     switch (action.type) {
       case "dontKnow":
         return state.step === "opening" ? startDiscovery(state) : state;
-      case "silence":
-        return state.step === "opening" ? startDiscovery(state) : { ...state, response: { kind: "silence" } };
       case "approach":
         return state.step === "noName" ? goTo(state, "clue1") : state;
       case "nextClue":
@@ -228,7 +252,7 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
       case "name": {
         const mode = modeOf(state.step);
         if (!mode) return state;
-        return apply(state, decide(matchScientist(action.text), mode, state.discoveryId, nameOf));
+        return apply(settle(state), decide(matchScientist(action.text), mode, state.discoveryId, nameOf));
       }
       case "confirm": {
         const mode = modeOf(state.step);
@@ -236,13 +260,13 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
         if (!state.response.candidates.some((c) => c.id === action.id)) return state;
         if (mode === "question") return say(state, action.id, answerKind(state, action.id));
         if (action.id === state.discoveryId) return goTo(state, "humanScale", { alreadySaid: true });
-        return { ...state, response: { kind: "otherPoint", text: nameOf(action.id) } };
+        return { ...settle(state), response: { kind: "otherPoint", text: nameOf(action.id) } };
       }
       case "reject": {
         const mode = modeOf(state.step);
         if (!mode || state.response?.kind !== "confirm") return state;
         const text = state.response.text;
-        return { ...state, response: mode === "question" ? { kind: "notFound", text } : { kind: "otherPoint", text } };
+        return { ...settle(state), response: mode === "question" ? { kind: "notFound", text } : { kind: "otherPoint", text } };
       }
       case "submitForReview": {
         if (state.response?.kind !== "notFound") return state;
@@ -262,7 +286,6 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
           alreadySaid: false,
           discoveryId: null,
           profileReturn: null,
-          silenceRecorded: false,
           hint: 0,
         });
       case "restart":
@@ -271,14 +294,14 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
           collective: state.collective,
           events: state.events,
           reviewQueue: state.reviewQueue,
-          discoveryCursor: state.discoveryCursor,
+          offered: state.offered,
           previous: state.step,
           stepCount: state.stepCount + 1,
         };
       case "clearPrevious":
         return action.stepCount === state.stepCount ? { ...state, previous: null } : state;
       case "clearResponse":
-        return state.response ? { ...state, response: null } : state;
+        return state.response ? { ...settle(state), response: null } : state;
     }
   };
 

@@ -6,10 +6,10 @@ export type EventStore = Pick<Storage, "getItem" | "setItem">;
 
 function parseEvent(value: unknown): CollectiveEvent | null {
   if (!value || typeof value !== "object") return null;
-  const { kind, id, at } = value as Record<string, unknown>;
+  const { kind, id, at, later } = value as Record<string, unknown>;
   if (typeof at !== "number" || !Number.isFinite(at)) return null;
   if (kind === "silence") return { kind, at };
-  if (isNameKind(kind) && typeof id === "string" && id.length > 0) return { kind, id, at };
+  if (isNameKind(kind) && typeof id === "string" && id.length > 0) return later === true ? { kind, id, at, later } : { kind, id, at };
   return null;
 }
 

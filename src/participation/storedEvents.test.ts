@@ -46,6 +46,13 @@ test("broken or tampered storage never breaks the experience", () => {
     parseEvents(JSON.stringify([{ kind: "recall", id: "a", at: 1 }, { kind: "recall", at: 2 }, { kind: "shout", id: "b", at: 3 }, { kind: "silence" }, null])),
     [{ kind: "recall", id: "a", at: 1 }],
   );
+  assert.deepEqual(
+    parseEvents(JSON.stringify([{ kind: "recall", id: "a", at: 1, later: true }, { kind: "recall", id: "b", at: 2, later: "yes" }])),
+    [
+      { kind: "recall", id: "a", at: 1, later: true },
+      { kind: "recall", id: "b", at: 2 },
+    ],
+  );
   const throwing: EventStore = {
     getItem: () => {
       throw new Error("blocked");
