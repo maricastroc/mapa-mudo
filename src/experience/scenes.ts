@@ -2,6 +2,7 @@ import type { FeaturedScientist } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
 import { SHEET, type Camera, type Channel, type Lens, type Scene, type SceneTarget, type Timing } from "../map/mapRenderer.ts";
 import { trenchBounds } from "../map/trench.ts";
+import { unnamedCount } from "../participation/collective.ts";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
@@ -20,10 +21,10 @@ export type DiscoveryGeometry = {
 };
 
 export const SCALE_STOPS = [
-  { z: 1, scale: 2_000_000, stage: "folha" },
-  { z: 6, scale: 250_000, stage: "território" },
-  { z: 40, scale: 25_000, stage: "problema" },
-  { z: 512, scale: 10, stage: "pesquisa" },
+  { z: 1, scale: 2_000_000, stage: "mapa" },
+  { z: 6, scale: 250_000, stage: "pergunta" },
+  { z: 40, scale: 25_000, stage: "trabalho" },
+  { z: 512, scale: 10, stage: "contribuição" },
   { z: 4096, scale: 1, stage: "pessoa" },
 ] as const;
 
@@ -172,8 +173,8 @@ export function sceneFor(
   const step: Step = state.step;
   switch (step) {
     case "opening": {
-      const overview = overviewCamera(screen, points.filter((p) => p.scientistId !== null)) ?? sheet;
-      scene = withDefaults({ ...fixed, camera: overview, lens: circle(summitOnScreen(overview), 900, 0), minInterval: 2 * SHEET_MIN_INTERVAL });
+      const overview = overviewCamera(screen, points.filter((p) => p.scientistId !== null), [trenchBounds()]) ?? sheet;
+      scene = withDefaults({ ...fixed, camera: overview, lens: circle(summitOnScreen(overview), 900, 0), features: 1, minInterval: 2 * SHEET_MIN_INTERVAL });
       timings = { camera: t(0, 2600), lens: t(0, 500), portrait: t(0, 1400), strata: NO_TIMING, intervalLock: t(0, 1200), sea: t(0, 1800), features: t(0, 1800) };
       break;
     }
@@ -184,9 +185,10 @@ export function sceneFor(
         camera: view,
         lens: circle(summitOnScreen(view), 110, 1),
         lensInk: 0.5,
+        features: 1,
         minInterval: SHEET_MIN_INTERVAL,
       });
-      timings = { camera: t(0, 1300), lens: t(350, 1300), lensInk: t(900, 800) };
+      timings = { camera: t(0, 1300), lens: t(350, 1300), lensInk: t(900, 800), features: t(0, 1300) };
       break;
     }
     case "clue1": {
@@ -267,9 +269,10 @@ export function sceneFor(
     }
     case "askAgain": {
       const view = clearOfCopy("askAgain", screen, sheet, geometry.summit);
-      scene = withDefaults({ ...fixed, camera: view, lens: circle(summitOnScreen(view), 70, 0), minInterval: SHEET_MIN_INTERVAL });
+      scene = withDefaults({ ...fixed, camera: view, lens: circle(summitOnScreen(view), 70, 0), features: 1, minInterval: SHEET_MIN_INTERVAL });
       timings = {
         camera: t(250, 3000),
+        features: t(700, 2300),
         portrait: t(0, 1500),
         strata: NO_TIMING,
         lens: t(0, 700),
@@ -323,7 +326,7 @@ export function sceneFor(
           const center = named ? field.summit(fieldPoint) : p;
           return { x: center.x, y: center.y, r: Math.max(MARK_CLEARANCE, named ? field.islandRadius(fieldPoint) : 0) };
         });
-      const view = collectiveCamera(screen, discs, state.collective.silences > 0 ? [trenchBounds()] : []) ?? sheet;
+      const view = collectiveCamera(screen, discs, unnamedCount(state.collective) > 0 ? [trenchBounds()] : []) ?? sheet;
       scene = withDefaults({
         ...fixed,
         camera: view,

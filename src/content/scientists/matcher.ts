@@ -1,8 +1,10 @@
-import type { Catalog, FeaturedScientist, KnownScientist, ScientistMatch } from "./types.ts";
+import type { Catalog, FeaturedScientist, KnownScientist, ReferenceName, ScientistMatch } from "./types.ts";
 
 const NAME_PARTICLES = new Set(["de", "da", "do", "das", "dos", "e", "d"]);
 const MAX_CANDIDATES = 3;
 const MIN_PARTIAL_TOKEN_LENGTH = 3;
+const MIN_SURNAME_LENGTH = 4;
+const MIN_COMPLETION_LETTERS = 3;
 const PARTIAL_WEIGHT = 10;
 
 export function normalizeName(text: string) {
@@ -14,7 +16,7 @@ export function normalizeName(text: string) {
     .trim();
 }
 
-function withoutParticles(normalized: string) {
+export function withoutParticles(normalized: string) {
   const tokens = normalized.split(" ").filter((t) => t && !NAME_PARTICLES.has(t));
   return tokens.length ? tokens.join(" ") : normalized;
 }
@@ -75,12 +77,36 @@ function containsRegisteredName(tokens: string[], form: string, same: (a: string
   return next === parts.length - 1;
 }
 
+function isSurname(token: string, entry: IndexedScientist) {
+  return token.length >= MIN_SURNAME_LENGTH && entry.forms.some((form) => form.split(" ").slice(1).includes(token));
+}
+
 function resolved(entry: IndexedScientist): ScientistMatch {
   return entry.featured ? { status: "featured", scientist: entry.featured } : { status: "known", scientist: entry.scientist };
 }
 
-export function createMatcher(catalog: Catalog) {
+type IndexedReference = { reference: ReferenceName; forms: string[] };
+
+function buildReferenceIndex(references: ReferenceName[]): IndexedReference[] {
+  return references.map((reference) => ({
+    reference,
+    forms: [...new Set([reference.canonicalName, ...reference.aliases].map((f) => withoutParticles(normalizeName(f))).filter(Boolean))],
+  }));
+}
+
+function referenceFor(index: IndexedReference[], query: string) {
+  const exact = index.filter((r) => r.forms.includes(query));
+  if (exact.length === 1) return exact[0].reference;
+  if (exact.length > 1) return null;
+  const tolerance = typoTolerance(query.length);
+  if (tolerance === 0) return null;
+  const close = index.filter((r) => r.forms.some((form) => form.length >= 6 && Math.abs(form.length - query.length) <= tolerance && editDistance(form, query) <= tolerance));
+  return close.length === 1 ? close[0].reference : null;
+}
+
+export function createMatcher(catalog: Catalog, references: ReferenceName[] = []) {
   const entries = buildIndex(catalog);
+  const referenceIndex = buildReferenceIndex(references);
 
   return function matchScientist(text: string): ScientistMatch {
     const normalized = normalizeName(text);
@@ -91,6 +117,9 @@ export function createMatcher(catalog: Catalog) {
     const exact = entries.filter((e) => e.forms.includes(query));
     if (exact.length === 1) return resolved(exact[0]);
     if (exact.length > 1) return { status: "ambiguous", submittedName, candidates: exact.map((e) => e.scientist) };
+
+    const reference = referenceFor(referenceIndex, query);
+    if (reference) return { status: "reference", submittedName, reference };
 
     const tokens = query.split(" ");
     const contained = entries.filter((e) => e.forms.some((form) => containsRegisteredName(tokens, form, sameToken)));
@@ -124,6 +153,9 @@ export function createMatcher(catalog: Catalog) {
 
     if (candidates.length === 0) return { status: "unknown", submittedName };
     const onlyPartial = candidates.every((c) => c.weight === PARTIAL_WEIGHT);
+    if (!specific && onlyPartial && candidates.length === 1 && isSurname(tokens[0], candidates[0].entry)) {
+      return { status: "suggestion", submittedName, candidate: candidates[0].entry.scientist };
+    }
     if ((!specific && onlyPartial) || candidates.length > MAX_CANDIDATES) {
       return { status: "incomplete", submittedName, candidateCount: candidates.length };
     }
@@ -135,4 +167,27 @@ export function createMatcher(catalog: Catalog) {
 
 export function isValidAnswer(match: ScientistMatch) {
   return match.status === "featured" || match.status === "known";
+}
+
+function fitsWord(typed: string, word: string, last: boolean) {
+  if (word.startsWith(typed) && (last || typed.length >= MIN_PARTIAL_TOKEN_LENGTH || typed === word)) return true;
+  if (typed.length < 5) return false;
+  const prefix = word.slice(0, typed.length);
+  return editDistance(prefix, typed) <= 1;
+}
+
+export function completesName(text: string, names: string[]) {
+  const typed = withoutParticles(normalizeName(text));
+  if (!typed || typed.replace(/ /g, "").length < MIN_COMPLETION_LETTERS) return false;
+  const tokens = typed.split(" ");
+  return names.some((name) => {
+    const words = withoutParticles(normalizeName(name)).split(" ");
+    let from = 0;
+    return tokens.every((t, i) => {
+      const at = words.findIndex((w, k) => k >= from && fitsWord(t, w, i === tokens.length - 1));
+      if (at < 0) return false;
+      from = at + 1;
+      return true;
+    });
+  });
 }

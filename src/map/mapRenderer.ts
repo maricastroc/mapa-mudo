@@ -57,6 +57,8 @@ export function sheetFit(W: number, H: number) {
   return Math.min(W / SHEET.w, H / SHEET.h);
 }
 
+const OPEN_WATER = 0.6;
+
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp = (x: number, a: number, b: number) => (x < a ? a : x > b ? b : x);
 
@@ -679,7 +681,7 @@ export class MapRenderer {
     const T = this.T;
     for (let k = 0; k < cols * rows; k++) {
       const t = T[k];
-      const a = t >= 0 ? 0 : t > -16 ? 1 : t > -28 ? 0.42 : 0;
+      const a = t >= 0 ? 0 : t > -16 ? 1 : t > -28 ? 0.62 : OPEN_WATER;
       data[4 * k] = r;
       data[4 * k + 1] = g;
       data[4 * k + 2] = b;

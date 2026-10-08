@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { FEATURED_FIXTURES } from "./fixtures.ts";
-import { createMatcher, isValidAnswer, normalizeName } from "./matcher.ts";
+import { completesName, createMatcher, isValidAnswer, normalizeName } from "./matcher.ts";
+import { REFERENCE_NAMES } from "./references.ts";
 import type { Catalog, KnownScientist, ScientistMatch } from "./types.ts";
 
 const helena = FEATURED_FIXTURES[0];
@@ -84,6 +85,60 @@ test("a specific input with two plausible candidates is ambiguous and never chos
 test("an excessively incomplete input is incomplete, not ambiguous", () => {
   assert.deepEqual(match("Ana"), { status: "incomplete", submittedName: "Ana", candidateCount: 3 });
   assert.deepEqual(match("Helena"), { status: "incomplete", submittedName: "Helena", candidateCount: 1 });
+});
+
+test("a surname that belongs to a single person is a suggestion, a first name alone is not", () => {
+  const surname = match("Alencar");
+  assert.ok(surname.status === "suggestion");
+  assert.equal(surname.candidate.id, helena.id);
+  assert.equal(match("Leitão").status, "suggestion");
+  assert.equal(match("Pires").status, "incomplete");
+  assert.equal(match("Helena").status, "incomplete");
+});
+
+const withReferences = createMatcher(catalog, REFERENCE_NAMES);
+
+test("famous names outside the sheet are recognized by name, alias or a close typo, never by a loose fragment", () => {
+  for (const [text, id] of [
+    ["Marie Curie", "marie-curie"],
+    ["madame curie", "marie-curie"],
+    ["Curie", "marie-curie"],
+    ["Mari Curie", "marie-curie"],
+    ["Einstein", "albert-einstein"],
+    ["einstien", "albert-einstein"],
+    ["Santos Dumont", "santos-dumont"],
+    ["Zilda Arns", "zilda-arns"],
+  ]) {
+    const result = withReferences(text);
+    assert.ok(result.status === "reference", text);
+    assert.equal(result.reference.id, id, text);
+  }
+  assert.equal(withReferences("Marie").status, "unknown");
+  assert.equal(withReferences("Cruz").status, "unknown");
+  assert.equal(withReferences("Helena Alencar").status, "featured");
+});
+
+test("every reference name is unique and none of them collides with a curated scientist", () => {
+  const ids = REFERENCE_NAMES.map((r) => r.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const r of REFERENCE_NAMES) {
+    assert.ok(r.note.length > 0, r.id);
+    const self = withReferences(r.canonicalName);
+    assert.ok(self.status === "reference" && self.reference.id === r.id, r.id);
+  }
+});
+
+test("completing a name accepts any unambiguous start of her words, in order, from three letters", () => {
+  const names = ["Ana Maria Primavesi"];
+  assert.equal(completesName("ana", names), true);
+  assert.equal(completesName("prima", names), true);
+  assert.equal(completesName("Ana Prim", names), true);
+  assert.equal(completesName("PRIMAVESI", names), true);
+  assert.equal(completesName("primaveis", names), true);
+  assert.equal(completesName("an", names), false);
+  assert.equal(completesName("Primavesi Ana", names), false);
+  assert.equal(completesName("Ana Souza", names), false);
+  assert.equal(completesName("", names), false);
 });
 
 test("the same alias registered for two people is ambiguous", () => {

@@ -1,24 +1,36 @@
 "use client";
 
-import { useEffect, useEffectEvent, useMemo, useReducer, useState, useSyncExternalStore, type CSSProperties } from "react";
-import { CATALOG, findFeatured, findScientist } from "@/content/scientists/catalog";
+import {
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+  type Dispatch,
+} from "react";
+import { CATALOG, findFeatured } from "@/content/scientists/catalog";
 import { MapCanvas, ZoomPlane } from "@/map/MapCanvas";
 import { TerrainField } from "@/map/terrainField";
-import { REEF_SURFACES_AT, SILENCE_SAMPLE_MIN, sharedSilence, tally, type Collective } from "@/participation/collective";
+import { REEF_SURFACES_AT, sharedSilence, type Collective, type CollectiveEvent } from "@/participation/collective";
 import { chooseDiscovery } from "@/participation/participations";
 import { sheetPoints } from "@/participation/sheetLayout";
 import { INITIAL_COLLECTIVE, PARTICIPATIONS_ARE_ILLUSTRATIVE, SHEET_LAYOUT } from "@/participation/source";
-import { browserStore, loadEvents, saveEvents } from "@/participation/storedEvents";
+import { adoptLegacy, browserStore, loadEvents, loadSubmissions, saveEvents, saveSubmissions } from "@/participation/storedEvents";
+import { fetchArchive, sendArchive } from "@/participation/sync";
+import type { PendingScientistSubmission } from "@/content/scientists/types";
 import {
   LensRing,
   PlaceNames,
   PointLabel,
   PortraitMedallion,
   SaidNameLabel,
+  SeaOfUnsaid,
   SummitPortrait,
   ScaleRuler,
   SheetMarkers,
-  SilenceTrench,
   Transect,
 } from "./MapOverlays";
 import { lensVariantFor } from "./layers";
@@ -29,14 +41,16 @@ import { collectiveObstacles, trenchCaptionBox } from "./collectiveLayout";
 import { Credits } from "./Credits";
 import { PortraitButton, PortraitPhoto } from "./PortraitPhoto";
 import { sceneryFor } from "./scenery";
-import { createExperience, type Step } from "./state";
+import { createExperience, type Action, type Step } from "./state";
 import { Button } from "./ui";
 
 const EXPERIENCE = createExperience(CATALOG, INITIAL_COLLECTIVE);
 
-const STEPS_WITHOUT_SCALE_TRACK: Step[] = ["nameSaid", "collective", "opening"];
+const STEPS_WITHOUT_SCALE_TRACK: Step[] = ["nameSaid", "collective", "opening", "noName"];
 
 const IDLE_RESET_MS = 90_000;
+
+const SYNC_EVERY_MS = 30_000;
 
 const ACTIVITY_EVENTS = ["pointerdown", "keydown", "wheel", "touchstart"] as const;
 
@@ -50,10 +64,50 @@ function stayOnClient() {
   return () => {};
 }
 
+function freshUid(at: number) {
+  return `${at.toString(36)}-${Math.floor(Math.random() * 0xffffffff).toString(36).padStart(7, "0")}`;
+}
+
 function restoredState() {
-  const events = loadEvents(browserStore());
-  const collective = tally(events, (id) => findScientist(CATALOG, id) !== undefined, INITIAL_COLLECTIVE);
-  return { ...EXPERIENCE.initialState(), events, collective };
+  const store = browserStore();
+  return EXPERIENCE.restore(adoptLegacy(loadEvents(store), freshUid), loadSubmissions(store));
+}
+
+function useArchiveSync(events: CollectiveEvent[], review: PendingScientistSubmission[], step: Step, dispatch: Dispatch<Action>) {
+  const synced = useRef(new Set<string>());
+  const busy = useRef(false);
+  const sync = useEffectEvent(async (pull: boolean) => {
+    if (busy.current) return;
+    busy.current = true;
+    try {
+      if (pull) {
+        const remote = await fetchArchive();
+        if (remote) {
+          for (const e of remote.events) synced.current.add(e.uid);
+          for (const r of remote.review) synced.current.add(r.uid);
+          if (step === "opening") dispatch({ type: "merge", events: remote.events, reviewQueue: remote.review });
+        }
+      }
+      const pending = {
+        events: events.filter((e) => !synced.current.has(e.uid)),
+        review: review.filter((r) => !synced.current.has(r.uid)),
+      };
+      if ((pending.events.length > 0 || pending.review.length > 0) && (await sendArchive(pending))) {
+        for (const e of pending.events) synced.current.add(e.uid);
+        for (const r of pending.review) synced.current.add(r.uid);
+      }
+    } finally {
+      busy.current = false;
+    }
+  });
+  useEffect(() => {
+    sync(true);
+    const id = window.setInterval(() => sync(true), SYNC_EVERY_MS);
+    return () => window.clearInterval(id);
+  }, []);
+  useEffect(() => {
+    sync(false);
+  }, [events.length, review.length]);
 }
 
 export function Experience() {
@@ -91,6 +145,12 @@ function LiveExperience() {
   useEffect(() => {
     saveEvents(browserStore(), state.events);
   }, [state.events]);
+
+  useEffect(() => {
+    saveSubmissions(browserStore(), state.reviewQueue);
+  }, [state.reviewQueue]);
+
+  useArchiveSync(state.events, state.reviewQueue, state.step, dispatch);
 
   const resetWhenIdle = useEffectEvent(() => {
     if (state.step === "opening" && state.fresh && !state.response) return;
@@ -152,6 +212,8 @@ function LiveExperience() {
       name: (text: string) => dispatch({ type: "name", text }),
       seeMap: () => dispatch({ type: "seeMap" }),
       anotherName: () => dispatch({ type: "anotherName" }),
+      discoverAnother: () => dispatch({ type: "discoverAnother" }),
+      passTurn: () => dispatch({ type: "restart" }),
       confirm: (id: string) => dispatch({ type: "confirm", id }),
       reject: () => dispatch({ type: "reject" }),
       submitForReview: () => dispatch({ type: "submitForReview", at: Date.now() }),
@@ -163,10 +225,9 @@ function LiveExperience() {
   const unit = screen.compact ? 0.72 : screen.fit;
   const labelView = useMemo(() => ({ W: screen.W, H: screen.H, fit: screen.fit, camera: rest }), [screen, rest]);
   const obstacles = useMemo(
-    () => [...collectiveObstacles(screen, unit), ...(state.collective.silences > 0 ? [trenchCaptionBox(labelView, unit)] : [])],
-    [screen, unit, labelView, state.collective.silences],
+    () => [...collectiveObstacles(screen, unit), trenchCaptionBox(labelView, unit)],
+    [screen, unit, labelView],
   );
-  const silenceCount = state.collective.answers >= SILENCE_SAMPLE_MIN ? state.collective.silences : null;
   const context: PlaneContext = {
     discovery,
     code: geometry.code,
@@ -181,13 +242,13 @@ function LiveExperience() {
   return (
     <main
       data-layout={screen.compact ? "compact" : "stage"}
-      className="fixed inset-0 overflow-hidden bg-paper text-ink select-none"
+      className="fixed inset-0 overflow-clip bg-paper text-ink select-none"
       style={{ "--u": unit } as CSSProperties}
     >
       <MapCanvas
         field={field}
         target={target}
-        stepKey={`${state.stepCount}`}
+        stepKey={state.step === "opening" ? `${state.stepCount}:${state.events.length}` : `${state.stepCount}`}
         screenKey={`${screen.W}x${screen.H}`}
         reducedMotion={reducedMotion}
         description={mapDescription(state, context)}
@@ -204,7 +265,7 @@ function LiveExperience() {
           returning={state.previous === "profile"}
           onOpenProfile={commands.openProfileOf}
         />
-        <SilenceTrench step={state.step} silences={state.collective.silences} count={silenceCount} unit={unit} />
+        <SeaOfUnsaid step={state.step} collective={state.collective} unit={unit} />
         <PlaceNames step={state.step} geometry={geometry} />
         <Transect step={state.step} geometry={geometry} prefix={discovery ? (sceneryFor(discovery).transect?.prefix ?? "") : ""} />
         <PortraitPhoto step={state.step} photo={discovery?.photo ?? null} />
@@ -262,7 +323,7 @@ function LiveExperience() {
           <span className="font-bold text-iris-blue">Íris</span> · Laboratório de Inovação e Dados · Governo do Ceará
         </p>
         <nav aria-label="Controles do protótipo" className="pointer-events-auto flex items-center gap-1 font-notation tracking-[0.08em]">
-          <Credits illustrative={PARTICIPATIONS_ARE_ILLUSTRATIVE} />
+          <Credits illustrative={PARTICIPATIONS_ARE_ILLUSTRATIVE} events={state.events} review={state.reviewQueue} collective={state.collective} />
           <span className="px-1 uppercase">Protótipo</span>
           {state.reviewQueue.length > 0 && <span className="px-1 uppercase">Para conferência: {state.reviewQueue.length}</span>}
           <Button variant="subtle" onClick={() => dispatch({ type: "restart" })}>

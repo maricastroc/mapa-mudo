@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Diga um Nome
 
-## Getting Started
+Experiência do ÍRIS — Laboratório de Inovação e Dados do Governo do Ceará para o espaço "Ciência Delas" da Feira do Conhecimento 2026.
 
-First, run the development server:
+## Na feira
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Com internet, uma vez: `npm ci` e `npm run build` (o build guarda as fontes; depois disso nada depende de internet).
+2. No computador do totem: `npm start` e abrir `http://localhost:3000/?totem` em tela cheia. O modo totem fica gravado no navegador e transforma os links das fontes em texto, para ninguém sair da experiência. `?totem=0` desliga.
+3. O teclado aparece na própria tela; um teclado físico também funciona.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Reiniciar (rodapé) e o reinício automático depois de 90 segundos sem toque começam uma nova visita sem apagar o mapa.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Dados
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Cada resposta fica no navegador do totem e é copiada para `data/participations.jsonl` no computador que roda o servidor. Os nomes guardados para conferência vão para `data/review-queue.jsonl`. A pasta pode ser trocada com `DIGA_UM_NOME_DATA_DIR`.
+- Se o navegador for limpo, o mapa volta a partir do arquivo. Se o servidor cair, o navegador continua guardando e envia depois.
+- Vários totens podem usar o mesmo servidor: a cada 30 segundos, quando a tela está parada na pergunta, o mapa junta as respostas de todos.
+- Exportar: Créditos → Dados da feira, ou `GET /api/participations?format=csv` (respostas) e `GET /api/participations?format=csv&list=review` (nomes para conferência).
+- Nada identifica quem participou: cada registro guarda o tipo de resposta, a cientista (ou a referência, como "estrangeira" ou "homem") e a hora. Os nomes para conferência são o texto digitado pela pessoa; revise antes de publicar.
+- A coluna `ja_estava_no_mapa` da exportação indica lembranças de nomes que já apareciam no mapa coletivo, e `voltou` indica nomes apresentados no estande e depois lembrados sem pista. A fila vê a tela, então essas lembranças não são medidas independentes de conhecimento prévio.
 
-## Learn More
+## Desenvolvimento
 
-To learn more about Next.js, take a look at the following resources:
+`npm run dev`, `npm test`, `npm run typecheck`, `npm run lint`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Conteúdo: `src/content/scientists/featured.json` (curadoria das 50 cientistas) e `src/content/scientists/references.ts` (nomes frequentes fora da folha: estrangeiras, homens e brasileiras ainda não curadas). Pendências de verificação em `docs/curation/REVISAO-PISTAS.md`.

@@ -46,22 +46,24 @@
         "hints": [
           {
             "level": 1,
-            "text": "Em um hospital psiquiátrico, ela recusou a ideia de que tratar significava apenas conter sintomas.",
+            "text": "Pintar e modelar podem fazer parte do tratamento de quem vive um sofrimento mental?",
             "factIds": [
-              "nise-f1"
+              "nise-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Em 1946, criou espaço para que pacientes trabalhassem com atividades e expressão em vez de serem reduzidos ao diagnóstico.",
+            "text": "Em 1946, num hospital psiquiátrico, ela propôs que pacientes fizessem atividades e arte, em vez de só conter sintomas.",
             "factIds": [
-              "nise-f1"
+              "nise-f1",
+              "nise-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Imagens, pinturas e modelagens tornaram-se parte de uma pesquisa pioneira sobre a vida psíquica.",
+            "text": "No Centro Psiquiátrico Pedro II, as obras dos pacientes viraram pesquisa, e seu trabalho, referência internacional de cuidado mais humano.",
             "factIds": [
+              "nise-f1",
               "nise-f2"
             ]
           }
@@ -163,21 +165,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Antes de ser lembrada pela política, ela entrou no Museu Nacional como bióloga.",
-            "factIds": [
-              "bertha-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Ali, passou décadas estudando zoologia — especialmente anfíbios brasileiros.",
+            "text": "Sapos, rãs e pererecas: o Brasil tem uma enorme diversidade de anfíbios. Quem os estuda?",
             "factIds": [
               "bertha-f2"
             ]
           },
           {
+            "level": 2,
+            "text": "Por décadas, ela pesquisou e ensinou no Museu Nacional, estudando espécies de anfíbios brasileiros.",
+            "factIds": [
+              "bertha-f1",
+              "bertha-f2"
+            ]
+          },
+          {
             "level": 3,
-            "text": "A mesma cientista também se tornou uma das figuras centrais da luta pelo voto feminino no Brasil.",
+            "text": "A mesma bióloga teve papel central na campanha pelo voto e pelos direitos políticos das mulheres no Brasil.",
             "factIds": [
               "bertha-f3"
             ]
@@ -287,22 +290,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "As primeiras pistas estão desenhadas e enterradas na pedra.",
+            "text": "Desenhos na pedra e objetos enterrados podem contar quem viveu nas Américas antes de nós?",
             "factIds": [
               "niede-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Na Serra da Capivara, décadas de escavação e preservação revelaram um arquivo extraordinário da presença humana.",
+            "text": "Por décadas, ela escavou, pesquisou e preservou o patrimônio arqueológico da Serra da Capivara, no Piauí.",
             "factIds": [
-              "niede-f1",
-              "niede-f2"
+              "niede-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Essas evidências ajudaram a manter aberta uma grande pergunta científica: há quanto tempo seres humanos vivem nas Américas?",
+            "text": "Seu trabalho pôs o Piauí no centro de um debate internacional ainda aberto: desde quando há humanos nas Américas?",
             "factIds": [
               "niede-f3"
             ]
@@ -413,14 +415,15 @@
         "hints": [
           {
             "level": 1,
-            "text": "Algumas doenças aparecem em famílias como uma mensagem escrita no DNA.",
+            "text": "Por que algumas doenças que enfraquecem os músculos aparecem em várias pessoas da mesma família?",
             "factIds": [
-              "mayana-f1"
+              "mayana-f1",
+              "mayana-f3"
             ]
           },
           {
             "level": 2,
-            "text": "Ela ajudou a construir no Brasil uma linha de pesquisa dedicada a doenças neuromusculares hereditárias.",
+            "text": "Ela foi pioneira no Brasil em estudar a genética dessas doenças, começando pela distrofia muscular de Duchenne.",
             "factIds": [
               "mayana-f1",
               "mayana-f3"
@@ -428,7 +431,7 @@
           },
           {
             "level": 3,
-            "text": "Na USP, seu trabalho passou do rastreamento de genes ao estudo de células-tronco e novas estratégias para doenças genéticas.",
+            "text": "Na USP, coordena um centro de genoma humano e células-tronco, unindo diagnóstico, famílias afetadas e busca por tratamentos.",
             "factIds": [
               "mayana-f2"
             ]
@@ -547,21 +550,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Um vírus chega ao país. A primeira pergunta não é só 'qual vírus?', mas 'qual versão dele chegou aqui?'.",
+            "text": "Cada vírus carrega um código genético, o genoma. O que dá para descobrir lendo esse código?",
             "factIds": [
-              "jaq-f1"
+              "jaq-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela já dominava protocolos rápidos de leitura de genomas virais antes da pandemia.",
+            "text": "Antes da Covid-19, ela já usava métodos rápidos para ler genomas de vírus, incluindo o do zika.",
             "factIds": [
               "jaq-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Em 2020, fez parte da liderança da equipe que obteve a sequência do SARS-CoV-2 no Brasil em cerca de 48 horas.",
+            "text": "Ajudou a liderar a equipe da USP e do Instituto Adolfo Lutz que leu o genoma do coronavírus em cerca de 48 horas.",
             "factIds": [
               "jaq-f1",
               "jaq-f3"
@@ -570,8 +573,8 @@
         ],
         "reveal": {
           "headline": "Jaqueline Goes de Jesus",
-          "summary": "Biomédica brasileira especialista em genômica de vírus e uma das cientistas à frente do sequenciamento inicial do SARS-CoV-2 no Brasil.",
-          "whyItMatters": "Sequências genômicas permitem acompanhar origem, dispersão e mudanças de vírus durante epidemias.",
+          "summary": "Biomédica brasileira especialista em genomas de vírus e uma das cientistas à frente da primeira leitura do genoma do coronavírus no Brasil.",
+          "whyItMatters": "Ler o genoma de um vírus permite acompanhar de onde ele veio, como se espalha e como muda durante uma epidemia.",
           "sourceRefs": [
             "jaq-s1",
             "jaq-s2"
@@ -684,14 +687,14 @@
         "hints": [
           {
             "level": 1,
-            "text": "O ar está cheio de nitrogênio. Para uma planta, isso não significa que ele esteja disponível.",
+            "text": "O ar está cheio de nitrogênio, mas as plantas não conseguem usá-lo direto. Como ele chega até elas?",
             "factIds": [
               "joh-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Algumas bactérias conseguem transformar esse nitrogênio em formas que entram no ciclo das plantas.",
+            "text": "Ela liderou pesquisas com bactérias que, junto às raízes, transformam o nitrogênio do ar em nutriente para plantas tropicais.",
             "factIds": [
               "joh-f1",
               "joh-f3"
@@ -699,15 +702,16 @@
           },
           {
             "level": 3,
-            "text": "Ela ajudou a transformar essa relação invisível entre raízes e microrganismos em uma tecnologia central da agricultura tropical brasileira.",
+            "text": "No Brasil, seu trabalho ajudou a mostrar que esses micróbios podem reduzir o uso de adubos de nitrogênio na agricultura tropical.",
             "factIds": [
+              "joh-f2",
               "joh-f3"
             ]
           }
         ],
         "reveal": {
           "headline": "Johanna Döbereiner",
-          "summary": "Agrônoma brasileira pioneira em microbiologia do solo e fixação biológica de nitrogênio.",
+          "summary": "Agrônoma brasileira pioneira no estudo de micróbios do solo que ajudam as plantas a aproveitar o nitrogênio do ar.",
           "whyItMatters": "Seu trabalho ajudou a demonstrar que microrganismos poderiam reduzir a dependência de fertilizantes nitrogenados em sistemas agrícolas.",
           "sourceRefs": [
             "joh-s1",
@@ -811,23 +815,24 @@
         "hints": [
           {
             "level": 1,
-            "text": "Há materiais que ficam entre dois mundos: não conduzem eletricidade como metais, nem bloqueiam completamente como isolantes.",
+            "text": "Chips e sensores usam materiais que conduzem eletricidade menos que metais e mais que isolantes. Que materiais são esses?",
             "factIds": [
               "sonia-f1"
             ]
           },
           {
             "level": 2,
-            "text": "É nesse território dos semicondutores e materiais para sensores que sua pesquisa se move.",
+            "text": "Na Física, ela pesquisa esses materiais, os semicondutores, e materiais para sensores; também deu aulas no ITA.",
             "factIds": [
               "sonia-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Sua trajetória também abriu uma fronteira institucional: tornou-se referência da presença de mulheres negras na Física e no ITA.",
+            "text": "Em 2018, foi palestrante da Feira do Conhecimento do Ceará, que a apresentou como a primeira mulher negra doutora em Física do Brasil.",
             "factIds": [
-              "sonia-f1"
+              "sonia-f1",
+              "sonia-f2"
             ]
           }
         ],
@@ -881,7 +886,7 @@
         "usageStatus": "approved"
       },
       "reviewStatus": "fact-checked-core",
-      "editorialNotes": "Antes da publicação final, convém obter uma fonte do ITA ou currículo institucional para os detalhes técnicos da linha de pesquisa; o claim histórico está apoiado na fonte do Governo do Ceará."
+      "editorialNotes": "Antes da publicação final, convém obter uma fonte do ITA ou currículo institucional para os detalhes técnicos da linha de pesquisa; o claim histórico está apoiado na fonte do Governo do Ceará. Revisão das pistas (2026-10): Pistas 1 e 2 (semicondutores e sensores) vêm das pistas anteriores e de researchAreas; nenhum fato as apoia. Confirmar com fonte do ITA ou currículo."
     },
     {
       "id": "duilia-de-mello",
@@ -922,21 +927,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "O céu parecia o mesmo — até surgir uma estrela onde antes não havia nenhuma.",
+            "text": "Algumas estrelas morrem numa explosão enorme, a supernova. Como reconhecer uma no céu?",
             "factIds": [
               "duilia-f1"
             ]
           },
           {
             "level": 2,
-            "text": "O instrumento não produzia uma fotografia: separava a luz em um espectro.",
+            "text": "Observando no Chile, ela analisou a luz separada em cores, o espectro, e viu linhas largas de uma explosão.",
             "factIds": [
+              "duilia-f1",
               "duilia-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Linhas muito largas denunciaram a explosão de uma estrela. O objeto seria registrado como Supernova 1997D.",
+            "text": "Assim, no observatório do ESO em La Silla, descobriu a Supernova 1997D, reconhecida pela luz, e não por uma foto.",
             "factIds": [
               "duilia-f1",
               "duilia-f2"
@@ -946,7 +952,7 @@
         "reveal": {
           "headline": "Duília de Mello",
           "summary": "Astrônoma brasileira que descobriu a Supernova 1997D durante observações no Chile.",
-          "whyItMatters": "O episódio mostra como cientistas conseguem reconhecer eventos cósmicos não apenas por imagens, mas pela assinatura física contida na luz.",
+          "whyItMatters": "O episódio mostra que cientistas reconhecem explosões no espaço não só por imagens, mas pelas pistas guardadas na luz.",
           "sourceRefs": [
             "duilia-s1"
           ]
@@ -1036,22 +1042,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "O gelo flutua. Parece banal — mas esse comportamento já mostra que a água foge de padrões comuns dos materiais.",
+            "text": "Na maioria das substâncias, o sólido afunda no próprio líquido. Por que o gelo flutua na água?",
             "factIds": [
               "marcia-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ao mudar temperatura e pressão, a água exibe uma coleção incomum de comportamentos físicos.",
+            "text": "Ela cria modelos para entender as anomalias da água, comportamentos incomuns que surgem ao mudar temperatura e pressão.",
             "factIds": [
               "marcia-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Ela construiu modelos para entender essas anomalias e o que elas revelam sobre líquidos complexos.",
+            "text": "Na UFRGS, é reconhecida pela ciência e pela liderança; entender essas anomalias ajuda a explicar fenômenos fundamentais e inspira aplicações em materiais.",
             "factIds": [
+              "marcia-f1",
               "marcia-f2"
             ]
           }
@@ -1149,30 +1156,29 @@
         "hints": [
           {
             "level": 1,
-            "text": "Um cristal parece imóvel. Por dentro, seus átomos obedecem a uma arquitetura precisa.",
+            "text": "Raios X mostram nossos ossos. Será que também revelam como os átomos se organizam num cristal?",
             "factIds": [
               "yvonne-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Raios X atravessam essa estrutura e produzem padrões de difração.",
+            "text": "Ela usa raios X em cristais e, pelo jeito como eles se espalham, descobre a estrutura das moléculas.",
             "factIds": [
               "yvonne-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Ela ajudou a consolidar no Brasil o uso desses padrões para determinar estruturas moleculares e cristalinas.",
+            "text": "Em São Carlos, foi pioneira em consolidar no Brasil essa ciência, a cristalografia, e em formar novos pesquisadores.",
             "factIds": [
-              "yvonne-f1",
               "yvonne-f2"
             ]
           }
         ],
         "reveal": {
           "headline": "Yvonne Mascarenhas",
-          "summary": "Física e cristalógrafa brasileira, pioneira na determinação de estruturas por difração de raios X e na formação da cristalografia em São Carlos.",
+          "summary": "Física e cristalógrafa brasileira, pioneira em descobrir a estrutura de moléculas e cristais com raios X e na consolidação da cristalografia em São Carlos.",
           "whyItMatters": "A cristalografia permite inferir estruturas invisíveis a partir da forma como a matéria espalha raios X.",
           "sourceRefs": [
             "yvonne-s1",
@@ -1270,21 +1276,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Antes de o novo coronavírus chegar ao Brasil, uma equipe já se preparava para ler rapidamente seu genoma.",
+            "text": "Dá para se preparar para uma epidemia antes de o vírus chegar ao país?",
             "factIds": [
-              "ester-f1"
+              "ester-f1",
+              "ester-f2"
             ]
           },
           {
             "level": 2,
-            "text": "A estratégia vinha de anos de trabalho com vigilância genômica de vírus e epidemias.",
+            "text": "Professora da USP, ela coordenou centros de pesquisa sobre vírus, genomas e epidemias, preparando uma equipe para agir rápido.",
             "factIds": [
+              "ester-f1",
               "ester-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Quando o primeiro caso foi confirmado, a equipe que ela coordenava publicou a sequência completa em cerca de 48 horas.",
+            "text": "Na Covid, a equipe que ela coordenava leu o genoma do vírus dos primeiros casos do Brasil em cerca de 48 horas.",
             "factIds": [
               "ester-f1"
             ]
@@ -1292,7 +1300,7 @@
         ],
         "reveal": {
           "headline": "Ester Sabino",
-          "summary": "Médica e pesquisadora brasileira em doenças infecciosas, genômica e epidemiologia molecular.",
+          "summary": "Médica e pesquisadora brasileira que estuda doenças infecciosas e acompanha epidemias pela leitura do genoma dos vírus.",
           "whyItMatters": "Sua liderança ajudou a transformar sequenciamento rápido em ferramenta de vigilância de epidemias no Brasil.",
           "sourceRefs": [
             "ester-s1",
@@ -1400,21 +1408,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "E se fosse possível ensinar o sistema imune usando o próprio parasita — enfraquecido antes de causar a doença?",
+            "text": "A malária vem de um parasita transmitido pela picada de mosquito. Dá para vacinar contra ele?",
             "factIds": [
-              "ruth-f1"
+              "ruth-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela irradiou a forma do parasita que entra no organismo pela picada do mosquito e mostrou proteção em animais.",
+            "text": "Ela enfraqueceu com radiação a forma do parasita que entra pela picada e mostrou que isso protegia animais da malária.",
             "factIds": [
               "ruth-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Esse experimento abriu um dos caminhos fundamentais para a busca de vacinas contra a malária.",
+            "text": "Muitos viam esse parasita como alvo inviável para vacinas; seu experimento abriu caminho para estratégias de vacina contra a malária.",
             "factIds": [
               "ruth-f2"
             ]
@@ -1422,8 +1430,8 @@
         ],
         "reveal": {
           "headline": "Ruth Sonntag Nussenzweig",
-          "summary": "Imunologista brasileira cujo trabalho pioneiro com esporozoítos atenuados abriu caminho para estratégias de vacinação contra a malária.",
-          "whyItMatters": "Ela ajudou a demonstrar experimentalmente que era possível induzir imunidade protetora contra um parasita que muitos consideravam um alvo inviável para vacinas.",
+          "summary": "Imunologista brasileira que, ao enfraquecer com radiação o parasita da malária, abriu caminho para estratégias de vacina contra a doença.",
+          "whyItMatters": "Ela ajudou a mostrar em experimentos que era possível proteger o organismo contra um parasita que muitos consideravam um alvo inviável para vacinas.",
           "sourceRefs": [
             "ruth-s1",
             "ruth-s2"
@@ -1535,21 +1543,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Quando quase não havia mulheres formadas em Física no país, ela escolheu justamente essa carreira.",
-            "factIds": [
-              "elisa-f1"
-            ]
-          },
-          {
-            "level": 2,
-            "text": "Sua trajetória se confundiu com a criação de uma das instituições centrais da Física brasileira.",
+            "text": "Para entender do que a matéria é feita, físicos fazem experimentos. Mas quem constrói os laboratórios?",
             "factIds": [
               "elisa-f2"
             ]
           },
           {
+            "level": 2,
+            "text": "Uma das primeiras mulheres formadas em Física no Brasil, ela fez carreira em física experimental, que testa ideias em laboratório.",
+            "factIds": [
+              "elisa-f1",
+              "elisa-f2"
+            ]
+          },
+          {
             "level": 3,
-            "text": "Ela foi uma das fundadoras do Centro Brasileiro de Pesquisas Físicas e construiu carreira em física experimental.",
+            "text": "Foi uma das fundadoras do Centro Brasileiro de Pesquisas Físicas, uma das instituições centrais da Física no Brasil.",
             "factIds": [
               "elisa-f2"
             ]
@@ -1645,21 +1654,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Uma floresta também pode ser lida como uma biblioteca de moléculas.",
+            "text": "Muitos remédios vieram de substâncias feitas por plantas. Quantas ainda se escondem na biodiversidade brasileira?",
             "factIds": [
               "vanderlan-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Plantas produzem compostos que podem funcionar como sinais, defesas — e pistas para novas moléculas bioativas.",
+            "text": "Ela analisa substâncias produzidas por plantas brasileiras, em busca das que têm efeito sobre seres vivos.",
             "factIds": [
+              "vanderlan-f1",
               "vanderlan-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Ela investiga a biodiversidade brasileira por meio da química de produtos naturais e da bioprospecção.",
+            "text": "Seu trabalho transforma a biodiversidade brasileira em pistas para novas moléculas de interesse científico e medicinal.",
             "factIds": [
               "vanderlan-f1",
               "vanderlan-f2"
@@ -1668,7 +1678,7 @@
         ],
         "reveal": {
           "headline": "Vanderlan Bolzani",
-          "summary": "Química brasileira que pesquisa produtos naturais e bioprospecção da biodiversidade brasileira.",
+          "summary": "Química brasileira que busca, na biodiversidade do Brasil, moléculas naturais de interesse científico e medicinal.",
           "whyItMatters": "Seu trabalho conecta diversidade biológica a diversidade química e à busca por moléculas de interesse científico e medicinal.",
           "sourceRefs": [
             "vanderlan-s1"
@@ -1757,14 +1767,14 @@
         "hints": [
           {
             "level": 1,
-            "text": "Dentro de uma raiz pode existir uma pequena fábrica biológica de fertilidade.",
+            "text": "Soja e feijão precisam de nitrogênio. E se bactérias fizessem o papel de parte do adubo?",
             "factIds": [
-              "mari-f1"
+              "mari-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Bactérias selecionadas e inoculadas nas plantas ajudam a trazer nitrogênio atmosférico para o ciclo agrícola.",
+            "text": "Ela desenvolve inoculantes, produtos com bactérias selecionadas que ajudam as plantas a usar o nitrogênio do ar.",
             "factIds": [
               "mari-f1",
               "mari-f2"
@@ -1772,7 +1782,7 @@
           },
           {
             "level": 3,
-            "text": "Ela pesquisa e desenvolve tecnologias microbianas que tornaram a fixação biológica de nitrogênio estratégica para a agricultura brasileira.",
+            "text": "Na Embrapa Soja, seu trabalho tornou essa tecnologia estratégica no Brasil: menos adubo nitrogenado, menor custo e menor impacto ambiental.",
             "factIds": [
               "mari-f1",
               "mari-f2"
@@ -1781,7 +1791,7 @@
         ],
         "reveal": {
           "headline": "Mariangela Hungria",
-          "summary": "Agrônoma e microbiologista brasileira da Embrapa, referência em fixação biológica de nitrogênio e inoculantes.",
+          "summary": "Agrônoma e microbiologista da Embrapa, referência no uso de bactérias que ajudam as lavouras a aproveitar o nitrogênio do ar.",
           "whyItMatters": "A tecnologia permite produzir com menor dependência de fertilizantes nitrogenados, reduzindo custos e impactos ambientais.",
           "sourceRefs": [
             "mari-s1",
@@ -1877,21 +1887,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Algumas estrelas funcionam como fósseis: guardam na luz pistas químicas do início da Galáxia.",
+            "text": "Fósseis contam a história da vida. Estrelas muito antigas podem contar a da Via Láctea?",
             "factIds": [
               "beatriz-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Sua pesquisa compara populações do bojo, halo e disco da Via Láctea para reconstruir como ela se formou.",
+            "text": "Ela estuda a química guardada na luz de estrelas antigas para reconstruir como a Via Láctea se formou.",
             "factIds": [
               "beatriz-f1"
             ]
           },
           {
             "level": 3,
-            "text": "No IAG-USP, estudos de estrelas muito pobres em metais ajudam a investigar algumas das populações mais antigas da nossa Galáxia.",
+            "text": "No IAG-USP, onde ela coordena pesquisas, foram identificadas estrelas da Via Láctea com cerca de 12,5 bilhões de anos.",
             "factIds": [
               "beatriz-f1",
               "beatriz-f2"
@@ -1900,7 +1910,7 @@
         ],
         "reveal": {
           "headline": "Beatriz Barbuy",
-          "summary": "Astrofísica brasileira que estuda estrelas antigas e populações estelares para reconstruir a formação e evolução da Via Láctea.",
+          "summary": "Astrofísica brasileira que estuda estrelas antigas para reconstruir como a Via Láctea se formou e evoluiu.",
           "whyItMatters": "A composição química de estrelas antigas preserva informação sobre etapas remotas da história galáctica.",
           "sourceRefs": [
             "beatriz-s1",
@@ -1955,7 +1965,8 @@
         "sourceUrl": "https://imagens.usp.br/escolas-faculdades-e-institutos-categorias/instituto-de-astronomia-geofisica-e-ciencias-atmosfericas-institutos-faculdades-e-escolas/coloquio-no-iag/attachment/professora-beatriz-barbuy-003/",
         "usageStatus": "approved-with-credit"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): Confirmar se as estrelas de cerca de 12,5 bilhões de anos foram identificadas pelo grupo coordenado por ela."
     },
     {
       "id": "debora-foguel",
@@ -1996,21 +2007,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Uma proteína não é apenas uma sequência: ela precisa dobrar-se na forma certa.",
+            "text": "Ao fritar um ovo, a clara fica branca porque suas proteínas mudam de forma. E dentro do nosso corpo?",
             "factIds": [
               "debora-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Quando proteínas se dobram ou se agrupam de maneira inadequada, podem formar agregados associados a doenças.",
+            "text": "Ela estuda como as proteínas do corpo se dobram e o que acontece quando se dobram errado e se agrupam.",
             "factIds": [
               "debora-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Ela investiga justamente como proteínas se enovelam, agregam e formam amiloides.",
+            "text": "Na UFRJ, num laboratório dedicado a esses aglomerados, os amiloides, ela busca entender os mecanismos de várias doenças.",
             "factIds": [
               "debora-f1",
               "debora-f2"
@@ -2019,7 +2030,7 @@
         ],
         "reveal": {
           "headline": "Débora Foguel",
-          "summary": "Bioquímica brasileira que estuda enovelamento, agregação de proteínas e doenças amiloidogênicas.",
+          "summary": "Bioquímica brasileira que estuda como as proteínas se dobram, como se agrupam de forma errada e as doenças ligadas a isso.",
           "whyItMatters": "Compreender como proteínas mudam de forma e se agregam ajuda a investigar mecanismos moleculares de diversas doenças.",
           "sourceRefs": [
             "debora-s1"
@@ -2108,21 +2119,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Para entender uma floresta continental, não basta olhar árvores: é preciso olhar estradas, cidades, fronteiras e fluxos.",
+            "text": "A Amazônia não é só árvores: tem estradas, cidades e fronteiras. Como estudar um território assim?",
             "factIds": [
               "becker-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela tratou a Amazônia como território em transformação, conectando espaço, política, economia e ambiente.",
+            "text": "Ela estudou como a Amazônia se transforma, ligando espaço, política, economia e meio ambiente.",
             "factIds": [
               "becker-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Sua obra tornou-se referência para pensar a geopolítica e a gestão territorial da Amazônia.",
+            "text": "Professora emérita da UFRJ, deixou uma obra que virou referência para pensar a política e a gestão do território amazônico.",
             "factIds": [
               "becker-f1",
               "becker-f2"
@@ -2220,14 +2231,14 @@
         "hints": [
           {
             "level": 1,
-            "text": "Como transformar comportamento — algo que muda a cada instante — em objeto de investigação científica?",
+            "text": "Dá para estudar o comportamento com experimentos, do mesmo jeito que se estuda a química?",
             "factIds": [
-              "bori-f1"
+              "bori-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela ajudou a consolidar no Brasil uma Psicologia baseada em observação, experimento e formação rigorosa de pesquisadores.",
+            "text": "Ela foi pioneira em pesquisar Psicologia com observação e experimentos no Brasil e formou pesquisadores com rigor.",
             "factIds": [
               "bori-f1",
               "bori-f2"
@@ -2235,7 +2246,7 @@
           },
           {
             "level": 3,
-            "text": "Seu nome tornou-se central para a psicologia experimental e para a própria organização da ciência brasileira.",
+            "text": "Assim, ajudou a firmar a Psicologia como ciência no Brasil e teve papel central na organização da ciência brasileira.",
             "factIds": [
               "bori-f1"
             ]
@@ -2331,22 +2342,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Solo não é apenas suporte para uma planta. É um sistema vivo.",
+            "text": "O solo é só o chão onde a planta fica, ou é um sistema cheio de vida?",
+            "factIds": [
+              "prim-f2"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela estudou o solo como um sistema vivo, em que raízes, microrganismos, água e matéria orgânica interagem.",
             "factIds": [
               "prim-f1",
               "prim-f2"
             ]
           },
           {
-            "level": 2,
-            "text": "Raízes, microrganismos, matéria orgânica, água e estrutura física interagem o tempo todo.",
-            "factIds": [
-              "prim-f2"
-            ]
-          },
-          {
             "level": 3,
-            "text": "Ela fez dessa visão integrada do solo uma base para o manejo ecológico e para a agroecologia no Brasil.",
+            "text": "No Brasil, essa visão virou base da agroecologia: cuidar da vida do solo, e não só adicionar adubos.",
             "factIds": [
               "prim-f1",
               "prim-f2"
@@ -2443,22 +2454,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Vacinas passam por uma longa sequência de testes antes de chegar à população.",
+            "text": "Antes de chegar ao posto de saúde, toda vacina é testada em voluntários. Quem coordena esses testes?",
             "factIds": [
               "sue-ann-clemens-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Durante a pandemia, ela coordenou no Brasil os testes clínicos de uma das vacinas mais conhecidas contra a Covid-19.",
+            "text": "Na pandemia, ela coordenou no Brasil os testes clínicos da vacina Oxford/AstraZeneca contra a Covid-19.",
             "factIds": [
               "sue-ann-clemens-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Sua carreira conecta pesquisa clínica brasileira a grandes redes internacionais de desenvolvimento de vacinas.",
+            "text": "Seu trabalho transforma vacinas candidatas em evidências que orientam seu uso, ligando o Brasil a redes internacionais de vacinas.",
             "factIds": [
+              "sue-ann-clemens-f1",
               "sue-ann-clemens-f2"
             ]
           }
@@ -2550,21 +2562,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Uma doença transmitida pelo ar acompanha a humanidade há séculos e ainda exige pesquisa, diagnóstico e tratamento.",
+            "text": "A tuberculose ataca os pulmões, passa pelo ar e existe há séculos. Por que não acabou?",
             "factIds": [
               "margareth-dalcolmo-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Grande parte de sua carreira foi dedicada à tuberculose e às doenças respiratórias.",
+            "text": "Na Fiocruz, ela dedicou boa parte da carreira à tuberculose, incluindo protocolos de pesquisa e de tratamento.",
             "factIds": [
-              "margareth-dalcolmo-f1"
+              "margareth-dalcolmo-f1",
+              "margareth-dalcolmo-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Na pandemia de Covid-19, tornou-se também uma das vozes científicas mais reconhecidas do país.",
+            "text": "Na pandemia de Covid-19, virou uma das vozes científicas mais reconhecidas do país, ligando pesquisa, saúde pública e comunicação.",
             "factIds": [
               "margareth-dalcolmo-f2"
             ]
@@ -2618,7 +2631,8 @@
         "sourceUrl": null,
         "usageStatus": "rights-review"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): 'Uma das vozes científicas mais reconhecidas do país na Covid-19' vem da pista anterior e não de um fato; confirmar na fonte."
     },
     {
       "id": "fabiana-corsi-zuelli",
@@ -2657,21 +2671,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "E se parte da diversidade dos transtornos psiquiátricos também pudesse ser investigada olhando para o sistema imune?",
+            "text": "A psicose afasta a pessoa da realidade. Pode ter relação com as defesas do corpo?",
             "factIds": [
               "fabiana-corsi-zuelli-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela estuda células e sinais imunológicos no sangue de pessoas com psicose.",
+            "text": "Ela analisa células e sinais do sistema imune no sangue de pessoas com psicose, cruzando com dados genéticos.",
             "factIds": [
-              "fabiana-corsi-zuelli-f1"
+              "fabiana-corsi-zuelli-f1",
+              "fabiana-corsi-zuelli-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Seu trabalho busca entender como alterações imunes periféricas se relacionam com cérebro, sintomas e comportamento.",
+            "text": "Ao investigar a conversa entre sistema imune, cérebro e comportamento, busca pistas para tratamentos psiquiátricos mais personalizados.",
             "factIds": [
               "fabiana-corsi-zuelli-f2"
             ]
@@ -2764,22 +2779,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Fazer uma vacina contra dengue exige lidar ao mesmo tempo com quatro sorotipos diferentes do vírus.",
+            "text": "O vírus da dengue tem quatro tipos. Como fazer uma só vacina que proteja contra todos?",
             "factIds": [
               "neuza-frazatti-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Sua equipe realizou centenas de experimentos para chegar a uma formulação tetravalente.",
+            "text": "Com sua equipe, ela fez centenas de experimentos até chegar a uma vacina com os quatro tipos do vírus.",
             "factIds": [
               "neuza-frazatti-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Ela liderou no Butantan o desenvolvimento do processo produtivo da vacina brasileira contra a dengue.",
+            "text": "No Butantan, liderou o desenvolvimento do processo que leva a vacina brasileira da dengue do laboratório à produção em escala.",
             "factIds": [
+              "neuza-frazatti-f1",
               "neuza-frazatti-f2"
             ]
           }
@@ -2832,7 +2848,8 @@
         "sourceUrl": null,
         "usageStatus": "rights-review"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): 'Centenas de experimentos' vem da pista anterior e não de um fato; confirmar na fonte."
     },
     {
       "id": "duda-franklin",
@@ -2871,21 +2888,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Sinais elétricos podem ser usados para conversar com o sistema nervoso sem cirurgia.",
+            "text": "Nosso sistema nervoso funciona com sinais elétricos. Dá para conversar com ele sem cirurgia?",
             "factIds": [
-              "duda-franklin-f1"
+              "duda-franklin-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela uniu neurociência, hardware e software para trabalhar com neuromodulação.",
+            "text": "Ela une neurociência, engenharia, eletrônica e programação para estimular o sistema nervoso de fora do corpo.",
             "factIds": [
-              "duda-franklin-f1"
+              "duda-franklin-f1",
+              "duda-franklin-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Sua tecnologia é voltada à recuperação de movimento e ao alívio de dor em pessoas com disfunções neurológicas.",
+            "text": "Cofundou a Orby, que desenvolve sistemas para ajudar pessoas a recuperar movimentos e aliviar a dor.",
             "factIds": [
               "duda-franklin-f2"
             ]
@@ -2978,21 +2996,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Nem toda afirmação que parece científica sobrevive ao teste das evidências.",
+            "text": "Como saber se uma notícia sobre saúde que circula nas redes é verdade?",
             "factIds": [
-              "natalia-pasternak-f1"
+              "natalia-pasternak-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Sua formação é em microbiologia e genética molecular de bactérias.",
+            "text": "Microbióloga com doutorado em genética de bactérias pela USP, ela leva o teste das evidências ao debate público.",
             "factIds": [
-              "natalia-pasternak-f1"
+              "natalia-pasternak-f1",
+              "natalia-pasternak-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Ela levou o método científico para o debate público, especialmente em saúde e desinformação.",
+            "text": "À frente do Instituto Questão de Ciência, defende políticas públicas baseadas em evidências e enfrenta a desinformação em saúde.",
             "factIds": [
               "natalia-pasternak-f2"
             ]
@@ -3085,22 +3104,24 @@
         "hints": [
           {
             "level": 1,
-            "text": "Catalisadores aceleram reações e podem torná-las mais eficientes e menos poluentes.",
+            "text": "Como acelerar uma reação química e, ao mesmo tempo, poluir menos?",
             "factIds": [
-              "viviane-dos-santos-f1"
+              "viviane-dos-santos-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela trabalhou com metais organizados em escala nanométrica para criar novos catalisadores.",
+            "text": "Engenheira química, ela pesquisou catalisadores de paládio e platina em estruturas nanométricas, invisíveis a olho nu.",
             "factIds": [
-              "viviane-dos-santos-f1"
+              "viviane-dos-santos-f1",
+              "viviane-dos-santos-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Sua trajetória saiu da escola pública na Bahia e chegou à engenharia química e nanotecnologia na Holanda.",
+            "text": "Da escola pública na Bahia ao mestrado em Delft, na Holanda, mostrou como materiais nanométricos podem alterar processos químicos.",
             "factIds": [
+              "viviane-dos-santos-f1",
               "viviane-dos-santos-f2"
             ]
           }
@@ -3153,7 +3174,8 @@
         "sourceUrl": null,
         "usageStatus": "rights-review"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): 'Escola pública na Bahia' vem da pista anterior e não de um fato; confirmar na fonte."
     },
     {
       "id": "helena-nader",
@@ -3192,21 +3214,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Moléculas de açúcar também podem ter funções estruturais e regulatórias decisivas no organismo.",
+            "text": "A heparina, um remédio contra coágulos, é feita de açúcares. O que esses açúcares fazem no corpo?",
             "factIds": [
               "helena-nader-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela dedicou sua pesquisa a glicosaminoglicanos, moléculas como a heparina.",
+            "text": "Ela estuda a família de moléculas de açúcar à qual a heparina pertence e seus usos na medicina.",
             "factIds": [
               "helena-nader-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Além do laboratório, tornou-se a primeira mulher a presidir a Academia Brasileira de Ciências.",
+            "text": "Além do laboratório, foi a primeira mulher eleita presidente da Academia Brasileira de Ciências, defendendo a ciência do país.",
             "factIds": [
               "helena-nader-f2"
             ]
@@ -3299,23 +3321,24 @@
         "hints": [
           {
             "level": 1,
-            "text": "Para entender uma floresta, não basta contar árvores: é preciso observar como elas funcionam e interagem.",
+            "text": "Plantas também ficam doentes. Como as plantas da Amazônia convivem com doenças e com o solo?",
             "factIds": [
-              "deliane-penha-f1"
+              "deliane-penha-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela investiga atributos das plantas e relações entre solo, vegetação e patógenos.",
+            "text": "Ela investiga como plantas amazônicas respondem ao ambiente e interagem com o solo e com micróbios causadores de doenças.",
             "factIds": [
-              "deliane-penha-f1"
+              "deliane-penha-f1",
+              "deliane-penha-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Seu laboratório trabalha para entender respostas de espécies vegetais em diferentes ecossistemas amazônicos.",
+            "text": "Em diferentes ecossistemas amazônicos, seu trabalho ajuda a entender como a biodiversidade da floresta responde às condições do ambiente.",
             "factIds": [
-              "deliane-penha-f2"
+              "deliane-penha-f1"
             ]
           }
         ],
@@ -3406,29 +3429,29 @@
         "hints": [
           {
             "level": 1,
-            "text": "Uma descoberta em biologia pode atravessar muitas escalas até se transformar em um novo medicamento.",
+            "text": "Como uma molécula tirada da natureza vira, um dia, remédio na farmácia?",
             "factIds": [
-              "maria-augusta-arruda-f1"
+              "maria-augusta-arruda-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela trabalha na interface entre biologia fundamental, doenças e descoberta de fármacos.",
+            "text": "Ela estuda como micróbios causadores de doenças agem no organismo infectado e busca medicamentos na biodiversidade.",
             "factIds": [
-              "maria-augusta-arruda-f1"
+              "maria-augusta-arruda-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Hoje dirige um laboratório nacional dedicado a biociências e infraestrutura científica de ponta.",
+            "text": "Hoje dirige o Laboratório Nacional de Biociências, no CNPEM, ligando pesquisa básica, biodiversidade, saúde e inovação.",
             "factIds": [
-              "maria-augusta-arruda-f2"
+              "maria-augusta-arruda-f1"
             ]
           }
         ],
         "reveal": {
           "headline": "Maria Augusta Arruda",
-          "summary": "Farmacologista e pesquisadora brasileira, diretora do LNBio/CNPEM.",
+          "summary": "Farmacologista brasileira que dirige o Laboratório Nacional de Biociências, no CNPEM, e busca medicamentos na biodiversidade.",
           "whyItMatters": "Sua atuação conecta pesquisa básica, biodiversidade, saúde e inovação tecnológica.",
           "sourceRefs": [
             "maria-augusta-arruda-s1"
@@ -3515,29 +3538,30 @@
         "hints": [
           {
             "level": 1,
-            "text": "O cérebro também pode ser estudado como um sistema complexo, usando matemática e física estatística.",
+            "text": "Bandos de pássaros, trânsito e cérebro são sistemas complexos. Dá para estudar o cérebro com a física?",
             "factIds": [
               "fernanda-matias-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela analisa padrões de atividade cerebral, entropia e complexidade em grandes conjuntos de dados.",
+            "text": "Ela usa ferramentas da física para achar padrões de atividade cerebral em grandes conjuntos de dados.",
             "factIds": [
               "fernanda-matias-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Sua pesquisa busca inclusive biomarcadores de envelhecimento e doença de Alzheimer.",
+            "text": "Na UFAL, busca nos dados do cérebro sinais de envelhecimento e Alzheimer; em 2022, ganhou o prêmio Para Mulheres na Ciência.",
             "factIds": [
+              "fernanda-matias-f1",
               "fernanda-matias-f2"
             ]
           }
         ],
         "reveal": {
           "headline": "Fernanda Matias",
-          "summary": "Física brasileira que aplica ferramentas de sistemas complexos à neurociência computacional.",
+          "summary": "Física brasileira que usa ferramentas da física e da matemática para estudar a atividade do cérebro.",
           "whyItMatters": "Seu trabalho aproxima física, matemática e dados cerebrais para investigar organização e doença no sistema nervoso.",
           "sourceRefs": [
             "fernanda-matias-s1"
@@ -3583,7 +3607,8 @@
         "sourceUrl": null,
         "usageStatus": "rights-review"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): 'Sinais de envelhecimento e Alzheimer' vem da pista anterior e não de um fato; confirmar na fonte."
     },
     {
       "id": "tatiana-ometto",
@@ -3622,21 +3647,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Alguns vírus só podem ser estudados em laboratórios construídos para impedir que o agente saia de ambientes altamente controlados.",
+            "text": "Alguns vírus são tão perigosos que só podem ser estudados em laboratórios especiais. Quem trabalha lá dentro?",
             "factIds": [
-              "tatiana-ometto-f1"
+              "tatiana-ometto-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela pesquisa vírus emergentes e reemergentes em condições de alta biossegurança.",
+            "text": "Ela pesquisa vírus que surgem ou voltam a circular e já trabalhou nesses laboratórios.",
             "factIds": [
-              "tatiana-ometto-f1"
+              "tatiana-ometto-f1",
+              "tatiana-ometto-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Sua trajetória inclui trabalho com níveis de contenção BSL-3 e BSL-4.",
+            "text": "Na USP, foi responsável por um laboratório de alta segurança, parte da preparação científica para enfrentar novas ameaças infecciosas.",
             "factIds": [
               "tatiana-ometto-f2"
             ]
@@ -3729,21 +3755,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Para produzir uma luz capaz de investigar matéria em escala microscópica, elétrons precisam circular em aceleradores com enorme precisão.",
+            "text": "Como produzir uma luz capaz de mostrar a matéria por dentro? Uma saída: elétrons girando num anel gigante.",
             "factIds": [
-              "liu-lin-f1"
+              "liu-lin-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela participou da construção e operação da primeira fonte de luz síncrotron brasileira, o UVX.",
+            "text": "Ela trabalhou no projeto, na construção e na operação dos aceleradores do UVX, primeira fonte dessa luz no Brasil.",
             "factIds": [
               "liu-lin-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Depois coordenou o projeto dos aceleradores do Sirius, uma das maiores infraestruturas científicas do país.",
+            "text": "Desde 2008, coordenou o projeto dos aceleradores do Sirius, máquina que abre caminho para milhares de outros experimentos.",
             "factIds": [
               "liu-lin-f2"
             ]
@@ -3751,7 +3777,7 @@
         ],
         "reveal": {
           "headline": "Liu Lin",
-          "summary": "Física brasileira especializada em aceleradores de partículas e luz síncrotron.",
+          "summary": "Física brasileira especialista em aceleradores de partículas que produzem luz síncrotron, usada para investigar a matéria em escala microscópica.",
           "whyItMatters": "Seu trabalho está literalmente na máquina que permite milhares de outros experimentos científicos.",
           "sourceRefs": [
             "liu-lin-s1"
@@ -3836,22 +3862,24 @@
         "hints": [
           {
             "level": 1,
-            "text": "Antes de computadores resolverem milhões de operações por segundo, formar uma comunidade matemática brasileira já era um desafio científico.",
+            "text": "A matemática está no celular, no GPS e no banco. Como um país forma seus matemáticos?",
             "factIds": [
-              "maria-laura-mouzinho-leite-lopes-f1"
+              "maria-laura-mouzinho-leite-lopes-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela esteve entre as primeiras mulheres a construir carreira de destaque na matemática brasileira.",
+            "text": "Ela foi uma das pioneiras da matemática brasileira e participou da construção de instituições científicas e da educação matemática.",
             "factIds": [
-              "maria-laura-mouzinho-leite-lopes-f1"
+              "maria-laura-mouzinho-leite-lopes-f1",
+              "maria-laura-mouzinho-leite-lopes-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Sua trajetória também atravessou a criação e consolidação de instituições científicas e a educação matemática.",
+            "text": "Pernambucana, membro da Academia Brasileira de Ciências desde 1952, deixou legado em matemática, formação de pesquisadores e instituições.",
             "factIds": [
+              "maria-laura-mouzinho-leite-lopes-f1",
               "maria-laura-mouzinho-leite-lopes-f2"
             ]
           }
@@ -3905,303 +3933,305 @@
         "usageStatus": "rights-review"
       },
       "reviewStatus": "fact-checked-core"
-    }, {
-  "id": "mercedes-bustamante",
-  "canonicalName": "Mercedes Bustamante",
-  "aliases": [
-    "Mercedes Maria da Cunha Bustamante"
-  ],
-  "field": "Ecologia",
-  "identity": {
-    "birthYear": 1963,
-    "deathYear": null,
-    "nationalityContext": "Nascida no Chile e naturalizada brasileira."
-  },
-  "science": {
-    "researchAreas": [
-      "ecologia de ecossistemas",
-      "Cerrado",
-      "biogeoquímica",
-      "mudanças no uso da terra",
-      "mudanças ambientais globais"
-    ],
-    "facts": [
-      {
-        "id": "mercedes-bustamante-f1",
-        "statement": "É uma das principais referências científicas no estudo do Cerrado e pesquisa o funcionamento desse bioma há décadas.",
-        "sourceRefs": [
-          "mercedes-bustamante-s1",
-          "mercedes-bustamante-s2"
+    },
+    {
+      "id": "mercedes-bustamante",
+      "canonicalName": "Mercedes Bustamante",
+      "aliases": [
+        "Mercedes Maria da Cunha Bustamante"
+      ],
+      "field": "Ecologia",
+      "identity": {
+        "birthYear": 1963,
+        "deathYear": null,
+        "nationalityContext": "Nascida no Chile e naturalizada brasileira."
+      },
+      "science": {
+        "researchAreas": [
+          "ecologia de ecossistemas",
+          "Cerrado",
+          "biogeoquímica",
+          "mudanças no uso da terra",
+          "mudanças ambientais globais"
+        ],
+        "facts": [
+          {
+            "id": "mercedes-bustamante-f1",
+            "statement": "É uma das principais referências científicas no estudo do Cerrado e pesquisa o funcionamento desse bioma há décadas.",
+            "sourceRefs": [
+              "mercedes-bustamante-s1",
+              "mercedes-bustamante-s2"
+            ]
+          },
+          {
+            "id": "mercedes-bustamante-f2",
+            "statement": "Suas pesquisas investigam ecologia de ecossistemas, mudanças no uso da terra, biogeoquímica e mudanças ambientais globais.",
+            "sourceRefs": [
+              "mercedes-bustamante-s1",
+              "mercedes-bustamante-s3"
+            ]
+          },
+          {
+            "id": "mercedes-bustamante-f3",
+            "statement": "Participou de trabalhos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC), incluindo temas ligados à mitigação das mudanças climáticas.",
+            "sourceRefs": [
+              "mercedes-bustamante-s1"
+            ]
+          }
         ]
       },
-      {
-        "id": "mercedes-bustamante-f2",
-        "statement": "Suas pesquisas investigam ecologia de ecossistemas, mudanças no uso da terra, biogeoquímica e mudanças ambientais globais.",
-        "sourceRefs": [
-          "mercedes-bustamante-s1",
-          "mercedes-bustamante-s3"
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "O Cerrado tem árvores retorcidas, capim e longas secas. O que acontece com ele quando é desmatado?",
+            "factIds": [
+              "mercedes-bustamante-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Há décadas, ela estuda como o Cerrado reage ao desmatamento, à mudança no uso da terra e ao clima.",
+            "factIds": [
+              "mercedes-bustamante-f1",
+              "mercedes-bustamante-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Na UnB, ajuda a entender como mudanças no Cerrado afetam o clima e participou de trabalhos do IPCC, painel internacional do clima.",
+            "factIds": [
+              "mercedes-bustamante-f2",
+              "mercedes-bustamante-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Mercedes Bustamante",
+          "summary": "Ecóloga brasileira e uma das principais referências no estudo do Cerrado, pesquisa como mudanças no uso da terra e no clima afetam os ecossistemas.",
+          "whyItMatters": "Seu trabalho ajuda a compreender como a transformação do Cerrado interfere no clima, na biodiversidade e no funcionamento de um dos maiores biomas brasileiros.",
+          "sourceRefs": [
+            "mercedes-bustamante-s1",
+            "mercedes-bustamante-s2",
+            "mercedes-bustamante-s3"
+          ]
+        },
+        "visualMotifs": [
+          "Cerrado",
+          "vegetação retorcida",
+          "solo",
+          "carbono",
+          "mudanças climáticas"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "mercedes-bustamante-f1",
+          "statement": "É uma das principais referências científicas no estudo do Cerrado e pesquisa o funcionamento desse bioma há décadas.",
+          "sourceRefs": [
+            "mercedes-bustamante-s1",
+            "mercedes-bustamante-s2"
+          ]
+        },
+        {
+          "id": "mercedes-bustamante-f2",
+          "statement": "Suas pesquisas investigam ecologia de ecossistemas, mudanças no uso da terra, biogeoquímica e mudanças ambientais globais.",
+          "sourceRefs": [
+            "mercedes-bustamante-s1",
+            "mercedes-bustamante-s3"
+          ]
+        },
+        {
+          "id": "mercedes-bustamante-f3",
+          "statement": "Participou de trabalhos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC), incluindo temas ligados à mitigação das mudanças climáticas.",
+          "sourceRefs": [
+            "mercedes-bustamante-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "mercedes-bustamante-s1",
+          "label": "Academia Brasileira de Ciências — Mercedes Maria da Cunha Bustamante",
+          "url": "https://www.abc.org.br/membro/Mercedes-Maria-da-Cunha-Bustamante/",
+          "type": "institutional"
+        },
+        {
+          "id": "mercedes-bustamante-s2",
+          "label": "UnB Notícias — Mercedes Bustamante e sua trajetória no Cerrado",
+          "url": "https://www.noticias.unb.br/ensino/5456-ecologista-mercedes-bustamante-e-a-convidada-das-boas-vindas-do-semestre",
+          "type": "institutional"
+        },
+        {
+          "id": "mercedes-bustamante-s3",
+          "label": "Universidade de Brasília — Instituto de Ciências Biológicas",
+          "url": "https://icb.unb.br/ut-et-tristique-libero/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/mercedes-bustamante.jpg",
+        "alt": "Retrato de Mercedes Bustamante",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
+    },
+    {
+      "id": "carolina-horta-andrade",
+      "canonicalName": "Carolina Horta Andrade",
+      "aliases": [
+        "Carolina Horta",
+        "Carolina Andrade"
+      ],
+      "field": "Química medicinal computacional",
+      "identity": {
+        "birthYear": 1983,
+        "deathYear": null,
+        "nationalityContext": "Cientista brasileira, natural de Formosa, Goiás."
+      },
+      "science": {
+        "researchAreas": [
+          "química medicinal computacional",
+          "inteligência artificial",
+          "descoberta de fármacos",
+          "doenças tropicais negligenciadas"
+        ],
+        "facts": [
+          {
+            "id": "carolina-horta-andrade-f1",
+            "statement": "Pesquisa o uso de ferramentas computacionais e inteligência artificial para acelerar a descoberta de novos medicamentos.",
+            "sourceRefs": [
+              "carolina-horta-andrade-s1",
+              "carolina-horta-andrade-s2"
+            ]
+          },
+          {
+            "id": "carolina-horta-andrade-f2",
+            "statement": "Seu trabalho busca candidatos a fármacos para doenças tropicais negligenciadas, incluindo leishmaniose, doença de Chagas e malária.",
+            "sourceRefs": [
+              "carolina-horta-andrade-s1",
+              "carolina-horta-andrade-s3"
+            ]
+          },
+          {
+            "id": "carolina-horta-andrade-f3",
+            "statement": "Foi reconhecida pelo programa Para Mulheres na Ciência e pelo International Rising Talents, da L'Oréal e UNESCO.",
+            "sourceRefs": [
+              "carolina-horta-andrade-s4"
+            ]
+          }
         ]
       },
-      {
-        "id": "mercedes-bustamante-f3",
-        "statement": "Participou de trabalhos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC), incluindo temas ligados à mitigação das mudanças climáticas.",
-        "sourceRefs": [
-          "mercedes-bustamante-s1"
-        ]
-      }
-    ]
-  },
-  "experience": {
-    "hints": [
-      {
-        "level": 1,
-        "text": "Ela estuda um bioma brasileiro onde árvores retorcidas, gramíneas e longos períodos de seca escondem uma enorme biodiversidade.",
-        "factIds": [
-          "mercedes-bustamante-f1"
-        ]
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "A inteligência artificial já cria textos e imagens. Pode também ajudar a descobrir remédios?",
+            "factIds": [
+              "carolina-horta-andrade-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela usa inteligência artificial e modelos de moléculas para achar, entre milhares, as mais promissoras para virar remédio.",
+            "factIds": [
+              "carolina-horta-andrade-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Na Universidade Federal de Goiás, busca candidatos a remédios para doenças com menos investimento em pesquisa, como leishmaniose, Chagas e malária.",
+            "factIds": [
+              "carolina-horta-andrade-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Carolina Horta Andrade",
+          "summary": "Cientista brasileira que combina química medicinal, modelagem molecular e inteligência artificial para buscar novos medicamentos.",
+          "whyItMatters": "Seu trabalho usa computação para reduzir o número de moléculas a testar e acelerar a busca por tratamentos, inclusive para doenças que recebem menos investimento em pesquisa.",
+          "sourceRefs": [
+            "carolina-horta-andrade-s1",
+            "carolina-horta-andrade-s2",
+            "carolina-horta-andrade-s3"
+          ]
+        },
+        "visualMotifs": [
+          "moléculas",
+          "modelagem molecular",
+          "inteligência artificial",
+          "medicamentos",
+          "doenças negligenciadas"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 5
       },
-      {
-        "level": 2,
-        "text": "Seu trabalho investiga como o Cerrado responde ao desmatamento, às mudanças no uso da terra e às alterações do clima.",
-        "factIds": [
-          "mercedes-bustamante-f1",
-          "mercedes-bustamante-f2"
-        ]
+      "facts": [
+        {
+          "id": "carolina-horta-andrade-f1",
+          "statement": "Pesquisa o uso de ferramentas computacionais e inteligência artificial para acelerar a descoberta de novos medicamentos.",
+          "sourceRefs": [
+            "carolina-horta-andrade-s1",
+            "carolina-horta-andrade-s2"
+          ]
+        },
+        {
+          "id": "carolina-horta-andrade-f2",
+          "statement": "Seu trabalho busca candidatos a fármacos para doenças tropicais negligenciadas, incluindo leishmaniose, doença de Chagas e malária.",
+          "sourceRefs": [
+            "carolina-horta-andrade-s1",
+            "carolina-horta-andrade-s3"
+          ]
+        },
+        {
+          "id": "carolina-horta-andrade-f3",
+          "statement": "Foi reconhecida pelo programa Para Mulheres na Ciência e pelo International Rising Talents, da L'Oréal e UNESCO.",
+          "sourceRefs": [
+            "carolina-horta-andrade-s4"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "carolina-horta-andrade-s1",
+          "label": "UFG — Pesquisadores do CESU-Agro se destacam por excelência científica e inovação",
+          "url": "https://cesu.ufg.br/n/202543-pesquisadores-do-cesu-agro-se-destacam-nacional-e-internacionalmente-por-excelencia-cientifica-e-inovacao",
+          "type": "institutional"
+        },
+        {
+          "id": "carolina-horta-andrade-s2",
+          "label": "UFG — Inteligência artificial auxilia descoberta de tratamentos para doenças negligenciadas",
+          "url": "https://jornal.ufg.br/n/177181-inteligencia-artificial-auxilia-descoberta-de-tratamentos-para-doencas-negligenciadas",
+          "type": "institutional"
+        },
+        {
+          "id": "carolina-horta-andrade-s3",
+          "label": "UFG — A dedicação feminina no universo da ciência",
+          "url": "https://jornal.ufg.br/n/81313-entrevista-carolina-horta-andrade-a-dedicacao-feminina-no-universo-da-ciencia",
+          "type": "institutional"
+        },
+        {
+          "id": "carolina-horta-andrade-s4",
+          "label": "UFG — Prêmio internacional reconhece pesquisa de docente da UFG",
+          "url": "https://ufg.br/n/79364-premio-internacional-reconhece-pesquisa-de-docente-da-ufg",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/carolina-horta-andrade.jpg",
+        "alt": "Retrato de Carolina Horta Andrade",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
       },
-      {
-        "level": 3,
-        "text": "Professora da Universidade de Brasília, ela também participou de trabalhos do IPCC sobre mudanças climáticas.",
-        "factIds": [
-          "mercedes-bustamante-f3"
-        ]
-      }
-    ],
-    "reveal": {
-      "headline": "Mercedes Bustamante",
-      "summary": "Ecóloga brasileira e uma das principais referências no estudo do Cerrado, pesquisa como mudanças no uso da terra e no clima afetam os ecossistemas.",
-      "whyItMatters": "Seu trabalho ajuda a compreender como a transformação do Cerrado interfere no clima, na biodiversidade e no funcionamento de um dos maiores biomas brasileiros.",
-      "sourceRefs": [
-        "mercedes-bustamante-s1",
-        "mercedes-bustamante-s2",
-        "mercedes-bustamante-s3"
-      ]
+      "reviewStatus": "fact-checked-core"
     },
-    "visualMotifs": [
-      "Cerrado",
-      "vegetação retorcida",
-      "solo",
-      "carbono",
-      "mudanças climáticas"
-    ],
-    "recognitionLevel": "discovery",
-    "difficulty": 2,
-    "experiencePotential": 5
-  },
-  "facts": [
-    {
-      "id": "mercedes-bustamante-f1",
-      "statement": "É uma das principais referências científicas no estudo do Cerrado e pesquisa o funcionamento desse bioma há décadas.",
-      "sourceRefs": [
-        "mercedes-bustamante-s1",
-        "mercedes-bustamante-s2"
-      ]
-    },
-    {
-      "id": "mercedes-bustamante-f2",
-      "statement": "Suas pesquisas investigam ecologia de ecossistemas, mudanças no uso da terra, biogeoquímica e mudanças ambientais globais.",
-      "sourceRefs": [
-        "mercedes-bustamante-s1",
-        "mercedes-bustamante-s3"
-      ]
-    },
-    {
-      "id": "mercedes-bustamante-f3",
-      "statement": "Participou de trabalhos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC), incluindo temas ligados à mitigação das mudanças climáticas.",
-      "sourceRefs": [
-        "mercedes-bustamante-s1"
-      ]
-    }
-  ],
-  "sources": [
-    {
-      "id": "mercedes-bustamante-s1",
-      "label": "Academia Brasileira de Ciências — Mercedes Maria da Cunha Bustamante",
-      "url": "https://www.abc.org.br/membro/Mercedes-Maria-da-Cunha-Bustamante/",
-      "type": "institutional"
-    },
-    {
-      "id": "mercedes-bustamante-s2",
-      "label": "UnB Notícias — Mercedes Bustamante e sua trajetória no Cerrado",
-      "url": "https://www.noticias.unb.br/ensino/5456-ecologista-mercedes-bustamante-e-a-convidada-das-boas-vindas-do-semestre",
-      "type": "institutional"
-    },
-    {
-      "id": "mercedes-bustamante-s3",
-      "label": "Universidade de Brasília — Instituto de Ciências Biológicas",
-      "url": "https://icb.unb.br/ut-et-tristique-libero/",
-      "type": "institutional"
-    }
-  ],
-  "photo": {
-    "src": "/scientists/mercedes-bustamante.jpg",
-    "alt": "Retrato de Mercedes Bustamante",
-    "credit": null,
-    "sourceUrl": null,
-    "usageStatus": "rights-review"
-  },
-  "reviewStatus": "fact-checked-core"
-},
-{
-  "id": "carolina-horta-andrade",
-  "canonicalName": "Carolina Horta Andrade",
-  "aliases": [
-    "Carolina Horta",
-    "Carolina Andrade"
-  ],
-  "field": "Química medicinal computacional",
-  "identity": {
-    "birthYear": 1983,
-    "deathYear": null,
-    "nationalityContext": "Cientista brasileira, natural de Formosa, Goiás."
-  },
-  "science": {
-    "researchAreas": [
-      "química medicinal computacional",
-      "inteligência artificial",
-      "descoberta de fármacos",
-      "doenças tropicais negligenciadas"
-    ],
-    "facts": [
-      {
-        "id": "carolina-horta-andrade-f1",
-        "statement": "Pesquisa o uso de ferramentas computacionais e inteligência artificial para acelerar a descoberta de novos medicamentos.",
-        "sourceRefs": [
-          "carolina-horta-andrade-s1",
-          "carolina-horta-andrade-s2"
-        ]
-      },
-      {
-        "id": "carolina-horta-andrade-f2",
-        "statement": "Seu trabalho busca candidatos a fármacos para doenças tropicais negligenciadas, incluindo leishmaniose, doença de Chagas e malária.",
-        "sourceRefs": [
-          "carolina-horta-andrade-s1",
-          "carolina-horta-andrade-s3"
-        ]
-      },
-      {
-        "id": "carolina-horta-andrade-f3",
-        "statement": "Foi reconhecida pelo programa Para Mulheres na Ciência e pelo International Rising Talents, da L'Oréal e UNESCO.",
-        "sourceRefs": [
-          "carolina-horta-andrade-s4"
-        ]
-      }
-    ]
-  },
-  "experience": {
-    "hints": [
-      {
-        "level": 1,
-        "text": "Antes de testar milhares de substâncias em laboratório, é possível ensinar computadores a procurar as moléculas mais promissoras.",
-        "factIds": [
-          "carolina-horta-andrade-f1"
-        ]
-      },
-      {
-        "level": 2,
-        "text": "Ela usa inteligência artificial e modelos moleculares para acelerar a busca por novos medicamentos.",
-        "factIds": [
-          "carolina-horta-andrade-f1"
-        ]
-      },
-      {
-        "level": 3,
-        "text": "Na Universidade Federal de Goiás, ela lidera pesquisas voltadas a doenças como leishmaniose, Chagas e malária.",
-        "factIds": [
-          "carolina-horta-andrade-f2"
-        ]
-      }
-    ],
-    "reveal": {
-      "headline": "Carolina Horta Andrade",
-      "summary": "Cientista brasileira que combina química medicinal, modelagem molecular e inteligência artificial para buscar novos medicamentos.",
-      "whyItMatters": "Seu trabalho usa computação para reduzir o universo de moléculas que precisam ser testadas e acelerar a busca por tratamentos, inclusive para doenças que historicamente recebem menos investimento em pesquisa.",
-      "sourceRefs": [
-        "carolina-horta-andrade-s1",
-        "carolina-horta-andrade-s2",
-        "carolina-horta-andrade-s3"
-      ]
-    },
-    "visualMotifs": [
-      "moléculas",
-      "modelagem molecular",
-      "inteligência artificial",
-      "medicamentos",
-      "doenças negligenciadas"
-    ],
-    "recognitionLevel": "discovery",
-    "difficulty": 2,
-    "experiencePotential": 5
-  },
-  "facts": [
-    {
-      "id": "carolina-horta-andrade-f1",
-      "statement": "Pesquisa o uso de ferramentas computacionais e inteligência artificial para acelerar a descoberta de novos medicamentos.",
-      "sourceRefs": [
-        "carolina-horta-andrade-s1",
-        "carolina-horta-andrade-s2"
-      ]
-    },
-    {
-      "id": "carolina-horta-andrade-f2",
-      "statement": "Seu trabalho busca candidatos a fármacos para doenças tropicais negligenciadas, incluindo leishmaniose, doença de Chagas e malária.",
-      "sourceRefs": [
-        "carolina-horta-andrade-s1",
-        "carolina-horta-andrade-s3"
-      ]
-    },
-    {
-      "id": "carolina-horta-andrade-f3",
-      "statement": "Foi reconhecida pelo programa Para Mulheres na Ciência e pelo International Rising Talents, da L'Oréal e UNESCO.",
-      "sourceRefs": [
-        "carolina-horta-andrade-s4"
-      ]
-    }
-  ],
-  "sources": [
-    {
-      "id": "carolina-horta-andrade-s1",
-      "label": "UFG — Pesquisadores do CESU-Agro se destacam por excelência científica e inovação",
-      "url": "https://cesu.ufg.br/n/202543-pesquisadores-do-cesu-agro-se-destacam-nacional-e-internacionalmente-por-excelencia-cientifica-e-inovacao",
-      "type": "institutional"
-    },
-    {
-      "id": "carolina-horta-andrade-s2",
-      "label": "UFG — Inteligência artificial auxilia descoberta de tratamentos para doenças negligenciadas",
-      "url": "https://jornal.ufg.br/n/177181-inteligencia-artificial-auxilia-descoberta-de-tratamentos-para-doencas-negligenciadas",
-      "type": "institutional"
-    },
-    {
-      "id": "carolina-horta-andrade-s3",
-      "label": "UFG — A dedicação feminina no universo da ciência",
-      "url": "https://jornal.ufg.br/n/81313-entrevista-carolina-horta-andrade-a-dedicacao-feminina-no-universo-da-ciencia",
-      "type": "institutional"
-    },
-    {
-      "id": "carolina-horta-andrade-s4",
-      "label": "UFG — Prêmio internacional reconhece pesquisa de docente da UFG",
-      "url": "https://ufg.br/n/79364-premio-internacional-reconhece-pesquisa-de-docente-da-ufg",
-      "type": "institutional"
-    }
-  ],
-  "photo": {
-    "src": "/scientists/carolina-horta-andrade.jpg",
-    "alt": "Retrato de Carolina Horta Andrade",
-    "credit": null,
-    "sourceUrl": null,
-    "usageStatus": "rights-review"
-  },
-  "reviewStatus": "fact-checked-core"
-},
     {
       "id": "marta-vannucci",
       "canonicalName": "Marta Vannucci",
@@ -4239,23 +4269,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Entre terra e mar existe um ecossistema capaz de proteger costas, abrigar espécies e armazenar carbono.",
+            "text": "Entre a terra e o mar, o mangue protege a costa, abriga caranguejos e guarda carbono. Quem estuda esse lugar?",
             "factIds": [
-              "marta-vannucci-f1"
+              "marta-vannucci-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela começou estudando manguezais em Cananeia e tornou-se referência internacional no tema.",
+            "text": "Ela estudou manguezais, plâncton e ecossistemas costeiros, começando em Cananeia, e virou referência internacional em manguezais.",
             "factIds": [
-              "marta-vannucci-f1"
+              "marta-vannucci-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Depois dirigiu o Instituto Oceanográfico da USP e ajudou a consolidar a oceanografia no Brasil.",
+            "text": "Dirigiu o Instituto Oceanográfico da USP e foi central para consolidar a oceanografia, a ciência do mar, no Brasil.",
             "factIds": [
-              "marta-vannucci-f2"
+              "marta-vannucci-f1"
             ]
           }
         ],
@@ -4307,7 +4337,8 @@
         "sourceUrl": null,
         "usageStatus": "rights-review"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): 'Cananeia' vem da pista anterior e não de um fato; confirmar na fonte."
     },
     {
       "id": "maria-zelia-rouquayrol",
@@ -4346,22 +4377,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Epidemiologia transforma casos individuais de doença em padrões que podem orientar decisões para populações inteiras.",
+            "text": "Como saber se uma doença está aumentando numa cidade e onde agir primeiro?",
             "factIds": [
               "maria-zelia-rouquayrol-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela fez da epidemiologia uma ferramenta de pesquisa, ensino e vigilância em saúde no Ceará.",
+            "text": "Ela fez da epidemiologia, que busca padrões nos casos de doença, ferramenta de pesquisa, ensino e vigilância em saúde.",
             "factIds": [
               "maria-zelia-rouquayrol-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Seu sobrenome virou parte do título de uma obra usada por gerações de estudantes e profissionais de saúde.",
+            "text": "Na UFC, no Ceará, organizou um livro de epidemiologia que leva seu sobrenome, usado por gerações de estudantes de saúde.",
             "factIds": [
+              "maria-zelia-rouquayrol-f1",
               "maria-zelia-rouquayrol-f2"
             ]
           }
@@ -4417,167 +4449,168 @@
       "reviewStatus": "fact-checked-core"
     },
     {
-  "id": "debora-peres-menezes",
-  "canonicalName": "Débora Peres Menezes",
-  "aliases": [
-    "Débora Menezes",
-    "Debora Peres Menezes",
-    "Debora Menezes"
-  ],
-  "field": "Física nuclear",
-  "identity": {
-    "birthYear": 1962,
-    "deathYear": null,
-    "nationalityContext": "brasileira; nascida em São Paulo (SP)"
-  },
-  "science": {
-    "researchAreas": [
-      "física nuclear",
-      "física de hádrons",
-      "astrofísica nuclear",
-      "estrelas de nêutrons",
-      "equações de estado"
-    ],
-    "facts": [
-      {
-        "id": "debora-peres-menezes-f1",
-        "statement": "Pesquisa física nuclear e de hádrons, incluindo modelos que descrevem matéria em condições extremas.",
-        "sourceRefs": [
-          "debora-peres-menezes-s1",
-          "debora-peres-menezes-s2"
+      "id": "debora-peres-menezes",
+      "canonicalName": "Débora Peres Menezes",
+      "aliases": [
+        "Débora Menezes",
+        "Debora Peres Menezes",
+        "Debora Menezes"
+      ],
+      "field": "Física nuclear",
+      "identity": {
+        "birthYear": 1962,
+        "deathYear": null,
+        "nationalityContext": "brasileira; nascida em São Paulo (SP)"
+      },
+      "science": {
+        "researchAreas": [
+          "física nuclear",
+          "física de hádrons",
+          "astrofísica nuclear",
+          "estrelas de nêutrons",
+          "equações de estado"
+        ],
+        "facts": [
+          {
+            "id": "debora-peres-menezes-f1",
+            "statement": "Pesquisa física nuclear e de hádrons, incluindo modelos que descrevem matéria em condições extremas.",
+            "sourceRefs": [
+              "debora-peres-menezes-s1",
+              "debora-peres-menezes-s2"
+            ]
+          },
+          {
+            "id": "debora-peres-menezes-f2",
+            "statement": "Sua pesquisa utiliza equações de estado para estudar objetos astrofísicos, incluindo estrelas de nêutrons.",
+            "sourceRefs": [
+              "debora-peres-menezes-s1",
+              "debora-peres-menezes-s3"
+            ]
+          },
+          {
+            "id": "debora-peres-menezes-f3",
+            "statement": "Foi a primeira mulher eleita presidente da Sociedade Brasileira de Física, cargo que exerceu entre 2021 e 2023.",
+            "sourceRefs": [
+              "debora-peres-menezes-s4",
+              "debora-peres-menezes-s5"
+            ]
+          }
         ]
       },
-      {
-        "id": "debora-peres-menezes-f2",
-        "statement": "Sua pesquisa utiliza equações de estado para estudar objetos astrofísicos, incluindo estrelas de nêutrons.",
-        "sourceRefs": [
-          "debora-peres-menezes-s1",
-          "debora-peres-menezes-s3"
-        ]
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma estrela pode espremer mais massa que o Sol numa bola do tamanho de uma cidade. Como fica a matéria ali?",
+            "factIds": [
+              "debora-peres-menezes-f2"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela usa modelos da física nuclear para entender como a matéria se comporta sob pressões tão extremas.",
+            "factIds": [
+              "debora-peres-menezes-f1",
+              "debora-peres-menezes-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Na UFSC, liga as partículas da matéria às estrelas de nêutrons e foi a primeira mulher eleita presidente da Sociedade Brasileira de Física.",
+            "factIds": [
+              "debora-peres-menezes-f2",
+              "debora-peres-menezes-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Débora Peres Menezes",
+          "summary": "Física brasileira que pesquisa matéria nuclear em condições extremas e sua relação com objetos como estrelas de nêutrons.",
+          "whyItMatters": "Seu trabalho liga as partículas que formam a matéria a alguns dos objetos mais densos do Universo, onde a matéria vive condições impossíveis de reproduzir na Terra.",
+          "sourceRefs": [
+            "debora-peres-menezes-s1",
+            "debora-peres-menezes-s2",
+            "debora-peres-menezes-s3"
+          ]
+        },
+        "visualMotifs": [
+          "estrela de nêutrons",
+          "matéria ultradensa",
+          "núcleo atômico",
+          "pressão",
+          "diagrama de fases"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 5
       },
-      {
-        "id": "debora-peres-menezes-f3",
-        "statement": "Foi a primeira mulher eleita presidente da Sociedade Brasileira de Física, cargo que exerceu entre 2021 e 2023.",
-        "sourceRefs": [
-          "debora-peres-menezes-s4",
-          "debora-peres-menezes-s5"
-        ]
-      }
-    ]
-  },
-  "experience": {
-    "hints": [
-      {
-        "level": 1,
-        "text": "Uma estrela pode concentrar uma massa maior que a do Sol em uma esfera do tamanho de uma cidade.",
-        "factIds": [
-          "debora-peres-menezes-f2"
-        ]
+      "facts": [
+        {
+          "id": "debora-peres-menezes-f1",
+          "statement": "Pesquisa física nuclear e de hádrons, incluindo modelos que descrevem matéria em condições extremas.",
+          "sourceRefs": [
+            "debora-peres-menezes-s1",
+            "debora-peres-menezes-s2"
+          ]
+        },
+        {
+          "id": "debora-peres-menezes-f2",
+          "statement": "Sua pesquisa utiliza equações de estado para estudar objetos astrofísicos, incluindo estrelas de nêutrons.",
+          "sourceRefs": [
+            "debora-peres-menezes-s1",
+            "debora-peres-menezes-s3"
+          ]
+        },
+        {
+          "id": "debora-peres-menezes-f3",
+          "statement": "Foi a primeira mulher eleita presidente da Sociedade Brasileira de Física, cargo que exerceu entre 2021 e 2023.",
+          "sourceRefs": [
+            "debora-peres-menezes-s4",
+            "debora-peres-menezes-s5"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "debora-peres-menezes-s1",
+          "label": "Programa de Pós-Graduação em Física da UFSC — Débora Peres Menezes",
+          "url": "https://ppgfsc.posgrad.ufsc.br/pt/debora-peres-menezes/",
+          "type": "institutional"
+        },
+        {
+          "id": "debora-peres-menezes-s2",
+          "label": "Sociedade Brasileira de Física — Débora Peres Menezes",
+          "url": "https://www.sbfisica.org.br/v1/sbf/teacher/debora-peres-menezes/",
+          "type": "institutional"
+        },
+        {
+          "id": "debora-peres-menezes-s3",
+          "label": "Caderno Brasileiro de Ensino de Física — A física da UFSC em números",
+          "url": "https://periodicos.ufsc.br/index.php/fisica/article/view/2175-7941.2018v35n1p324",
+          "type": "academic"
+        },
+        {
+          "id": "debora-peres-menezes-s4",
+          "label": "UFSC — Professora é a primeira mulher eleita para presidir a Sociedade Brasileira de Física",
+          "url": "https://noticias.ufsc.br/2021/06/professora-da-ufsc-e-a-primeira-mulher-eleita-para-presidir-a-sociedade-brasileira-de-fisica/",
+          "type": "institutional"
+        },
+        {
+          "id": "debora-peres-menezes-s5",
+          "label": "Sociedade Brasileira de Física — Eleições reforçam a presença da mulher na ciência",
+          "url": "https://www.sbfisica.org.br/v1/sbf/eleicoes-na-sbf-reforcam-a-presenca-da-mulher-na-ciencia/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/debora-peres-menezes.jpg",
+        "alt": "Retrato de Débora Peres Menezes",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
       },
-      {
-        "level": 2,
-        "text": "Para entender o que acontece com a matéria sob pressões tão extremas, ela trabalha com modelos da física nuclear.",
-        "factIds": [
-          "debora-peres-menezes-f1",
-          "debora-peres-menezes-f2"
-        ]
-      },
-      {
-        "level": 3,
-        "text": "Física brasileira e pesquisadora da UFSC, ela estuda equações de estado e objetos como estrelas de nêutrons.",
-        "factIds": [
-          "debora-peres-menezes-f2"
-        ]
-      }
-    ],
-    "reveal": {
-      "headline": "Débora Peres Menezes",
-      "summary": "Física brasileira que pesquisa matéria nuclear em condições extremas e sua relação com objetos como estrelas de nêutrons.",
-      "whyItMatters": "Seu trabalho conecta a física das partículas que formam a matéria a alguns dos objetos mais densos do Universo, ajudando a investigar como a matéria se comporta em condições impossíveis de reproduzir diretamente na Terra.",
-      "sourceRefs": [
-        "debora-peres-menezes-s1",
-        "debora-peres-menezes-s2",
-        "debora-peres-menezes-s3"
-      ]
+      "reviewStatus": "fact-checked-core"
     },
-    "visualMotifs": [
-      "estrela de nêutrons",
-      "matéria ultradensa",
-      "núcleo atômico",
-      "pressão",
-      "diagrama de fases"
-    ],
-    "recognitionLevel": "discovery",
-    "difficulty": 2,
-    "experiencePotential": 5
-  },
-  "facts": [
-    {
-      "id": "debora-peres-menezes-f1",
-      "statement": "Pesquisa física nuclear e de hádrons, incluindo modelos que descrevem matéria em condições extremas.",
-      "sourceRefs": [
-        "debora-peres-menezes-s1",
-        "debora-peres-menezes-s2"
-      ]
-    },
-    {
-      "id": "debora-peres-menezes-f2",
-      "statement": "Sua pesquisa utiliza equações de estado para estudar objetos astrofísicos, incluindo estrelas de nêutrons.",
-      "sourceRefs": [
-        "debora-peres-menezes-s1",
-        "debora-peres-menezes-s3"
-      ]
-    },
-    {
-      "id": "debora-peres-menezes-f3",
-      "statement": "Foi a primeira mulher eleita presidente da Sociedade Brasileira de Física, cargo que exerceu entre 2021 e 2023.",
-      "sourceRefs": [
-        "debora-peres-menezes-s4",
-        "debora-peres-menezes-s5"
-      ]
-    }
-  ],
-  "sources": [
-    {
-      "id": "debora-peres-menezes-s1",
-      "label": "Programa de Pós-Graduação em Física da UFSC — Débora Peres Menezes",
-      "url": "https://ppgfsc.posgrad.ufsc.br/pt/debora-peres-menezes/",
-      "type": "institutional"
-    },
-    {
-      "id": "debora-peres-menezes-s2",
-      "label": "Sociedade Brasileira de Física — Débora Peres Menezes",
-      "url": "https://www.sbfisica.org.br/v1/sbf/teacher/debora-peres-menezes/",
-      "type": "institutional"
-    },
-    {
-      "id": "debora-peres-menezes-s3",
-      "label": "Caderno Brasileiro de Ensino de Física — A física da UFSC em números",
-      "url": "https://periodicos.ufsc.br/index.php/fisica/article/view/2175-7941.2018v35n1p324",
-      "type": "academic"
-    },
-    {
-      "id": "debora-peres-menezes-s4",
-      "label": "UFSC — Professora é a primeira mulher eleita para presidir a Sociedade Brasileira de Física",
-      "url": "https://noticias.ufsc.br/2021/06/professora-da-ufsc-e-a-primeira-mulher-eleita-para-presidir-a-sociedade-brasileira-de-fisica/",
-      "type": "institutional"
-    },
-    {
-      "id": "debora-peres-menezes-s5",
-      "label": "Sociedade Brasileira de Física — Eleições reforçam a presença da mulher na ciência",
-      "url": "https://www.sbfisica.org.br/v1/sbf/eleicoes-na-sbf-reforcam-a-presenca-da-mulher-na-ciencia/",
-      "type": "institutional"
-    }
-  ],
-  "photo": {
-    "src": "/scientists/debora-peres-menezes.jpg",
-    "alt": "Retrato de Débora Peres Menezes",
-    "credit": null,
-    "sourceUrl": null,
-    "usageStatus": "rights-review"
-  },
-  "reviewStatus": "fact-checked-core"
-},
     {
       "id": "lelia-gonzalez",
       "canonicalName": "Lélia Gonzalez",
@@ -4615,21 +4648,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Uma palavra nova pode mudar a forma como enxergamos um continente inteiro.",
+            "text": "Por que o português do Brasil tem tantas palavras de origem africana e indígena?",
             "factIds": [
-              "lelia-gonzalez-f1"
+              "lelia-gonzalez-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela analisou como raça, gênero, cultura e linguagem se cruzam na formação brasileira.",
+            "text": "Filósofa, antropóloga e liderança do movimento negro, ela analisou como raça, gênero, cultura e linguagem se cruzam no Brasil.",
             "factIds": [
               "lelia-gonzalez-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Na década de 1980, formulou a ideia de amefricanidade para destacar as presenças negras e indígenas nas Américas.",
+            "text": "Nos anos 1980, criou o conceito de amefricanidade, que destaca as presenças negras e indígenas na formação das Américas.",
             "factIds": [
               "lelia-gonzalez-f2"
             ]
@@ -4722,21 +4755,22 @@
         "hints": [
           {
             "level": 1,
-            "text": "Existe um mundo no Sistema Solar onde vulcões lançam lava muito além da Terra.",
+            "text": "Existem vulcões ativos fora da Terra, em outros mundos do Sistema Solar?",
             "factIds": [
               "rosaly-lopes-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela usou uma sonda espacial e luz infravermelha para procurar atividade vulcânica em uma lua de Júpiter.",
+            "text": "Na missão Galileo, ela usou dados de luz infravermelha, que revela calor, para procurar vulcões em Io, lua de Júpiter.",
             "factIds": [
-              "rosaly-lopes-f1"
+              "rosaly-lopes-f1",
+              "rosaly-lopes-f2"
             ]
           },
           {
             "level": 3,
-            "text": "Seu trabalho identificou 71 vulcões ativos em Io.",
+            "text": "Geóloga do JPL, da NASA, descobriu 71 vulcões ativos em Io, ajudando a revelá-la como um dos mundos mais vulcânicos conhecidos.",
             "factIds": [
               "rosaly-lopes-f2"
             ]
@@ -4829,29 +4863,30 @@
         "hints": [
           {
             "level": 1,
-            "text": "No centro de muitas galáxias existe um objeto com milhões ou bilhões de vezes a massa do Sol.",
+            "text": "No centro de muitas galáxias há buracos negros gigantes. Como eles se alimentam?",
             "factIds": [
               "thaisa-storchi-bergmann-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela observa o gás e a radiação ao redor desses buracos negros supermassivos para entender como eles se alimentam.",
+            "text": "Ela observa o gás e a radiação em volta desses buracos negros supermassivos para entender como se alimentam.",
             "factIds": [
               "thaisa-storchi-bergmann-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Em 2015, seu trabalho foi reconhecido pelo prêmio internacional L’Oréal-UNESCO Para Mulheres na Ciência.",
+            "text": "Seu trabalho ajuda a explicar a relação entre buracos negros e a evolução das galáxias; em 2015, ganhou o prêmio L’Oréal-UNESCO.",
             "factIds": [
+              "thaisa-storchi-bergmann-f1",
               "thaisa-storchi-bergmann-f2"
             ]
           }
         ],
         "reveal": {
           "headline": "Thaisa Storchi Bergmann",
-          "summary": "Astrofísica brasileira referência em buracos negros supermassivos e núcleos ativos de galáxias.",
+          "summary": "Astrofísica brasileira referência no estudo dos buracos negros gigantes que ficam no centro das galáxias.",
           "whyItMatters": "Seu trabalho ajuda a explicar a relação entre buracos negros e a evolução das galáxias que os abrigam.",
           "sourceRefs": [
             "thaisa-storchi-bergmann-s1"
@@ -4936,21 +4971,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Por décadas, livros repetiram um número redondo para a quantidade de neurônios do cérebro humano sem uma medição direta convincente.",
+            "text": "Quantos neurônios tem o cérebro humano? Por décadas, livros repetiram um número redondo, sem medição direta.",
             "factIds": [
               "suzana-herculano-houzel-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Ela transformou tecido cerebral em uma suspensão homogênea para tornar possível contar núcleos celulares.",
+            "text": "Ela transformou o tecido do cérebro num líquido uniforme, uma espécie de sopa, para contar os núcleos das células.",
             "factIds": [
               "suzana-herculano-houzel-f1"
             ]
           },
           {
             "level": 3,
-            "text": "O resultado derrubou o famoso número de 100 bilhões: a média encontrada foi de cerca de 86 bilhões de neurônios.",
+            "text": "O resultado derrubou os famosos 100 bilhões: o cérebro humano tem, em média, cerca de 86 bilhões de neurônios.",
             "factIds": [
               "suzana-herculano-houzel-f2"
             ]
@@ -5043,22 +5078,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Uma célula embrionária pode se multiplicar e dar origem a muitos tipos de tecido — mas mantê-la em laboratório exige domínio técnico extraordinário.",
+            "text": "Células-tronco embrionárias podem dar origem a muitos tecidos do corpo. Como mantê-las vivas em laboratório?",
             "factIds": [
-              "lygia-da-veiga-pereira-f1"
+              "lygia-da-veiga-pereira-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Seu grupo trabalhou com centenas de embriões congelados para estabelecer uma linhagem estável.",
+            "text": "Com seu grupo, ela trabalhou com centenas de embriões congelados para obter uma linhagem estável dessas células.",
             "factIds": [
               "lygia-da-veiga-pereira-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Em 2008 anunciou a BR-1, primeira linhagem brasileira de células-tronco embrionárias humanas.",
+            "text": "Na USP, em 2008, seu grupo anunciou a BR-1, primeira linhagem brasileira dessas células, reduzindo a dependência de células importadas.",
             "factIds": [
+              "lygia-da-veiga-pereira-f1",
               "lygia-da-veiga-pereira-f2"
             ]
           }
@@ -5111,7 +5147,8 @@
         "sourceUrl": null,
         "usageStatus": "rights-review"
       },
-      "reviewStatus": "fact-checked-core"
+      "reviewStatus": "fact-checked-core",
+      "editorialNotes": "Revisão das pistas (2026-10): 'Centenas de embriões congelados' vem da pista anterior; 'na USP' foi deduzido do resumo. Confirmar."
     },
     {
       "id": "celina-turchi",
@@ -5150,22 +5187,23 @@
         "hints": [
           {
             "level": 1,
-            "text": "Em 2015, médicos no Nordeste começaram a perceber um aumento incomum de bebês nascendo com microcefalia.",
+            "text": "Em 2015, o Nordeste viu um aumento incomum de bebês com microcefalia. Qual seria a causa?",
             "factIds": [
               "celina-turchi-f1"
             ]
           },
           {
             "level": 2,
-            "text": "Era preciso descobrir rapidamente se o surto tinha relação com o vírus zika.",
+            "text": "Ela coordenou em Pernambuco uma pesquisa para descobrir se o vírus zika tinha relação com esses casos.",
             "factIds": [
               "celina-turchi-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Ela coordenou em Pernambuco uma investigação epidemiológica que ajudou a estabelecer essa associação.",
+            "text": "Na Fiocruz Pernambuco, ajudou a ligar zika e microcefalia, e a revista Nature a incluiu entre os 10 destaques de 2016.",
             "factIds": [
+              "celina-turchi-f1",
               "celina-turchi-f2"
             ]
           }
@@ -5257,21 +5295,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Ondas gravitacionais fazem o espaço-tempo vibrar, mas descobrir de onde vieram também pode exigir encontrar um ponto de luz no céu.",
+            "text": "Quando duas estrelas se chocam, o próprio espaço vibra. Dá para ver a luz desse choque?",
             "factIds": [
-              "marcelle-soares-santos-f1"
+              "marcelle-soares-santos-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Ela ajudou a conectar detectores de ondas gravitacionais a uma das câmeras astronômicas mais poderosas do mundo.",
+            "text": "Ela coordena buscas com a Dark Energy Camera, uma das câmeras astronômicas mais poderosas do mundo, atrás dessa luz.",
             "factIds": [
               "marcelle-soares-santos-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Em 2017, sua equipe observou a contraparte luminosa de uma colisão de estrelas de nêutrons.",
+            "text": "Em 2017, sua equipe esteve entre as primeiras a ver a luz da colisão de duas estrelas de nêutrons, detectada pelo LIGO/Virgo.",
             "factIds": [
               "marcelle-soares-santos-f2"
             ]
@@ -5279,8 +5317,8 @@
         ],
         "reveal": {
           "headline": "Marcelle Soares-Santos",
-          "summary": "Astrofísica brasileira que trabalha com cosmologia, energia escura e astronomia de ondas gravitacionais.",
-          "whyItMatters": "Seu trabalho ajuda a combinar diferentes mensageiros do Universo para estudar eventos extremos e cosmologia.",
+          "summary": "Astrofísica brasileira que estuda o Universo e procura a luz de eventos que produzem ondas gravitacionais.",
+          "whyItMatters": "Seu trabalho ajuda a combinar ondas gravitacionais e luz para estudar eventos extremos do Universo.",
           "sourceRefs": [
             "marcelle-soares-santos-s1"
           ]
@@ -5364,21 +5402,21 @@
         "hints": [
           {
             "level": 1,
-            "text": "Para saber se uma floresta absorve ou libera carbono, pesquisadores podem medir o ar acima dela repetidamente durante anos.",
+            "text": "Florestas tiram gás carbônico do ar. Será que toda a Amazônia ainda faz isso?",
             "factIds": [
-              "luciana-gatti-f1"
+              "luciana-gatti-f2"
             ]
           },
           {
             "level": 2,
-            "text": "Sua equipe realizou centenas de perfis verticais de gases atmosféricos usando aviões sobre a Amazônia.",
+            "text": "Ela liderou voos sobre quatro regiões da Amazônia, de 2010 a 2018, medindo os gases do ar.",
             "factIds": [
               "luciana-gatti-f1"
             ]
           },
           {
             "level": 3,
-            "text": "Os dados mostraram forte contraste regional e revelaram o sudeste amazônico como fonte líquida de carbono.",
+            "text": "Publicados na Nature em 2021, os dados mostraram que o sudeste da Amazônia libera mais carbono do que absorve.",
             "factIds": [
               "luciana-gatti-f2"
             ]
@@ -5386,7 +5424,7 @@
         ],
         "reveal": {
           "headline": "Luciana Gatti",
-          "summary": "Química atmosférica brasileira e pesquisadora do INPE, especialista no balanço de carbono da Amazônia.",
+          "summary": "Química atmosférica brasileira e pesquisadora do INPE que mede quanto carbono a Amazônia absorve e libera.",
           "whyItMatters": "Seu trabalho fornece medições diretas para entender como desmatamento e mudança climática estão alterando o papel da Amazônia no clima.",
           "sourceRefs": [
             "luciana-gatti-s1"
@@ -5435,385 +5473,386 @@
       "reviewStatus": "fact-checked-core"
     },
     {
-  "id": "tatiana-sampaio",
-  "canonicalName": "Tatiana Sampaio",
-  "aliases": [],
-  "field": "Neurociência",
-  "identity": {
-    "birthYear": null,
-    "deathYear": null,
-    "nationalityContext": "Cientista brasileira."
-  },
-  "science": {
-    "researchAreas": [
-      "neurociência",
-      "regeneração neural",
-      "lesões da medula espinhal",
-      "terapias celulares"
-    ],
-    "facts": [
-      {
-        "id": "tatiana-sampaio-f1",
-        "statement": "Desenvolveu pesquisas pioneiras voltadas à regeneração do sistema nervoso e ao tratamento de lesões da medula espinhal.",
-        "sourceRefs": [
-          "tatiana-sampaio-s1"
+      "id": "tatiana-sampaio",
+      "canonicalName": "Tatiana Sampaio",
+      "aliases": [],
+      "field": "Neurociência",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "Cientista brasileira."
+      },
+      "science": {
+        "researchAreas": [
+          "neurociência",
+          "regeneração neural",
+          "lesões da medula espinhal",
+          "terapias celulares"
+        ],
+        "facts": [
+          {
+            "id": "tatiana-sampaio-f1",
+            "statement": "Desenvolveu pesquisas pioneiras voltadas à regeneração do sistema nervoso e ao tratamento de lesões da medula espinhal.",
+            "sourceRefs": [
+              "tatiana-sampaio-s1"
+            ]
+          },
+          {
+            "id": "tatiana-sampaio-f2",
+            "statement": "Seu trabalho abriu novas perspectivas para o desenvolvimento de tratamentos para lesões medulares.",
+            "sourceRefs": [
+              "tatiana-sampaio-s1"
+            ]
+          }
         ]
       },
-      {
-        "id": "tatiana-sampaio-f2",
-        "statement": "Seu trabalho abriu novas perspectivas para o desenvolvimento de tratamentos para lesões medulares.",
-        "sourceRefs": [
-          "tatiana-sampaio-s1"
-        ]
-      }
-    ]
-  },
-  "experience": {
-    "hints": [
-      {
-        "level": 1,
-        "text": "Quando a medula espinhal é lesionada, reconectar os caminhos interrompidos do sistema nervoso é um dos grandes desafios da medicina.",
-        "factIds": [
-          "tatiana-sampaio-f1"
-        ]
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma lesão na medula espinhal pode tirar os movimentos do corpo. Os nervos podem se reconectar?",
+            "factIds": [
+              "tatiana-sampaio-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela pesquisou formas de fazer o sistema nervoso se regenerar depois de uma lesão na medula.",
+            "factIds": [
+              "tatiana-sampaio-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Sua pesquisa pioneira abriu novos caminhos para tratar lesões da medula, um dos grandes desafios da medicina.",
+            "factIds": [
+              "tatiana-sampaio-f2"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Tatiana Sampaio",
+          "summary": "Neurocientista brasileira cujo trabalho pioneiro investigou caminhos para regenerar o sistema nervoso após lesões da medula espinhal.",
+          "whyItMatters": "Suas pesquisas ajudaram a abrir novas possibilidades para uma área em que recuperar funções perdidas após uma lesão continua sendo um dos grandes desafios terapêuticos.",
+          "sourceRefs": [
+            "tatiana-sampaio-s1"
+          ]
+        },
+        "visualMotifs": [
+          "medula espinhal",
+          "neurônios",
+          "conexões nervosas",
+          "regeneração"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 5
       },
-      {
-        "level": 2,
-        "text": "Ela investigou maneiras de estimular a regeneração do tecido nervoso depois de uma lesão.",
-        "factIds": [
-          "tatiana-sampaio-f1"
-        ]
+      "facts": [
+        {
+          "id": "tatiana-sampaio-f1",
+          "statement": "Desenvolveu pesquisas pioneiras voltadas à regeneração do sistema nervoso e ao tratamento de lesões da medula espinhal.",
+          "sourceRefs": [
+            "tatiana-sampaio-s1"
+          ]
+        },
+        {
+          "id": "tatiana-sampaio-f2",
+          "statement": "Seu trabalho abriu novas perspectivas para o desenvolvimento de tratamentos para lesões medulares.",
+          "sourceRefs": [
+            "tatiana-sampaio-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "tatiana-sampaio-s1",
+          "label": "Fiocruz — Programa de Apoio à Jovem Cientista Mulher Dra. Tatiana Sampaio",
+          "url": "https://www.campusvirtual.fiocruz.br/portal/?q=jovemcientistamulher",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/tatiana-sampaio.jpg",
+        "alt": "Retrato de Tatiana Sampaio",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
       },
-      {
-        "level": 3,
-        "text": "Seu trabalho pioneiro abriu novas perspectivas para o tratamento de lesões da medula espinhal.",
-        "factIds": [
-          "tatiana-sampaio-f2"
-        ]
-      }
-    ],
-    "reveal": {
-      "headline": "Tatiana Sampaio",
-      "summary": "Neurocientista brasileira cujo trabalho pioneiro investigou caminhos para regenerar o sistema nervoso após lesões da medula espinhal.",
-      "whyItMatters": "Suas pesquisas ajudaram a abrir novas possibilidades para uma área em que recuperar funções perdidas após uma lesão continua sendo um dos grandes desafios terapêuticos.",
-      "sourceRefs": [
-        "tatiana-sampaio-s1"
-      ]
+      "reviewStatus": "fact-checked-core"
     },
-    "visualMotifs": [
-      "medula espinhal",
-      "neurônios",
-      "conexões nervosas",
-      "regeneração"
-    ],
-    "recognitionLevel": "discovery",
-    "difficulty": 2,
-    "experiencePotential": 5
-  },
-  "facts": [
     {
-      "id": "tatiana-sampaio-f1",
-      "statement": "Desenvolveu pesquisas pioneiras voltadas à regeneração do sistema nervoso e ao tratamento de lesões da medula espinhal.",
-      "sourceRefs": [
-        "tatiana-sampaio-s1"
-      ]
+      "id": "marilda-goncalves",
+      "canonicalName": "Marilda Gonçalves",
+      "aliases": [
+        "Marilda de Souza Gonçalves"
+      ],
+      "field": "Hematologia e genética",
+      "identity": {
+        "birthYear": 1957,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "doença falciforme",
+          "hematologia",
+          "genética",
+          "biologia molecular",
+          "hemoglobinopatias"
+        ],
+        "facts": [
+          {
+            "id": "marilda-goncalves-f1",
+            "statement": "Pesquisa a interação entre genética e marcadores hematológicos, bioquímicos e imunológicos, com destaque para a doença falciforme.",
+            "sourceRefs": [
+              "marilda-goncalves-s1",
+              "marilda-goncalves-s2"
+            ]
+          },
+          {
+            "id": "marilda-goncalves-f2",
+            "statement": "É pesquisadora titular da Fiocruz Bahia e professora titular da Faculdade de Farmácia da UFBA.",
+            "sourceRefs": [
+              "marilda-goncalves-s1"
+            ]
+          },
+          {
+            "id": "marilda-goncalves-f3",
+            "statement": "Tornou-se a primeira mulher negra a dirigir a Fiocruz Bahia.",
+            "sourceRefs": [
+              "marilda-goncalves-s2"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Uma pequena mudança no DNA pode deixar os glóbulos vermelhos em forma de foice. O que isso causa no corpo?",
+            "factIds": [
+              "marilda-goncalves-f1"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela estuda como a genética se relaciona com sinais no sangue de pessoas com doença falciforme.",
+            "factIds": [
+              "marilda-goncalves-f1"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Primeira mulher negra a dirigir a Fiocruz Bahia, amplia o conhecimento sobre doenças do sangue relevantes para a população brasileira.",
+            "factIds": [
+              "marilda-goncalves-f2",
+              "marilda-goncalves-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Marilda Gonçalves",
+          "summary": "Cientista brasileira que pesquisa genética, hematologia e doença falciforme.",
+          "whyItMatters": "Seu trabalho conecta genética, biologia molecular e saúde pública para ampliar o conhecimento sobre doenças do sangue relevantes para a população brasileira.",
+          "sourceRefs": [
+            "marilda-goncalves-s1",
+            "marilda-goncalves-s2"
+          ]
+        },
+        "visualMotifs": [
+          "hemácias",
+          "DNA",
+          "sangue",
+          "doença falciforme"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "marilda-goncalves-f1",
+          "statement": "Pesquisa a interação entre genética e marcadores hematológicos, bioquímicos e imunológicos, com destaque para a doença falciforme.",
+          "sourceRefs": [
+            "marilda-goncalves-s1",
+            "marilda-goncalves-s2"
+          ]
+        },
+        {
+          "id": "marilda-goncalves-f2",
+          "statement": "É pesquisadora titular da Fiocruz Bahia e professora titular da Faculdade de Farmácia da UFBA.",
+          "sourceRefs": [
+            "marilda-goncalves-s1"
+          ]
+        },
+        {
+          "id": "marilda-goncalves-f3",
+          "statement": "Tornou-se a primeira mulher negra a dirigir a Fiocruz Bahia.",
+          "sourceRefs": [
+            "marilda-goncalves-s2"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "marilda-goncalves-s1",
+          "label": "Fiocruz Bahia — Marilda de Souza Gonçalves",
+          "url": "https://pgbsmi.bahia.fiocruz.br/marilda-de-souza-goncalves/",
+          "type": "institutional"
+        },
+        {
+          "id": "marilda-goncalves-s2",
+          "label": "Fiocruz Bahia — Cientistas: Marilda Gonçalves",
+          "url": "https://www.bahia.fiocruz.br/author/julia-salles/page/9/",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/marilda-goncalves.jpg",
+        "alt": "Retrato de Marilda Gonçalves",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
     },
     {
-      "id": "tatiana-sampaio-f2",
-      "statement": "Seu trabalho abriu novas perspectivas para o desenvolvimento de tratamentos para lesões medulares.",
-      "sourceRefs": [
-        "tatiana-sampaio-s1"
-      ]
+      "id": "jaqueline-godoy-mesquita",
+      "canonicalName": "Jaqueline Godoy Mesquita",
+      "aliases": [
+        "Jaqueline Mesquita"
+      ],
+      "field": "Matemática",
+      "identity": {
+        "birthYear": null,
+        "deathYear": null,
+        "nationalityContext": "brasileira"
+      },
+      "science": {
+        "researchAreas": [
+          "análise matemática",
+          "equações diferenciais funcionais",
+          "sistemas dinâmicos",
+          "equações com atraso"
+        ],
+        "facts": [
+          {
+            "id": "jaqueline-mesquita-f1",
+            "statement": "Sua pesquisa está concentrada em análise matemática, com ênfase em equações diferenciais funcionais.",
+            "sourceRefs": [
+              "jaqueline-mesquita-s1",
+              "jaqueline-mesquita-s2"
+            ]
+          },
+          {
+            "id": "jaqueline-mesquita-f2",
+            "statement": "Investiga equações capazes de representar fenômenos cujo estado atual depende também do que aconteceu anteriormente.",
+            "sourceRefs": [
+              "jaqueline-mesquita-s2"
+            ]
+          },
+          {
+            "id": "jaqueline-mesquita-f3",
+            "statement": "Em 2023, tomou posse como presidente da Sociedade Brasileira de Matemática.",
+            "sourceRefs": [
+              "jaqueline-mesquita-s1"
+            ]
+          }
+        ]
+      },
+      "experience": {
+        "hints": [
+          {
+            "level": 1,
+            "text": "Você mexe no chuveiro e a água demora a esquentar. Como a matemática descreve efeitos que chegam atrasados?",
+            "factIds": [
+              "jaqueline-mesquita-f2"
+            ]
+          },
+          {
+            "level": 2,
+            "text": "Ela estuda equações em que o que acontece agora depende também do que aconteceu antes.",
+            "factIds": [
+              "jaqueline-mesquita-f1",
+              "jaqueline-mesquita-f2"
+            ]
+          },
+          {
+            "level": 3,
+            "text": "Essas equações ajudam a modelar fenômenos que não respondem na hora; em 2023, ela assumiu a presidência da Sociedade Brasileira de Matemática.",
+            "factIds": [
+              "jaqueline-mesquita-f2",
+              "jaqueline-mesquita-f3"
+            ]
+          }
+        ],
+        "reveal": {
+          "headline": "Jaqueline Godoy Mesquita",
+          "summary": "Matemática brasileira que estuda equações capazes de descrever sistemas em que o passado influencia o presente.",
+          "whyItMatters": "Equações desse tipo permitem construir modelos matemáticos para fenômenos que não respondem instantaneamente às mudanças.",
+          "sourceRefs": [
+            "jaqueline-mesquita-s1",
+            "jaqueline-mesquita-s2"
+          ]
+        },
+        "visualMotifs": [
+          "equações",
+          "curvas",
+          "tempo",
+          "atraso",
+          "sistemas dinâmicos"
+        ],
+        "recognitionLevel": "discovery",
+        "difficulty": 2,
+        "experiencePotential": 5
+      },
+      "facts": [
+        {
+          "id": "jaqueline-mesquita-f1",
+          "statement": "Sua pesquisa está concentrada em análise matemática, com ênfase em equações diferenciais funcionais.",
+          "sourceRefs": [
+            "jaqueline-mesquita-s1",
+            "jaqueline-mesquita-s2"
+          ]
+        },
+        {
+          "id": "jaqueline-mesquita-f2",
+          "statement": "Investiga equações capazes de representar fenômenos cujo estado atual depende também do que aconteceu anteriormente.",
+          "sourceRefs": [
+            "jaqueline-mesquita-s2"
+          ]
+        },
+        {
+          "id": "jaqueline-mesquita-f3",
+          "statement": "Em 2023, tomou posse como presidente da Sociedade Brasileira de Matemática.",
+          "sourceRefs": [
+            "jaqueline-mesquita-s1"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "jaqueline-mesquita-s1",
+          "label": "Universidade de Brasília — Jaqueline Godoy Mesquita assume presidência da Sociedade Brasileira de Matemática",
+          "url": "https://mat.unb.br/index.php/outras-noticias/14-eventos/627-ex-aluna-da-unb-e-professora-do-departamento-de-matematica-da-universidade-de-brasilia-toma-posse-como-presidenta-da-sociedade-brasileira-de-matematica",
+          "type": "institutional"
+        },
+        {
+          "id": "jaqueline-mesquita-s2",
+          "label": "UnB Notícias — Professora da UnB recebe prêmio para mulheres cientistas",
+          "url": "https://noticias.unb.br/39-homenagem/3160-professora-da-matematica-recebe-premio-para-mulheres-cientistas",
+          "type": "institutional"
+        }
+      ],
+      "photo": {
+        "src": "/scientists/jaqueline-godoy-mesquita.jpg",
+        "alt": "Retrato de Jaqueline Godoy Mesquita",
+        "credit": null,
+        "sourceUrl": null,
+        "usageStatus": "rights-review"
+      },
+      "reviewStatus": "fact-checked-core"
     }
-  ],
-  "sources": [
-    {
-      "id": "tatiana-sampaio-s1",
-      "label": "Fiocruz — Programa de Apoio à Jovem Cientista Mulher Dra. Tatiana Sampaio",
-      "url": "https://www.campusvirtual.fiocruz.br/portal/?q=jovemcientistamulher",
-      "type": "institutional"
-    }
-  ],
-  "photo": {
-    "src": "/scientists/tatiana-sampaio.jpg",
-    "alt": "Retrato de Tatiana Sampaio",
-    "credit": null,
-    "sourceUrl": null,
-    "usageStatus": "rights-review"
-  },
-  "reviewStatus": "fact-checked-core"
-},
-{
-  "id": "marilda-goncalves",
-  "canonicalName": "Marilda Gonçalves",
-  "aliases": [
-    "Marilda de Souza Gonçalves"
-  ],
-  "field": "Hematologia e genética",
-  "identity": {
-    "birthYear": 1957,
-    "deathYear": null,
-    "nationalityContext": "brasileira"
-  },
-  "science": {
-    "researchAreas": [
-      "doença falciforme",
-      "hematologia",
-      "genética",
-      "biologia molecular",
-      "hemoglobinopatias"
-    ],
-    "facts": [
-      {
-        "id": "marilda-goncalves-f1",
-        "statement": "Pesquisa a interação entre genética e marcadores hematológicos, bioquímicos e imunológicos, com destaque para a doença falciforme.",
-        "sourceRefs": [
-          "marilda-goncalves-s1",
-          "marilda-goncalves-s2"
-        ]
-      },
-      {
-        "id": "marilda-goncalves-f2",
-        "statement": "É pesquisadora titular da Fiocruz Bahia e professora titular da Faculdade de Farmácia da UFBA.",
-        "sourceRefs": [
-          "marilda-goncalves-s1"
-        ]
-      },
-      {
-        "id": "marilda-goncalves-f3",
-        "statement": "Tornou-se a primeira mulher negra a dirigir a Fiocruz Bahia.",
-        "sourceRefs": [
-          "marilda-goncalves-s2"
-        ]
-      }
-    ]
-  },
-  "experience": {
-    "hints": [
-      {
-        "level": 1,
-        "text": "Uma pequena alteração no DNA pode mudar o formato das células responsáveis por transportar oxigênio pelo corpo.",
-        "factIds": [
-          "marilda-goncalves-f1"
-        ]
-      },
-      {
-        "level": 2,
-        "text": "Ela estuda como genética e sangue se relacionam em doenças como a falciforme.",
-        "factIds": [
-          "marilda-goncalves-f1"
-        ]
-      },
-      {
-        "level": 3,
-        "text": "Pesquisadora da Fiocruz Bahia, tornou-se a primeira mulher negra a dirigir a instituição.",
-        "factIds": [
-          "marilda-goncalves-f2",
-          "marilda-goncalves-f3"
-        ]
-      }
-    ],
-    "reveal": {
-      "headline": "Marilda Gonçalves",
-      "summary": "Cientista brasileira que pesquisa genética, hematologia e doença falciforme.",
-      "whyItMatters": "Seu trabalho conecta genética, biologia molecular e saúde pública para ampliar o conhecimento sobre doenças do sangue relevantes para a população brasileira.",
-      "sourceRefs": [
-        "marilda-goncalves-s1",
-        "marilda-goncalves-s2"
-      ]
-    },
-    "visualMotifs": [
-      "hemácias",
-      "DNA",
-      "sangue",
-      "doença falciforme"
-    ],
-    "recognitionLevel": "discovery",
-    "difficulty": 2,
-    "experiencePotential": 5
-  },
-  "facts": [
-    {
-      "id": "marilda-goncalves-f1",
-      "statement": "Pesquisa a interação entre genética e marcadores hematológicos, bioquímicos e imunológicos, com destaque para a doença falciforme.",
-      "sourceRefs": [
-        "marilda-goncalves-s1",
-        "marilda-goncalves-s2"
-      ]
-    },
-    {
-      "id": "marilda-goncalves-f2",
-      "statement": "É pesquisadora titular da Fiocruz Bahia e professora titular da Faculdade de Farmácia da UFBA.",
-      "sourceRefs": [
-        "marilda-goncalves-s1"
-      ]
-    },
-    {
-      "id": "marilda-goncalves-f3",
-      "statement": "Tornou-se a primeira mulher negra a dirigir a Fiocruz Bahia.",
-      "sourceRefs": [
-        "marilda-goncalves-s2"
-      ]
-    }
-  ],
-  "sources": [
-    {
-      "id": "marilda-goncalves-s1",
-      "label": "Fiocruz Bahia — Marilda de Souza Gonçalves",
-      "url": "https://pgbsmi.bahia.fiocruz.br/marilda-de-souza-goncalves/",
-      "type": "institutional"
-    },
-    {
-      "id": "marilda-goncalves-s2",
-      "label": "Fiocruz Bahia — Cientistas: Marilda Gonçalves",
-      "url": "https://www.bahia.fiocruz.br/author/julia-salles/page/9/",
-      "type": "institutional"
-    }
-  ],
-  "photo": {
-    "src": "/scientists/marilda-goncalves.jpg",
-    "alt": "Retrato de Marilda Gonçalves",
-    "credit": null,
-    "sourceUrl": null,
-    "usageStatus": "rights-review"
-  },
-  "reviewStatus": "fact-checked-core"
-},
-{
-  "id": "jaqueline-godoy-mesquita",
-  "canonicalName": "Jaqueline Godoy Mesquita",
-  "aliases": [
-    "Jaqueline Mesquita"
-  ],
-  "field": "Matemática",
-  "identity": {
-    "birthYear": null,
-    "deathYear": null,
-    "nationalityContext": "brasileira"
-  },
-  "science": {
-    "researchAreas": [
-      "análise matemática",
-      "equações diferenciais funcionais",
-      "sistemas dinâmicos",
-      "equações com atraso"
-    ],
-    "facts": [
-      {
-        "id": "jaqueline-mesquita-f1",
-        "statement": "Sua pesquisa está concentrada em análise matemática, com ênfase em equações diferenciais funcionais.",
-        "sourceRefs": [
-          "jaqueline-mesquita-s1",
-          "jaqueline-mesquita-s2"
-        ]
-      },
-      {
-        "id": "jaqueline-mesquita-f2",
-        "statement": "Investiga equações capazes de representar fenômenos cujo estado atual depende também do que aconteceu anteriormente.",
-        "sourceRefs": [
-          "jaqueline-mesquita-s2"
-        ]
-      },
-      {
-        "id": "jaqueline-mesquita-f3",
-        "statement": "Em 2023, tomou posse como presidente da Sociedade Brasileira de Matemática.",
-        "sourceRefs": [
-          "jaqueline-mesquita-s1"
-        ]
-      }
-    ]
-  },
-  "experience": {
-    "hints": [
-      {
-        "level": 1,
-        "text": "Nem tudo o que acontece agora depende apenas do instante presente. Em alguns sistemas, o passado continua fazendo parte da equação.",
-        "factIds": [
-          "jaqueline-mesquita-f2"
-        ]
-      },
-      {
-        "level": 2,
-        "text": "Ela estuda equações usadas para representar fenômenos em que existe atraso entre uma mudança e seu efeito.",
-        "factIds": [
-          "jaqueline-mesquita-f1",
-          "jaqueline-mesquita-f2"
-        ]
-      },
-      {
-        "level": 3,
-        "text": "Matemática brasileira, tornou-se presidente da Sociedade Brasileira de Matemática em 2023.",
-        "factIds": [
-          "jaqueline-mesquita-f3"
-        ]
-      }
-    ],
-    "reveal": {
-      "headline": "Jaqueline Godoy Mesquita",
-      "summary": "Matemática brasileira que pesquisa equações diferenciais funcionais e formas de descrever sistemas em que o passado influencia o presente.",
-      "whyItMatters": "Equações desse tipo permitem construir modelos matemáticos para fenômenos que não respondem instantaneamente às mudanças.",
-      "sourceRefs": [
-        "jaqueline-mesquita-s1",
-        "jaqueline-mesquita-s2"
-      ]
-    },
-    "visualMotifs": [
-      "equações",
-      "curvas",
-      "tempo",
-      "atraso",
-      "sistemas dinâmicos"
-    ],
-    "recognitionLevel": "discovery",
-    "difficulty": 2,
-    "experiencePotential": 5
-  },
-  "facts": [
-    {
-      "id": "jaqueline-mesquita-f1",
-      "statement": "Sua pesquisa está concentrada em análise matemática, com ênfase em equações diferenciais funcionais.",
-      "sourceRefs": [
-        "jaqueline-mesquita-s1",
-        "jaqueline-mesquita-s2"
-      ]
-    },
-    {
-      "id": "jaqueline-mesquita-f2",
-      "statement": "Investiga equações capazes de representar fenômenos cujo estado atual depende também do que aconteceu anteriormente.",
-      "sourceRefs": [
-        "jaqueline-mesquita-s2"
-      ]
-    },
-    {
-      "id": "jaqueline-mesquita-f3",
-      "statement": "Em 2023, tomou posse como presidente da Sociedade Brasileira de Matemática.",
-      "sourceRefs": [
-        "jaqueline-mesquita-s1"
-      ]
-    }
-  ],
-  "sources": [
-    {
-      "id": "jaqueline-mesquita-s1",
-      "label": "Universidade de Brasília — Jaqueline Godoy Mesquita assume presidência da Sociedade Brasileira de Matemática",
-      "url": "https://mat.unb.br/index.php/outras-noticias/14-eventos/627-ex-aluna-da-unb-e-professora-do-departamento-de-matematica-da-universidade-de-brasilia-toma-posse-como-presidenta-da-sociedade-brasileira-de-matematica",
-      "type": "institutional"
-    },
-    {
-      "id": "jaqueline-mesquita-s2",
-      "label": "UnB Notícias — Professora da UnB recebe prêmio para mulheres cientistas",
-      "url": "https://noticias.unb.br/39-homenagem/3160-professora-da-matematica-recebe-premio-para-mulheres-cientistas",
-      "type": "institutional"
-    }
-  ],
-  "photo": {
-    "src": "/scientists/jaqueline-godoy-mesquita.jpg",
-    "alt": "Retrato de Jaqueline Godoy Mesquita",
-    "credit": null,
-    "sourceUrl": null,
-    "usageStatus": "rights-review"
-  },
-  "reviewStatus": "fact-checked-core"
-}
   ]
 }

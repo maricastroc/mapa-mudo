@@ -85,7 +85,7 @@ export function MapCanvas({ field, target, stepKey, screenKey, reducedMotion, de
 
   return (
     <MapViewContext.Provider value={bus}>
-      <div className="graph-paper fixed inset-0 overflow-hidden">
+      <div className="graph-paper fixed inset-0 overflow-clip">
         <canvas ref={canvasRef} role="img" aria-label={description} className="absolute inset-0 block h-full w-full" />
         {children}
       </div>

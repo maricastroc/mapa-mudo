@@ -8,7 +8,7 @@ import { createMatcher, isValidAnswer } from "../content/scientists/matcher.ts";
 import { fromCounts, presenceOf } from "../participation/collective.ts";
 import { INITIAL_COLLECTIVE, SHEET_LAYOUT } from "../participation/source.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
-import { createExperience, type Action, type State } from "./state.ts";
+import { createExperience, MAX_HINT, type Action, type State } from "./state.ts";
 
 function clock() {
   let t = 1000;
@@ -87,7 +87,9 @@ test("scenario 1: a featured name said at the first question counts as remembere
     assert.equal(state.collective.recall[s.id], 1);
     assert.equal(state.collective.reef[s.id] ?? 0, 0);
     assert.equal(state.collective.answers, 1);
-    assert.deepEqual(state.events, [{ kind: "recall", id: s.id, at: state.events[0].at }]);
+    assert.equal(state.events.length, 1);
+    const [event] = state.events;
+    assert.ok(event.kind === "recall" && event.id === s.id && event.uid.length > 0 && !("later" in event));
     assert.equal(state.discoveryId, null);
   }
 });
@@ -124,15 +126,75 @@ test("an excessively incomplete answer asks for the full name without counting",
   assert.equal(state.fresh, true);
 });
 
-test("scenario 4: an unknown name is not an error and can be submitted for review", () => {
-  const unknown = run([{ type: "name", text: "Marie Curie" }]);
+test("scenario 4: an unknown name is not an error and can be kept for review, counted only as unidentified", () => {
+  const unknown = run([{ type: "name", text: "Josefa Tavares Brito" }]);
   assert.equal(unknown.step, "opening");
-  assert.deepEqual(unknown.response, { kind: "notFound", text: "Marie Curie" });
+  assert.deepEqual(unknown.response, { kind: "notFound", text: "Josefa Tavares Brito" });
+  assert.equal(unknown.fresh, true);
 
   const submitted = run([{ type: "submitForReview", at: 1000 }], unknown);
-  assert.deepEqual(submitted.reviewQueue, [{ submittedName: "Marie Curie", createdAt: 1000 }]);
-  assert.deepEqual(submitted.response, { kind: "submitted", text: "Marie Curie" });
-  assert.deepEqual(submitted.collective, INITIAL_COLLECTIVE);
+  assert.equal(submitted.reviewQueue.length, 1);
+  assert.equal(submitted.reviewQueue[0].submittedName, "Josefa Tavares Brito");
+  assert.equal(submitted.reviewQueue[0].createdAt, 1000);
+  assert.deepEqual(submitted.response, { kind: "submitted", text: "Josefa Tavares Brito" });
+  assert.equal(submitted.collective.firsts.unidentified, 1);
+  assert.equal(submitted.collective.silences, 0);
+  assert.equal(submitted.fresh, false);
+  const discovering = run([{ type: "discoverAnother" }], submitted);
+  assert.equal(discovering.step, "noName");
+  assert.equal(discovering.collective.silences, 0);
+});
+
+test("a famous foreign scientist or a man is acknowledged, counted apart, and leads to a Brazilian discovery", () => {
+  const curie = run([{ type: "name", text: "Marie Curie" }]);
+  assert.equal(curie.step, "opening");
+  assert.ok(curie.response?.kind === "reference");
+  assert.equal(curie.response.category, "foreign");
+  assert.equal(curie.response.name, "Marie Curie");
+  assert.equal(curie.collective.firsts.foreign, 1);
+  assert.equal(curie.collective.answers, 1);
+  assert.equal(curie.fresh, false);
+  const discovering = run([{ type: "discoverAnother" }], curie);
+  assert.equal(discovering.step, "noName");
+  assert.equal(discovering.intro, "reference");
+  assert.equal(discovering.collective.silences, 0);
+  assert.equal(run([{ type: "dontKnow" }], curie).collective.silences, 0);
+
+  const cruz = run([{ type: "name", text: "oswaldo cruz" }]);
+  assert.ok(cruz.response?.kind === "reference" && cruz.response.category === "man");
+  assert.equal(cruz.collective.firsts.man, 1);
+
+  const typo = run([{ type: "name", text: "Albert Einstain" }]);
+  assert.ok(typo.response?.kind === "reference" && typo.response.name === "Albert Einstein");
+});
+
+test("a Brazilian scientist outside the curated sheet counts as remembered, off the sheet", () => {
+  const zilda = run([{ type: "name", text: "Zilda Arns" }]);
+  assert.ok(zilda.response?.kind === "reference" && zilda.response.category === "elsewhere");
+  assert.equal(zilda.collective.firsts.elsewhere, 1);
+  assert.equal(zilda.collective.references["zilda-arns"], 1);
+  assert.equal(run([{ type: "seeMap" }], zilda).step, "collective");
+  const next = run([{ type: "discoverAnother" }], zilda);
+  assert.equal(next.intro, "another");
+});
+
+test("others who answered the same way are told, without counting the visitor twice", () => {
+  let state = experience.initialState();
+  for (let i = 0; i < 3; i++) state = run([{ type: "name", text: "Marie Curie" }, { type: "restart" }], state);
+  const fourth = run([{ type: "name", text: "Ada Lovelace" }], state);
+  assert.ok(fourth.response?.kind === "reference");
+  assert.equal(fourth.response.others, 3);
+});
+
+test("a single distinctive surname is offered for confirmation instead of asking for the full name", () => {
+  const surname = run([{ type: "name", text: "Primavesi" }]);
+  assert.ok(surname.response?.kind === "confirm");
+  assert.deepEqual(
+    surname.response.candidates.map((c) => c.id),
+    ["ana-maria-primavesi"],
+  );
+  const firstName = run([{ type: "name", text: "Bertha" }]);
+  assert.equal(firstName.response?.kind, "incomplete");
 });
 
 test("scenario 5: for every featured scientist, don't know → discover → know → say it → reef, never rock", () => {
@@ -154,25 +216,18 @@ test("scenario 5: for every featured scientist, don't know → discover → know
   assert.ok(FEATURED.every((s) => state.collective.reef[s.id] === 1));
 });
 
-test("recognizing the discovery during the clues reveals her and counts once, as a cued reef", () => {
+test("the clues ask nothing: names typed during the approach are ignored and the discovery goes on", () => {
   const started = run([{ type: "dontKnow" }, { type: "approach" }]);
   const discovery = FEATURED.find((s) => s.id === started.discoveryId);
   assert.ok(discovery);
-  const revealed = run([{ type: "name", text: discovery.canonicalName }], started);
-  assert.equal(revealed.step, "humanScale");
-  assert.equal(revealed.alreadySaid, true);
-  const counted = run([{ type: "continue" }], revealed);
-  assert.equal(counted.step, "nameSaid");
-  assert.equal(counted.saidKind, "cued");
-  assert.equal(counted.collective.reef[discovery.id], 1);
-  assert.equal(counted.collective.recall[discovery.id] ?? 0, 0);
-});
-
-test("during the clues another valid name does not count and keeps the discovery going", () => {
-  const state = run([{ type: "dontKnow" }, { type: "approach" }, { type: "name", text: "Nise da Silveira" }]);
-  assert.equal(state.step, "clue1");
-  assert.equal(state.response?.kind, "otherPoint");
-  assert.equal(presenceOf(state.collective, "nise-da-silveira"), 0);
+  for (const text of [discovery.canonicalName, "Nise da Silveira", "Marie Curie"]) {
+    const typed = run([{ type: "name", text }], started);
+    assert.equal(typed, started);
+  }
+  assert.equal(presenceOf(started.collective, "nise-da-silveira"), 0);
+  assert.equal(run([{ type: "reachHumanScale" }], started).step, "clue1");
+  const path = run([{ type: "nextClue" }, { type: "nextClue" }, { type: "reachHumanScale" }], started);
+  assert.equal(path.step, "humanScale");
 });
 
 test("'Não sei' at the opening starts a discovery and is recorded once, as a first answer", () => {
@@ -182,7 +237,45 @@ test("'Não sei' at the opening starts a discovery and is recorded once, as a fi
   assert.equal(state.collective.silences, 1);
   assert.equal(state.collective.answers, 1);
   assert.equal(state.silenceRecorded, true);
-  assert.deepEqual(state.events, [{ kind: "silence", at: state.events[0].at }]);
+  assert.equal(state.events.length, 1);
+  assert.equal(state.events[0].kind, "silence");
+  assert.equal(state.intro, "silence");
+});
+
+test("someone who remembers a name is offered a discovery among the least remembered, without a new silence", () => {
+  const remembered = run([{ type: "name", text: "Nise da Silveira" }]);
+  assert.equal(remembered.step, "nameSaid");
+  const discovering = run([{ type: "discoverAnother" }], remembered);
+  assert.equal(discovering.step, "noName");
+  assert.equal(discovering.intro, "another");
+  assert.notEqual(discovering.discoveryId, "nise-da-silveira");
+  assert.equal(discovering.collective.silences, 0);
+  assert.equal(discovering.collective.answers, 1);
+  const discovery = FEATURED.find((s) => s.id === discovering.discoveryId);
+  assert.ok(discovery);
+  assert.equal(discovery.experience.recognitionLevel ?? "discovery", "discovery");
+  const asking = run(DISCOVERY_PATH.slice(1), discovering);
+  assert.equal(asking.step, "askAgain");
+  const named = run([{ type: "name", text: discovery.canonicalName }], asking);
+  assert.equal(named.saidKind, "discovery");
+  assert.equal(named.collective.reef[discovery.id], 1);
+  assert.equal(named.collective.recall["nise-da-silveira"], 1);
+  assert.equal(run([{ type: "discoverAnother" }], experience.initialState()).step, "opening");
+});
+
+test("at the second question, an unambiguous part of her name is enough to name her point", () => {
+  const asking = run(DISCOVERY_PATH);
+  const discovery = FEATURED.find((s) => s.id === asking.discoveryId);
+  assert.ok(discovery);
+  const words = discovery.canonicalName.split(" ");
+  for (const text of [words.at(-1) ?? "", words[0].slice(0, 3), discovery.canonicalName.toUpperCase()]) {
+    const said = run([{ type: "name", text }], asking);
+    assert.equal(said.step, "nameSaid", text);
+    assert.equal(said.saidId, discovery.id, text);
+    assert.equal(said.saidKind, "discovery", text);
+  }
+  const tooShort = run([{ type: "name", text: words[0].slice(0, 2) }], asking);
+  assert.notEqual(tooShort.saidId, discovery.id);
 });
 
 test("after the first answer, a name not yet shown in this visit is still a memory, and one already shown is a recognition", () => {
@@ -345,27 +438,18 @@ test("the profile opens only from the human scale and closes back to it without 
 test("continuing from the profile behaves like continuing from the human scale", () => {
   const profile = run([...DISCOVERY_PATH.slice(0, 5), { type: "openProfile" }]);
   assert.equal(run([{ type: "continue" }], profile).step, "askAgain");
-
-  const recognized = run([{ type: "dontKnow" }, { type: "approach" }]);
-  const discovery = FEATURED.find((s) => s.id === recognized.discoveryId);
-  assert.ok(discovery);
-  const revealed = run([{ type: "name", text: discovery.canonicalName }, { type: "openProfile" }], recognized);
-  assert.equal(revealed.step, "profile");
-  const counted = run([{ type: "continue" }], revealed);
-  assert.equal(counted.step, "nameSaid");
-  assert.equal(counted.collective.reef[discovery.id], 1);
 });
 
-test("the profile can also be opened from the waiting point on the map once the name is shown, and returns there", () => {
+test("the profile can also be opened from her portrait on the map, and returns there with the name shown", () => {
   const asking = run(DISCOVERY_PATH);
   assert.equal(asking.step, "askAgain");
-  assert.equal(run([{ type: "openProfile" }], asking).step, "askAgain");
-  const profile = run([{ type: "hint" }, { type: "hint" }, { type: "openProfile" }], asking);
+  const profile = run([{ type: "openProfile" }], asking);
   assert.equal(profile.step, "profile");
   assert.equal(profile.profileReturn, "askAgain");
   const back = run([{ type: "closeProfile" }], profile);
   assert.equal(back.step, "askAgain");
   assert.equal(back.profileReturn, null);
+  assert.equal(back.hint, MAX_HINT);
   assert.deepEqual(back.collective, asking.collective);
 });
 
@@ -392,7 +476,7 @@ test("help at the second question never turns the answer into a memory", () => {
   const asking = run(DISCOVERY_PATH);
   const discovery = FEATURED.find((s) => s.id === asking.discoveryId);
   assert.ok(discovery);
-  for (const hints of [0, 1, 2]) {
+  for (const hints of [0, 1]) {
     const helped = run(Array.from({ length: hints }, () => ({ type: "hint" }) as Action), asking);
     assert.equal(helped.hint, hints);
     const said = run([{ type: "name", text: discovery.canonicalName }], helped);
@@ -456,4 +540,24 @@ test("any named scientist on the collective map opens her profile and returns to
   assert.deepEqual(back.collective, map.collective);
   assert.equal(run([{ type: "openProfile", id: "not-a-scientist" }], map).step, "collective");
   assert.equal(run([{ type: "openProfile", id: b.id }]).step, "opening");
+});
+
+test("the archive of another totem merges into the map without duplicating what is already here", () => {
+  const local = run([{ type: "name", text: "Nise da Silveira" }, { type: "restart" }]);
+  const remote = createExperience(CATALOG, INITIAL_COLLECTIVE, clock(), seeded(99));
+  const elsewhere = remote.reduce(remote.reduce(remote.initialState(), { type: "dontKnow" }), { type: "restart" });
+  const merged = run([{ type: "merge", events: [...elsewhere.events, ...local.events] }], local);
+  assert.equal(merged.events.length, 2);
+  assert.equal(merged.collective.silences, 1);
+  assert.equal(merged.collective.recall["nise-da-silveira"], 1);
+  assert.equal(run([{ type: "merge", events: merged.events }], merged), merged);
+});
+
+test("a reload restores the map from stored events and keeps the review list", () => {
+  const visited = run([{ type: "dontKnow" }, { type: "restart" }, { type: "name", text: "Josefa Tavares Brito" }, { type: "submitForReview", at: 5 }]);
+  const restored = experience.restore(visited.events, visited.reviewQueue);
+  assert.equal(restored.step, "opening");
+  assert.equal(restored.fresh, true);
+  assert.deepEqual(restored.collective, visited.collective);
+  assert.deepEqual(restored.reviewQueue, visited.reviewQueue);
 });

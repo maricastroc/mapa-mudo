@@ -114,18 +114,30 @@ export type Catalog = {
   known: KnownScientist[];
 };
 
+export type ReferenceCategory = "foreign" | "man" | "elsewhere";
+
+export type ReferenceName = {
+  id: string;
+  category: ReferenceCategory;
+  canonicalName: string;
+  aliases: string[];
+  note: string;
+};
+
 export type ScientistMatch =
   | { status: "featured"; scientist: FeaturedScientist }
   | { status: "known"; scientist: KnownScientist }
   | { status: "suggestion"; submittedName: string; candidate: KnownScientist }
   | { status: "ambiguous"; submittedName: string; candidates: KnownScientist[] }
   | { status: "incomplete"; submittedName: string; candidateCount: number }
+  | { status: "reference"; submittedName: string; reference: ReferenceName }
   | { status: "unknown"; submittedName: string }
   | { status: "empty" };
 
 export type Participations = Record<string, number>;
 
 export type PendingScientistSubmission = {
+  uid: string;
   submittedName: string;
   createdAt: number;
 };
