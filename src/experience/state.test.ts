@@ -8,7 +8,6 @@ import { createMatcher, isValidAnswer } from "../content/scientists/matcher.ts";
 import { fromCounts, presenceOf } from "../participation/collective.ts";
 import { INITIAL_COLLECTIVE, SHEET_LAYOUT } from "../participation/source.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
-import { simulatedSpeech } from "./speechSimulation.ts";
 import { createExperience, type Action, type State } from "./state.ts";
 
 function clock() {
@@ -143,9 +142,7 @@ test("scenario 5: for every featured scientist, don't know → discover → know
     assert.equal(asking.step, "askAgain");
     const discovery = FEATURED.find((s) => s.id === asking.discoveryId);
     assert.ok(discovery);
-    const spoken = simulatedSpeech(asking.step, discovery);
-    assert.equal(spoken, discovery.canonicalName);
-    const said = run([{ type: "name", text: spoken ?? "" }, { type: "seeMap" }], asking);
+    const said = run([{ type: "name", text: discovery.canonicalName }, { type: "seeMap" }], asking);
     assert.equal(said.step, "collective");
     assert.equal(said.saidId, discovery.id);
     assert.equal(said.saidKind, "discovery");
@@ -178,15 +175,8 @@ test("during the clues another valid name does not count and keeps the discovery
   assert.equal(presenceOf(state.collective, "nise-da-silveira"), 0);
 });
 
-test("speech simulation is scripted outside the interface and stays silent at the opening", () => {
-  const discovery = FEATURED[0];
-  assert.equal(simulatedSpeech("opening", discovery), null);
-  assert.equal(simulatedSpeech("clue2", discovery), discovery.canonicalName);
-  assert.equal(simulatedSpeech("askAgain", null), null);
-});
-
-test("silence at the opening starts a discovery and is recorded once, as a first answer", () => {
-  const state = run([{ type: "silence" }]);
+test("'Não sei' at the opening starts a discovery and is recorded once, as a first answer", () => {
+  const state = run([{ type: "dontKnow" }]);
   assert.equal(state.step, "noName");
   assert.ok(FEATURED.some((s) => s.id === state.discoveryId));
   assert.equal(state.collective.silences, 1);
@@ -195,20 +185,47 @@ test("silence at the opening starts a discovery and is recorded once, as a first
   assert.deepEqual(state.events, [{ kind: "silence", at: state.events[0].at }]);
 });
 
-test("after the first answer, a name said at the opening again is a recognition, not a memory", () => {
+test("after the first answer, a name not yet shown in this visit is still a memory, and one already shown is a recognition", () => {
   const [first, second] = FEATURED;
   const again = run([{ type: "name", text: first.canonicalName }, { type: "seeMap" }, { type: "anotherName" }]);
   assert.equal(again.step, "opening");
   assert.equal(again.fresh, false);
+  assert.deepEqual(again.seen, [first.id]);
   const said = run([{ type: "name", text: second.canonicalName }], again);
-  assert.equal(said.saidKind, "recognition");
-  assert.equal(said.collective.recall[second.id] ?? 0, 0);
-  assert.equal(said.collective.reef[second.id], 1);
+  assert.equal(said.saidKind, "recall");
+  assert.equal(said.collective.recall[second.id], 1);
+  assert.equal(said.collective.reef[second.id] ?? 0, 0);
   assert.equal(said.collective.answers, 1);
+  const last = said.events.at(-1);
+  assert.ok(last && last.kind === "recall" && last.later === true);
 
   const repeated = run([{ type: "name", text: first.canonicalName }], again);
+  assert.equal(repeated.saidKind, "recognition");
   assert.equal(repeated.collective.recall[first.id], 1);
   assert.equal(repeated.collective.reef[first.id], 1);
+});
+
+test("every name on the collective map counts as shown to the visitor who opened it", () => {
+  const [first, second, third] = FEATURED;
+  const elsewhere = run([{ type: "name", text: second.canonicalName }, { type: "seeMap" }, { type: "restart" }]);
+  assert.deepEqual(elsewhere.seen, []);
+  const map = run([{ type: "name", text: first.canonicalName }, { type: "seeMap" }], elsewhere);
+  assert.deepEqual([...map.seen].sort(), [first.id, second.id].sort());
+  const back = run([{ type: "anotherName" }], map);
+  assert.equal(run([{ type: "name", text: second.canonicalName }], back).saidKind, "recognition");
+  assert.equal(run([{ type: "name", text: third.canonicalName }], back).saidKind, "recall");
+});
+
+test("names suggested in 'É ela?' count as shown once the visitor moves on, without spoiling the one she picks", () => {
+  const asked = runWithKnown([{ type: "name", text: "Ana Luísa" }]);
+  assert.ok(asked.response?.kind === "confirm");
+  const ids = asked.response.candidates.map((c) => c.id);
+  assert.deepEqual(asked.seen, []);
+  const confirmed = runWithKnown([{ type: "confirm", id: ids[1] }], asked);
+  assert.equal(confirmed.saidKind, "recall");
+  assert.ok(ids.every((id) => confirmed.seen.includes(id)));
+  const rejected = runWithKnown([{ type: "reject" }], asked);
+  assert.ok(ids.every((id) => rejected.seen.includes(id)));
 });
 
 test("a discovered scientist said again in the same visit never becomes a memory", () => {
@@ -228,6 +245,64 @@ test("'não sei' after the first answer starts another discovery without countin
   assert.equal(discovering.step, "noName");
   assert.equal(discovering.collective.silences, 0);
   assert.equal(discovering.silenceRecorded, false);
+});
+
+function seeded(seed: number) {
+  return () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+}
+
+test("every new visit draws a new order, and nobody is offered twice before everyone has been offered once", () => {
+  const drawn = createExperience(CATALOG, INITIAL_COLLECTIVE, clock(), seeded(11));
+  const tierOf = (id: string) => FEATURED.find((s) => s.id === id)?.experience.recognitionLevel ?? "discovery";
+  let state = drawn.initialState();
+  const orders = new Set<string>();
+  const offered: string[] = [];
+  for (let visit = 0; visit < FEATURED.length / 2; visit++) {
+    orders.add(state.discoveryOrder.join());
+    const first = drawn.reduce(state, { type: "dontKnow" });
+    const second = drawn.reduce(drawn.reduce(first, { type: "anotherName" }), { type: "dontKnow" });
+    assert.ok(first.discoveryId && second.discoveryId);
+    offered.push(first.discoveryId, second.discoveryId);
+    state = drawn.reduce(second, { type: "restart" });
+    assert.deepEqual(state.collective, second.collective);
+  }
+  assert.equal(orders.size, FEATURED.length / 2);
+  assert.equal(new Set(offered).size, FEATURED.length);
+  const lesserKnown = offered.filter((id) => tierOf(id) === "discovery").length;
+  assert.ok(offered.slice(0, lesserKnown).every((id) => tierOf(id) === "discovery"));
+  const firstOfFreshVisits = new Set(
+    [1, 2, 3, 4, 5, 6].map((seed) => {
+      const fresh = createExperience(CATALOG, INITIAL_COLLECTIVE, clock(), seeded(seed));
+      return fresh.reduce(fresh.initialState(), { type: "dontKnow" }).discoveryId;
+    }),
+  );
+  assert.ok(firstOfFreshVisits.size > 1);
+});
+
+test("going back to the start mid-visit keeps the visit: no new silence, no memory, and her own silence stays out of the count", () => {
+  const silent = run([{ type: "dontKnow" }]);
+  for (const path of [[], [{ type: "approach" }, { type: "nextClue" }], DISCOVERY_PATH.slice(1)] as Action[][]) {
+    const away = run(path, silent);
+    const home = run([{ type: "anotherName" }], away);
+    assert.equal(home.step, "opening");
+    assert.equal(home.fresh, false);
+    assert.equal(home.discoveryId, null);
+    assert.deepEqual(home.events, silent.events);
+    const again = run([{ type: "dontKnow" }], home);
+    assert.equal(again.collective.silences, 1);
+    assert.equal(again.silenceRecorded, true);
+    const discovery = FEATURED.find((s) => s.id === away.discoveryId);
+    const other = FEATURED.find((s) => s.id !== away.discoveryId);
+    assert.ok(discovery && other);
+    const remembered = run([{ type: "name", text: other.canonicalName }], home);
+    assert.equal(remembered.saidKind, "recall");
+    assert.equal(remembered.collective.answers, 1);
+    const hinted = run([{ type: "name", text: discovery.canonicalName }], home);
+    assert.equal(hinted.saidKind, path.length === 0 ? "recall" : "recognition");
+  }
 });
 
 test("at the second question, another scientist's name is a recognition, not the discovery", () => {
@@ -337,7 +412,9 @@ test("after a discovery, the second question also leads to the collective map wi
   assert.equal(map.saidId, null);
   assert.deepEqual(map.collective, asking.collective);
   assert.deepEqual(map.events, asking.events);
-  const next = run([{ type: "anotherName" }, { type: "name", text: FEATURED[0].canonicalName }], map);
+  const discovery = FEATURED.find((s) => s.id === asking.discoveryId);
+  assert.ok(discovery);
+  const next = run([{ type: "anotherName" }, { type: "name", text: discovery.canonicalName }], map);
   assert.equal(next.saidKind, "recognition");
 });
 

@@ -84,7 +84,7 @@ test("the landing shows the whole sheet at a smaller scale beside the question, 
     { x0: 40, y0: 30, x1: 480, y1: 70 },
     { x0: 64, y0: 228, x1: 820, y1: 528 },
     { x0: 64, y0: 548, x1: 700, y1: 592 },
-    { x0: 52, y0: 618, x1: 560, y1: 712 },
+    { x0: 68, y0: 618, x1: 560, y1: 712 },
   ];
   for (const screen of SCREENS) {
     const { rest } = sceneAt("opening", "ruth-nussenzweig", screen);

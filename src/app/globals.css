@@ -23,19 +23,12 @@
   --accent: var(--iris-orange);
   --action: var(--iris-blue);
   --on-action: #ffffff;
-  --speak: var(--iris-blue);
-  --on-speak: #ffffff;
   --focus-ring: var(--iris-blue);
   --action-radius: 0px;
 
   --display-weight: 600;
   --display-tracking: -0.02em;
   --grid-step: 36px;
-}
-
-[data-speak="accent"] {
-  --speak: var(--iris-orange);
-  --on-speak: var(--ink);
 }
 
 @theme inline {
@@ -45,8 +38,6 @@
   --color-accent: var(--accent);
   --color-action: var(--action);
   --color-on-action: var(--on-action);
-  --color-speak: var(--speak);
-  --color-on-speak: var(--on-speak);
   --color-iris-blue: var(--iris-blue);
   --font-primary: var(--font-primary);
   --font-notation: var(--font-notation);
@@ -108,23 +99,6 @@ body {
   }
 }
 
-@keyframes ripple {
-  from {
-    transform: scale(0.6);
-    opacity: 0.9;
-  }
-  to {
-    transform: scale(2.3);
-    opacity: 0;
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
 .fade-in {
   animation: fade-in 700ms ease-out both;
 }
@@ -157,14 +131,6 @@ body {
 
 .fade-out {
   animation: fade-out 900ms ease-in both;
-}
-
-.ripple {
-  animation: ripple 1800ms cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
-}
-
-.caret-blink {
-  animation: blink 1s steps(1) infinite;
 }
 
 @layer components {
@@ -204,10 +170,5 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
     transition-delay: 0ms !important;
-  }
-  .ripple {
-    animation: none;
-    opacity: 0.35;
-    transform: scale(1.5);
   }
 }

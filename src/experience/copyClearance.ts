@@ -8,12 +8,12 @@ export const SHEET_COPY: Record<SheetCopyStep, Box[]> = {
   noName: [
     { x0: 64, y0: 150, x1: 780, y1: 290 },
     { x0: 64, y0: 304, x1: 840, y1: 500 },
-    { x0: 64, y0: 540, x1: 272, y1: 608 },
+    { x0: 80, y0: 540, x1: 288, y1: 608 },
   ],
   askAgain: [
     { x0: 64, y0: 228, x1: 806, y1: 528 },
     { x0: 64, y0: 150, x1: 412, y1: 200 },
-    { x0: 52, y0: 618, x1: 760, y1: 712 },
+    { x0: 68, y0: 618, x1: 760, y1: 712 },
   ],
 };
 
@@ -59,7 +59,7 @@ function compactTarget(step: SheetCopyStep, screen: Screen, x: number, y: number
 
 export const CARTOUCHE = { x: 36, y: 30, w: 336, h: 286 };
 
-export const NEXT_ACTION = { x: 36, y: 800, w: 336, h: 64 };
+export const NEXT_ACTION = { x: 36, y: 776, w: 336, h: 64 };
 
 export const COLLECTIVE_COLUMN = { x0: 0, y0: 0, x1: CARTOUCHE.x + CARTOUCHE.w + 16, y1: 900 };
 

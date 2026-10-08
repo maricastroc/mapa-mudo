@@ -2,7 +2,7 @@ import type { Participations } from "../content/scientists/types.ts";
 
 export type NameKind = "recall" | "cued" | "discovery" | "recognition";
 
-export type CollectiveEvent = { kind: NameKind; id: string; at: number } | { kind: "silence"; at: number };
+export type CollectiveEvent = { kind: NameKind; id: string; at: number; later?: true } | { kind: "silence"; at: number };
 
 export type Collective = {
   recall: Participations;
@@ -31,7 +31,7 @@ function add(counts: Participations, id: string): Participations {
 export function record(collective: Collective, event: CollectiveEvent): Collective {
   if (event.kind === "silence") return { ...collective, silences: collective.silences + 1, answers: collective.answers + 1 };
   const order = collective.order.includes(event.id) ? collective.order : [...collective.order, event.id];
-  if (event.kind === "recall") return { ...collective, order, recall: add(collective.recall, event.id), answers: collective.answers + 1 };
+  if (event.kind === "recall") return { ...collective, order, recall: add(collective.recall, event.id), answers: collective.answers + (event.later ? 0 : 1) };
   return { ...collective, order, reef: add(collective.reef, event.id) };
 }
 

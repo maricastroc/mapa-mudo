@@ -29,7 +29,6 @@ import { collectiveObstacles, trenchCaptionBox } from "./collectiveLayout";
 import { Credits } from "./Credits";
 import { PortraitButton, PortraitPhoto } from "./PortraitPhoto";
 import { sceneryFor } from "./scenery";
-import { simulatedSpeech } from "./speechSimulation";
 import { createExperience, type Step } from "./state";
 import { Button } from "./ui";
 
@@ -76,8 +75,8 @@ function LiveExperience() {
   const discovery = useMemo(
     () =>
       EXPERIENCE.discoverable.find((f) => f.id === state.discoveryId) ??
-      chooseDiscovery(EXPERIENCE.discoverable, state.collective, state.discoveryCursor),
-    [state.discoveryId, state.collective, state.discoveryCursor],
+      chooseDiscovery(EXPERIENCE.discoverable, state.collective, state.offered, state.discoveryOrder),
+    [state.discoveryId, state.collective, state.offered, state.discoveryOrder],
   );
   const geometry = useMemo(() => discoveryGeometry(field, discovery, points), [field, discovery, points]);
   const { target, rest } = useMemo(
@@ -142,7 +141,6 @@ function LiveExperience() {
   const commands = useMemo<Commands>(
     () => ({
       dontKnow: () => dispatch({ type: "dontKnow" }),
-      silence: () => dispatch({ type: "silence" }),
       approach: () => dispatch({ type: "approach" }),
       nextClue: () => dispatch({ type: "nextClue" }),
       reachHumanScale: () => dispatch({ type: "reachHumanScale" }),
@@ -169,14 +167,13 @@ function LiveExperience() {
     [screen, unit, labelView, state.collective.silences],
   );
   const silenceCount = state.collective.answers >= SILENCE_SAMPLE_MIN ? state.collective.silences : null;
-  const contextFor = (step: Step): PlaneContext => ({
+  const context: PlaneContext = {
     discovery,
     code: geometry.code,
     points,
     illustrative: PARTICIPATIONS_ARE_ILLUSTRATIVE,
-    speech: simulatedSpeech(step, discovery),
     sharedSilence: sharedSilence(state.collective, state.silenceRecorded),
-  });
+  };
   const planes: { step: Step; key: number; leaving: boolean }[] = [];
   if (state.previous) planes.push({ step: state.previous, key: state.stepCount - 1, leaving: true });
   planes.push({ step: state.step, key: state.stepCount, leaving: false });
@@ -193,7 +190,7 @@ function LiveExperience() {
         stepKey={`${state.stepCount}`}
         screenKey={`${screen.W}x${screen.H}`}
         reducedMotion={reducedMotion}
-        description={mapDescription(state, contextFor(state.step))}
+        description={mapDescription(state, context)}
       >
         <SheetMarkers
           step={state.step}
@@ -239,8 +236,7 @@ function LiveExperience() {
               state={state}
               screen={screen}
               commands={commands}
-              reducedMotion={reducedMotion}
-              context={contextFor(p.step)}
+              context={context}
             />
           </ZoomPlane>
         ))}
@@ -274,6 +270,13 @@ function LiveExperience() {
           </Button>
         </nav>
       </footer>
+      {state.step !== "opening" && (
+        <nav aria-label="Navegação" className="pointer-events-none fixed bottom-0 left-2 z-10 bg-paper/80 pr-3 text-[12px] text-ink-soft">
+          <Button variant="subtle" onClick={commands.anotherName} aria-label="Voltar ao início">
+            ← Início
+          </Button>
+        </nav>
+      )}
     </main>
   );
 }
