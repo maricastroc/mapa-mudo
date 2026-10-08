@@ -139,3 +139,50 @@ test("an exact longer name is not confused with a shorter registered name", () =
   assert.equal(idOf(match("Marta Pires")), "k-marta");
   assert.equal(idOf(match("Marta Pires Neto")), "k-marta-neto");
 });
+
+const fullNames = createMatcher({
+  featured: [],
+  known: [
+    known("k-tatiana", "Tatiana Sampaio"),
+    known("k-nise", "Nise da Silveira"),
+    known("k-elisa", "Elisa Frota-Pessôa"),
+    known("k-ana-maria", "Ana Maria Primavesi"),
+    known("k-maria-silva", "Maria Silva"),
+    known("k-maria-souza-silva", "Maria Souza Silva"),
+  ],
+});
+
+function idFrom(result: ScientistMatch) {
+  return result.status === "featured" || result.status === "known" ? result.scientist.id : null;
+}
+
+test("a fuller name that keeps the registered first name and last surname is recognized", () => {
+  assert.equal(idFrom(fullNames("Tatiana Coelho de Sampaio")), "k-tatiana");
+  assert.equal(idFrom(fullNames("Nise Magalhães da Silveira")), "k-nise");
+  assert.equal(idFrom(fullNames("Elisa Esther Habib Frota Pessoa")), "k-elisa");
+  assert.equal(idFrom(fullNames("ana maria pereira primavesi")), "k-ana-maria");
+});
+
+test("a fuller name is not recognized when the first name, the last surname or the order differ", () => {
+  assert.equal(idFrom(fullNames("Tatiana Coelho")), null);
+  assert.equal(idFrom(fullNames("Luana Coelho de Sampaio")), null);
+  assert.equal(idFrom(fullNames("Tatiana Sampaio Coelho")), null);
+  assert.equal(idFrom(fullNames("Sampaio Coelho Tatiana")), null);
+  assert.equal(idFrom(fullNames("Ana Pereira Primavesi")), null);
+});
+
+test("extra names may sit anywhere between the registered ones", () => {
+  assert.equal(idFrom(fullNames("Ana Pereira Maria Primavesi")), "k-ana-maria");
+});
+
+test("a fuller name with a typo in a registered word asks for confirmation", () => {
+  const result = fullNames("Tatiana Coelho de Sampaoi");
+  assert.equal(result.status, "suggestion");
+  assert.equal(result.status === "suggestion" && result.candidate.id, "k-tatiana");
+});
+
+test("a fuller name that fits two registered people is ambiguous", () => {
+  const result = fullNames("Maria Pereira Souza Silva");
+  assert.equal(result.status, "ambiguous");
+  assert.deepEqual(result.status === "ambiguous" && result.candidates.map((c) => c.id).sort(), ["k-maria-silva", "k-maria-souza-silva"]);
+});

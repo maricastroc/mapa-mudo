@@ -60,6 +60,21 @@ function buildIndex(catalog: Catalog): IndexedScientist[] {
   return entries;
 }
 
+const sameToken = (a: string, b: string) => a === b;
+
+const closeToken = (a: string, b: string) => a === b || editDistance(a, b) <= typoTolerance(Math.min(a.length, b.length));
+
+function containsRegisteredName(tokens: string[], form: string, same: (a: string, b: string) => boolean) {
+  const parts = form.split(" ");
+  if (parts.length < 2 || tokens.length <= parts.length) return false;
+  if (!same(tokens[0], parts[0]) || !same(tokens[tokens.length - 1], parts[parts.length - 1])) return false;
+  let next = 1;
+  for (let i = 1; i < tokens.length - 1 && next < parts.length - 1; i++) {
+    if (same(tokens[i], parts[next])) next++;
+  }
+  return next === parts.length - 1;
+}
+
 function resolved(entry: IndexedScientist): ScientistMatch {
   return entry.featured ? { status: "featured", scientist: entry.featured } : { status: "known", scientist: entry.scientist };
 }
@@ -78,6 +93,10 @@ export function createMatcher(catalog: Catalog) {
     if (exact.length > 1) return { status: "ambiguous", submittedName, candidates: exact.map((e) => e.scientist) };
 
     const tokens = query.split(" ");
+    const contained = entries.filter((e) => e.forms.some((form) => containsRegisteredName(tokens, form, sameToken)));
+    if (contained.length === 1) return resolved(contained[0]);
+    if (contained.length > 1) return { status: "ambiguous", submittedName, candidates: contained.map((e) => e.scientist) };
+
     const specific = tokens.length >= 2;
     const tolerance = typoTolerance(query.length);
     const candidates: { entry: IndexedScientist; weight: number }[] = [];
@@ -88,6 +107,10 @@ export function createMatcher(catalog: Catalog) {
       }
       if (best <= tolerance) {
         candidates.push({ entry, weight: best });
+        continue;
+      }
+      if (entry.forms.some((form) => containsRegisteredName(tokens, form, closeToken))) {
+        candidates.push({ entry, weight: 1 });
         continue;
       }
       const partial =

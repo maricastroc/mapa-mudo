@@ -106,3 +106,15 @@ test("names still pending identity review never reach the map or the discovery",
     assert.equal(CATALOG.known.some((s) => s.id === p.id), false, p.id);
   }
 });
+
+test("curated scientists are recognized by fuller versions of their names", () => {
+  const match = createMatcher(CATALOG);
+  for (const [text, id] of [
+    ["Tatiana Coelho de Sampaio", "tatiana-sampaio"],
+    ["Nise Magalhães da Silveira", "nise-da-silveira"],
+    ["Lélia de Almeida Gonzalez", "lelia-gonzalez"],
+  ]) {
+    const result = match(text);
+    assert.equal(result.status === "featured" && result.scientist.id, id, text);
+  }
+});
