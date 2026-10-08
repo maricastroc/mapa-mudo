@@ -1,7 +1,8 @@
 import { discoverableScientists, findScientist } from "../content/scientists/catalog.ts";
 import { createMatcher } from "../content/scientists/matcher.ts";
-import type { Catalog, Participations, PendingScientistSubmission, ScientistMatch } from "../content/scientists/types.ts";
-import { chooseDiscovery, recordMention } from "../participation/participations.ts";
+import type { Catalog, PendingScientistSubmission, ScientistMatch } from "../content/scientists/types.ts";
+import { record, type Collective, type CollectiveEvent, type NameKind } from "../participation/collective.ts";
+import { chooseDiscovery } from "../participation/participations.ts";
 
 export type Step =
   | "opening"
@@ -16,6 +17,8 @@ export type Step =
   | "collective";
 
 export const CLUE_STEPS: Step[] = ["clue1", "clue2", "clue3"];
+
+export const MAX_HINT = 2;
 
 export type Candidate = { id: string; name: string };
 
@@ -32,9 +35,14 @@ export type State = {
   step: Step;
   previous: Step | null;
   stepCount: number;
-  participations: Participations;
+  collective: Collective;
+  events: CollectiveEvent[];
+  fresh: boolean;
+  silenceRecorded: boolean;
+  hint: number;
   discoveryId: string | null;
   saidId: string | null;
+  saidKind: NameKind | null;
   alreadySaid: boolean;
   response: Response | null;
   reviewQueue: PendingScientistSubmission[];
@@ -51,7 +59,7 @@ export type Action =
   | { type: "continue" }
   | { type: "openProfile"; id?: string }
   | { type: "closeProfile" }
-  | { type: "seeAgain" }
+  | { type: "hint" }
   | { type: "name"; text: string }
   | { type: "confirm"; id: string }
   | { type: "reject" }
@@ -110,7 +118,7 @@ export function decide(
   }
 }
 
-export function createExperience(catalog: Catalog, initialParticipations: Participations) {
+export function createExperience(catalog: Catalog, initialCollective: Collective, now: () => number = Date.now) {
   const matchScientist = createMatcher(catalog);
   const discoverable = discoverableScientists(catalog);
   const nameOf = (id: string) => findScientist(catalog, id)?.canonicalName ?? id;
@@ -119,9 +127,14 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
     step: "opening",
     previous: null,
     stepCount: 0,
-    participations: { ...initialParticipations },
+    collective: initialCollective,
+    events: [],
+    fresh: true,
+    silenceRecorded: false,
+    hint: 0,
     discoveryId: null,
     saidId: null,
+    saidKind: null,
     alreadySaid: false,
     response: null,
     reviewQueue: [],
@@ -138,13 +151,23 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
     response: null,
   });
 
-  const say = (state: State, id: string): State =>
-    goTo(state, "nameSaid", { saidId: id, participations: recordMention(state.participations, id) });
+  const remember = (state: State, event: CollectiveEvent) => ({
+    collective: record(state.collective, event),
+    events: [...state.events, event],
+  });
+
+  const say = (state: State, id: string, kind: NameKind): State =>
+    goTo(state, "nameSaid", { saidId: id, saidKind: kind, fresh: false, ...remember(state, { kind, id, at: now() }) });
+
+  const answerKind = (state: State, id: string): NameKind => {
+    if (state.step === "askAgain") return id === state.discoveryId ? "discovery" : "recognition";
+    return state.fresh ? "recall" : "recognition";
+  };
 
   const apply = (state: State, decision: Decision): State => {
     switch (decision.kind) {
       case "count":
-        return say(state, decision.id);
+        return say(state, decision.id, answerKind(state, decision.id));
       case "reveal":
         return goTo(state, "humanScale", { alreadySaid: true });
       case "respond":
@@ -155,9 +178,16 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
   };
 
   const startDiscovery = (state: State): State => {
-    const chosen = chooseDiscovery(discoverable, state.participations, state.discoveryCursor);
+    const chosen = chooseDiscovery(discoverable, state.collective, state.discoveryCursor);
     if (!chosen) return { ...state, response: { kind: "noCuration" } };
-    return goTo(state, "noName", { discoveryId: chosen.id, discoveryCursor: state.discoveryCursor + 1 });
+    const silent = state.step === "opening" && state.fresh;
+    return goTo(state, "noName", {
+      discoveryId: chosen.id,
+      discoveryCursor: state.discoveryCursor + 1,
+      fresh: false,
+      silenceRecorded: silent,
+      ...(silent ? remember(state, { kind: "silence", at: now() }) : {}),
+    });
   };
 
   const reduce = (state: State, action: Action): State => {
@@ -177,7 +207,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
       case "continue":
         if ((state.step !== "humanScale" && state.step !== "profile") || !state.discoveryId) return state;
         if (state.step === "profile" && state.profileReturn !== "humanScale") return state;
-        return state.alreadySaid ? say(state, state.discoveryId) : goTo(state, "askAgain");
+        return state.alreadySaid ? say(state, state.discoveryId, "cued") : goTo(state, "askAgain", { hint: 0 });
       case "openProfile": {
         if (action.id !== undefined) {
           if (state.step !== "nameSaid" && state.step !== "collective") return state;
@@ -185,6 +215,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
           return goTo(state, "profile", { discoveryId: action.id, profileReturn: state.step });
         }
         if ((state.step !== "humanScale" && state.step !== "askAgain") || !state.discoveryId) return state;
+        if (state.step === "askAgain" && state.hint < MAX_HINT) return state;
         return goTo(state, "profile", { profileReturn: state.step });
       }
       case "closeProfile": {
@@ -192,8 +223,8 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
         const back = state.profileReturn === "nameSaid" ? "collective" : (state.profileReturn ?? "humanScale");
         return goTo(state, back, { profileReturn: null });
       }
-      case "seeAgain":
-        return state.step === "askAgain" && state.discoveryId ? goTo(state, "humanScale") : state;
+      case "hint":
+        return state.step === "askAgain" && state.hint < MAX_HINT ? { ...state, hint: state.hint + 1 } : state;
       case "name": {
         const mode = modeOf(state.step);
         if (!mode) return state;
@@ -203,7 +234,7 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
         const mode = modeOf(state.step);
         if (!mode || state.response?.kind !== "confirm") return state;
         if (!state.response.candidates.some((c) => c.id === action.id)) return state;
-        if (mode === "question") return say(state, action.id);
+        if (mode === "question") return say(state, action.id, answerKind(state, action.id));
         if (action.id === state.discoveryId) return goTo(state, "humanScale", { alreadySaid: true });
         return { ...state, response: { kind: "otherPoint", text: nameOf(action.id) } };
       }
@@ -223,12 +254,22 @@ export function createExperience(catalog: Catalog, initialParticipations: Partic
         };
       }
       case "seeMap":
-        return state.step === "nameSaid" || state.step === "opening" ? goTo(state, "collective") : state;
+        return state.step === "nameSaid" || state.step === "askAgain" ? goTo(state, "collective") : state;
       case "anotherName":
-        return goTo(state, "opening", { saidId: null, alreadySaid: false, discoveryId: null, profileReturn: null });
+        return goTo(state, "opening", {
+          saidId: null,
+          saidKind: null,
+          alreadySaid: false,
+          discoveryId: null,
+          profileReturn: null,
+          silenceRecorded: false,
+          hint: 0,
+        });
       case "restart":
         return {
           ...initialState(),
+          collective: state.collective,
+          events: state.events,
           reviewQueue: state.reviewQueue,
           discoveryCursor: state.discoveryCursor,
           previous: state.step,

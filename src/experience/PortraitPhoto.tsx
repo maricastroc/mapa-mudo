@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useSyncExternalStore } from "react";
 import type { ScientistPhoto } from "@/content/scientists/types";
 import { useMapView } from "@/map/MapCanvas";
+import { isLayerActive } from "./layers";
 import type { Step } from "./state";
 import { ArrowIcon } from "./ui";
 
@@ -49,7 +50,7 @@ export function PortraitPhoto({ step, photo }: { step: Step; photo: ScientistPho
   });
   const src = useAvailablePhoto(photo?.src);
   if (!photo || !src) return null;
-  const active = step === "humanScale" || step === "profile";
+  const active = isLayerActive("portraitPhoto", step);
   return (
     <div
       ref={frame}
@@ -84,7 +85,7 @@ export function PortraitButton({
     el.style.height = `${size.toFixed(1)}px`;
     el.style.transform = `translate3d(${(l.x - size / 2).toFixed(1)}px, ${(l.y - size / 2).toFixed(1)}px, 0)`;
   });
-  const active = step === "humanScale";
+  const active = isLayerActive("portraitButton", step);
   return (
     <button
       ref={button}

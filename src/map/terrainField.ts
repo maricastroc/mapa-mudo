@@ -1,6 +1,9 @@
 import { createNoise, fbm, type Noise } from "./noise.ts";
+import { trenchCalm } from "./trench.ts";
 
-export type FieldPoint = { id: string; x: number; y: number; mentions: number };
+export type FieldPoint = { id: string; x: number; y: number; recall: number; reef: number };
+
+export type Shape = { amp: number; presence: number; reef: number; reefTop: number };
 
 export type Peak = {
   id: string;
@@ -13,6 +16,7 @@ export type Peak = {
   cos: number;
   sin: number;
   reach: number;
+  rockReach: number;
   summitX: number;
   summitY: number;
   anchor: number;
@@ -20,25 +24,18 @@ export type Peak = {
   presence: number;
   baseAmp: number;
   baseMentions: number;
-  flattens: boolean;
-  plateau: number;
+  rock: boolean;
+  reef: number;
+  reefTop: number;
 };
 
-const RIVER: [number, number][] = [
-  [1130, 720],
-  [1092, 590],
-  [1046, 470],
-  [1004, 360],
-  [978, 270],
-  [970, 196],
-  [962, 110],
-  [956, 30],
-];
-
-const RIVER_WIDTH = 5.5;
-export const NEW_RING_GAUSS = 0.75;
-const PLATEAU_LIFT = 0.05;
-const PLATEAU_SPREAD = 3.2;
+export const SEA_FLOOR = -90;
+export const REEF_LAND = 3;
+const SEA_RELIEF = 40;
+const REEF_FROM_ROCK = 7;
+const REEF_ALONE = 12;
+const REEF_GROWTH = 5.2;
+const REEF_SHELF = 56;
 const SHEET_OCTAVES = 3.8;
 
 function hash(text: string) {
@@ -77,49 +74,62 @@ function gauss(u: number, v: number, cx: number, cy: number, sx: number, sy: num
 }
 
 export class TerrainField {
-  readonly peaks: Peak[];
+  readonly peaks: Peak[] = [];
   private readonly byId = new Map<string, Peak>();
   private readonly land: Noise = createNoise(11);
   private readonly warp: Noise = createNoise(23);
-  private readonly shoreline: Noise = createNoise(37);
   private readonly layers: Noise = createNoise(53);
 
-  private readonly predicted = new Map<string, Peak>();
-
   readonly step: number;
+  readonly surfaceAt: number;
 
-  constructor(points: FieldPoint[], step = 1) {
+  constructor(points: FieldPoint[], step = 1, surfaceAt = 1) {
     this.step = step;
-    this.peaks = points.filter((p) => p.mentions > 0).map((p) => this.createPeak(p));
-    for (const p of this.peaks) this.byId.set(p.id, p);
-    const mentions = new Map(points.map((p) => [p.id, p.mentions]));
-    this.calibrate(this.peaks, mentions);
+    this.surfaceAt = surfaceAt;
+    const present = points.filter((p) => p.recall > 0 || p.reef > 0);
+    for (const p of present) this.register(this.createPeak(p));
+    const rocks = present.filter((p) => p.recall > 0).map((p) => this.byId.get(p.id) as Peak);
+    this.calibrate(rocks, new Map(present.map((p) => [p.id, p.recall * step])));
+    for (const p of rocks) p.rock = true;
+    for (const p of present) this.setShape(p.id, this.target(p));
+  }
+
+  private register(peak: Peak) {
+    this.peaks.push(peak);
+    this.byId.set(peak.id, peak);
+  }
+
+  private sigmaFor(recall: number) {
+    return 32 + 0.12 * recall;
   }
 
   private createPeak(p: FieldPoint): Peak {
-    const sigma = 32 + 0.12 * (p.mentions / this.step);
+    const sigma = this.sigmaFor(p.recall);
     const angle = hash(p.id) * Math.PI;
     const stretch = 0.82 + hash(p.id + "e") * 0.42;
+    const rockReach = 3.2 * sigma * Math.max(stretch, 1 / stretch);
     return {
       id: p.id,
       cx: p.x,
       cy: p.y,
-      amp: p.mentions,
+      amp: p.recall * this.step,
       k: 1 / (2 * sigma * sigma),
       ex: 1 / stretch,
       ey: stretch,
       cos: Math.cos(angle),
       sin: Math.sin(angle),
-      reach: 3.2 * sigma * Math.max(stretch, 1 / stretch),
+      reach: rockReach,
+      rockReach,
       summitX: p.x,
       summitY: p.y,
-      anchor: this.baseRelief(p.x, p.y, SHEET_OCTAVES),
+      anchor: this.relief(p.x, p.y, SHEET_OCTAVES),
       baseLevel: 0,
-      presence: 1,
-      baseAmp: p.mentions,
-      baseMentions: p.mentions,
-      flattens: false,
-      plateau: 0,
+      presence: p.recall > 0 ? 1 : 0,
+      baseAmp: p.recall * this.step,
+      baseMentions: p.recall * this.step,
+      rock: false,
+      reef: 0,
+      reefTop: REEF_LAND,
     };
   }
 
@@ -131,7 +141,7 @@ export class TerrainField {
         p.summitY = y;
       }
       for (const p of targets) {
-        const current = this.terrain(p.summitX, p.summitY, SHEET_OCTAVES, this.peaks);
+        const current = this.ground(p.summitX, p.summitY, SHEET_OCTAVES, this.peaks);
         if (pass === 0) p.baseLevel = Math.max(0, Math.round((current - p.amp) / this.step) * this.step);
         p.amp += p.baseLevel + (mentions.get(p.id) ?? 0) + this.step / 2 - current;
       }
@@ -142,69 +152,110 @@ export class TerrainField {
     }
   }
 
-  private predict(point: FieldPoint) {
-    const ready = this.predicted.get(point.id);
-    if (ready) return ready;
-    const fresh = this.createPeak({ ...point, mentions: this.step });
-    fresh.flattens = true;
-    const ground = this.terrain(fresh.cx, fresh.cy, SHEET_OCTAVES, this.peaks);
-    fresh.baseLevel = Math.max(0, Math.floor(ground / this.step) * this.step);
-    fresh.plateau = fresh.baseLevel + PLATEAU_LIFT * this.step;
-    fresh.amp = (fresh.baseLevel + this.step - fresh.plateau) / NEW_RING_GAUSS;
-    fresh.baseAmp = fresh.amp;
-    fresh.baseMentions = this.step;
-    this.peaks.push(fresh);
-    const [x, y] = this.climb(fresh);
-    this.peaks.pop();
-    fresh.summitX = x;
-    fresh.summitY = y;
-    fresh.presence = 0;
-    this.predicted.set(point.id, fresh);
-    return fresh;
+  private raiseRock(p: Peak, recall: number) {
+    const sigma = this.sigmaFor(recall);
+    const presence = p.presence;
+    p.k = 1 / (2 * sigma * sigma);
+    p.rockReach = 3.2 * sigma * Math.max(p.ex, p.ey);
+    p.reach = Math.max(p.reach, p.rockReach);
+    p.amp = recall * this.step;
+    p.presence = 1;
+    this.calibrate([p], new Map([[p.id, recall * this.step]]));
+    p.rock = true;
+    p.presence = presence;
+    p.amp = p.baseAmp;
+  }
+
+  private ensure(point: FieldPoint) {
+    let p = this.byId.get(point.id);
+    if (!p) {
+      p = this.createPeak({ ...point, recall: 0 });
+      this.register(p);
+    }
+    if (point.recall > 0 && !p.rock) this.raiseRock(p, point.recall);
+    return p;
+  }
+
+  private coastRadius(p: Peak, amp: number, presence: number) {
+    if (!p.rock || presence <= 0) return 0;
+    const depth = -(SEA_FLOOR + p.anchor);
+    if (depth <= 0 || amp <= depth) return 0;
+    return Math.sqrt(Math.log(amp / depth) / p.k);
+  }
+
+  private reefRadius(p: Peak, amp: number, presence: number, reef: number) {
+    if (reef <= 0) return 0;
+    const coast = this.coastRadius(p, amp, presence);
+    return (coast > 0 ? coast + REEF_FROM_ROCK : REEF_ALONE) + REEF_GROWTH * Math.sqrt(reef);
+  }
+
+  target(point: FieldPoint): Shape {
+    const p = this.ensure(point);
+    const presence = point.recall > 0 ? 1 : 0;
+    const amp = p.rock && presence > 0 ? p.baseAmp + (point.recall * this.step - p.baseMentions) : p.amp;
+    const reefTop = point.reef >= this.surfaceAt ? REEF_LAND : REEF_LAND - (this.surfaceAt - point.reef) * this.step;
+    return { amp, presence, reef: this.reefRadius(p, amp, presence, point.reef), reefTop };
   }
 
   summit(point: FieldPoint) {
-    const p = this.byId.get(point.id) ?? this.predict(point);
-    return { x: p.summitX, y: p.summitY, sigma: 1 / Math.sqrt(2 * p.k), fresh: p.flattens, elongation: Math.max(p.ex, p.ey) };
+    const p = point.recall > 0 || point.reef > 0 ? this.ensure(point) : this.byId.get(point.id);
+    const sigma = p ? 1 / Math.sqrt(2 * p.k) : 32;
+    const elongation = p ? Math.max(p.ex, p.ey) : 1;
+    if (p && p.rock && point.recall > 0) return { x: p.summitX, y: p.summitY, sigma, elongation };
+    if (p && point.reef > 0) return { ...this.unwarp(point.x, point.y), sigma, elongation };
+    return { x: point.x, y: point.y, sigma, elongation };
+  }
+
+  islandRadius(point: FieldPoint) {
+    if (point.recall <= 0 && point.reef <= 0) return 0;
+    const p = this.ensure(point);
+    const shape = this.target(point);
+    const coast = this.coastRadius(p, shape.amp, shape.presence);
+    return Math.max(coast, shape.reef > 0 ? shape.reef + 3 : 0) * Math.max(p.ex, p.ey);
   }
 
   growthRadius(point: FieldPoint) {
-    const p = this.byId.get(point.id) ?? this.predict(point);
-    const amp = Math.max(1e-6, p.baseAmp + (point.mentions - p.baseMentions));
-    const below = p.flattens ? p.plateau + amp - (p.baseLevel + point.mentions) : this.step / 2;
-    const g = Math.min(0.99999, Math.max(0.02, 1 - below / amp));
+    const p = this.ensure(point);
+    const amp = Math.max(1e-6, p.baseAmp + (point.recall * this.step - p.baseMentions));
+    const g = Math.min(0.99999, Math.max(0.02, 1 - this.step / 2 / amp));
     return Math.sqrt(2 * Math.log(1 / g)) / Math.sqrt(2 * p.k);
   }
 
-  addPeak(point: FieldPoint) {
-    const existing = this.byId.get(point.id);
-    if (existing) return existing;
-    const fresh = this.predict(point);
-    this.predicted.delete(point.id);
-    this.peaks.push(fresh);
-    this.byId.set(fresh.id, fresh);
-    return fresh;
+  reefRadiusOf(point: FieldPoint) {
+    return this.target(point).reef;
   }
 
-  private baseRelief(x: number, y: number, octaves: number) {
-    return 50 * fbm(this.land, x / 260, y / 260, octaves, 0.58);
+  addPeak(point: FieldPoint) {
+    return this.ensure(point);
   }
 
   peak(id: string) {
     return this.byId.get(id);
   }
 
-  setAmplitude(id: string, amp: number, presence: number) {
+  shape(id: string): Shape | undefined {
+    const p = this.byId.get(id);
+    return p && { amp: p.amp, presence: p.presence, reef: p.reef, reefTop: p.reefTop };
+  }
+
+  setShape(id: string, shape: Shape) {
     const p = this.byId.get(id);
     if (!p) return;
-    p.amp = amp;
-    p.presence = presence;
+    p.amp = shape.amp;
+    p.presence = shape.presence;
+    p.reef = shape.reef;
+    p.reefTop = shape.reefTop;
+    p.reach = Math.max(p.rockReach, (p.reef + REEF_SHELF + 4) * Math.max(p.ex, p.ey));
   }
 
   activePeaks(x0: number, y0: number, x1: number, y1: number) {
     return this.peaks.filter(
       (p) => p.cx + p.reach > x0 && p.cx - p.reach < x1 && p.cy + p.reach > y0 && p.cy - p.reach < y1,
     );
+  }
+
+  private relief(x: number, y: number, octaves: number, sea = 1) {
+    return SEA_RELIEF * fbm(this.land, x / 260, y / 260, octaves, 0.58) * (1 - trenchCalm(x, y) * sea);
   }
 
   private climb(p: Peak) {
@@ -214,8 +265,8 @@ export class TerrainField {
     const limit = 0.45 / Math.sqrt(2 * p.k);
     for (let i = 0; i < 80; i++) {
       const h = 0.4;
-      const gx = this.terrain(px + h, py, SHEET_OCTAVES, this.peaks) - this.terrain(px - h, py, SHEET_OCTAVES, this.peaks);
-      const gy = this.terrain(px, py + h, SHEET_OCTAVES, this.peaks) - this.terrain(px, py - h, SHEET_OCTAVES, this.peaks);
+      const gx = this.ground(px + h, py, SHEET_OCTAVES, this.peaks) - this.ground(px - h, py, SHEET_OCTAVES, this.peaks);
+      const gy = this.ground(px, py + h, SHEET_OCTAVES, this.peaks) - this.ground(px, py - h, SHEET_OCTAVES, this.peaks);
       const n = Math.hypot(gx, gy);
       if (n < 1e-6) break;
       const nx = px + (gx / n) * step;
@@ -228,65 +279,83 @@ export class TerrainField {
     return [px, py] as const;
   }
 
-  coast(x: number, y: number) {
-    const line = 86 + 30 * this.shoreline(x / 240, 0.37) + 9 * this.shoreline(x / 64, 3.1);
-    return -14 + 54 * Math.tanh((y - line) / 44);
-  }
-
-  river(x: number, y: number) {
-    let d2 = Infinity;
-    for (let i = 0; i < RIVER.length - 1; i++) {
-      const [ax, ay] = RIVER[i];
-      const [bx, by] = RIVER[i + 1];
-      const vx = bx - ax;
-      const vy = by - ay;
-      const t = Math.max(0, Math.min(1, ((x - ax) * vx + (y - ay) * vy) / (vx * vx + vy * vy)));
-      const dx = x - ax - vx * t;
-      const dy = y - ay - vy * t;
-      const d = dx * dx + dy * dy;
-      if (d < d2) d2 = d;
+  private unwarp(x: number, y: number) {
+    let ux = x;
+    let uy = y;
+    for (let i = 0; i < 8; i++) {
+      const [qx, qy] = this.warped(ux, uy);
+      ux += x - qx;
+      uy += y - qy;
     }
-    const upstream = Math.max(0, Math.min(1, (700 - y) / 260));
-    return -46 * upstream * Math.exp(-d2 / (2 * RIVER_WIDTH * RIVER_WIDTH));
+    return { x: ux, y: uy };
   }
 
-  terrain(x: number, y: number, octaves: number, active: Peak[]) {
-    const qx = x + 22 * this.warp(x / 170, y / 170);
-    const qy = y + 22 * this.warp(x / 170 + 17.3, y / 170 + 5.9);
+  private warped(x: number, y: number) {
+    return [x + 22 * this.warp(x / 170, y / 170), y + 22 * this.warp(x / 170 + 17.3, y / 170 + 5.9)] as const;
+  }
+
+  private local(p: Peak, qx: number, qy: number) {
+    const dx = qx - p.cx;
+    const dy = qy - p.cy;
+    const u = (dx * p.cos + dy * p.sin) * p.ex;
+    const v = (dy * p.cos - dx * p.sin) * p.ey;
+    return u * u + v * v;
+  }
+
+  private groundAt(x: number, y: number, qx: number, qy: number, octaves: number, active: Peak[], sea = 1, features = 1) {
     let sum = 0;
     let weight = 0;
     let anchors = 0;
-    let flatWeight = 0;
-    let flatLevel = 0;
-    let flatSum = 0;
     for (let i = 0; i < active.length; i++) {
       const p = active[i];
-      const dx = qx - p.cx;
-      const dy = qy - p.cy;
-      const u = (dx * p.cos + dy * p.sin) * p.ex;
-      const v = (dy * p.cos - dx * p.sin) * p.ey;
-      const e = (u * u + v * v) * p.k;
+      const presence = p.presence * features;
+      if (presence <= 0) continue;
+      const e = this.local(p, qx, qy) * p.k;
       if (e > 10) continue;
       const g = Math.exp(-e);
-      if (p.flattens) {
-        const w = Math.min(1, PLATEAU_SPREAD * g) * p.presence;
-        flatWeight += w;
-        flatLevel += p.plateau * w;
-        flatSum += p.amp * g * p.presence;
-        continue;
-      }
-      sum += p.amp * g * p.presence;
-      const gd = g * g * p.presence;
+      sum += p.amp * g * presence;
+      const gd = g * g * presence;
       weight += gd;
       anchors += p.anchor * gd;
     }
-    const free = this.baseRelief(x, y, octaves);
+    const free = this.relief(x, y, octaves, sea);
     const d = weight > 1 ? 1 : weight;
     const relief = weight > 1e-9 ? free * (1 - d) + (anchors / weight) * d : free;
-    const ground = relief + this.coast(x, y) + this.river(qx, qy) + sum;
-    if (flatWeight <= 0) return ground;
-    const fw = flatWeight > 1 ? 1 : flatWeight;
-    return ground * (1 - fw) + (flatLevel / flatWeight) * fw + flatSum;
+    return SEA_FLOOR + relief + sum;
+  }
+
+  ground(x: number, y: number, octaves: number, active: Peak[]) {
+    const [qx, qy] = this.warped(x, y);
+    return this.groundAt(x, y, qx, qy, octaves, active);
+  }
+
+  terrain(x: number, y: number, octaves: number, active: Peak[], sea = 1, features = 1) {
+    const [qx, qy] = this.warped(x, y);
+    let h = this.groundAt(x, y, qx, qy, octaves, active, sea, features);
+    if (sea <= 0 || features <= 0) return h;
+    for (let i = 0; i < active.length; i++) {
+      const p = active[i];
+      if (p.reef <= 0 || p.reefTop <= h) continue;
+      const rho = Math.sqrt(this.local(p, qx, qy));
+      const w = (1 - smoothstep(p.reef - 4, p.reef + REEF_SHELF, rho)) * Math.min(1, p.reef / 8) * sea * features;
+      if (w > 0) h += (p.reefTop - h) * w;
+    }
+    return h;
+  }
+
+  coral(x: number, y: number, active: Peak[], height: number) {
+    const [qx, qy] = this.warped(x, y);
+    let best = 0;
+    for (let i = 0; i < active.length; i++) {
+      const p = active[i];
+      if (p.reef <= 0 || p.reefTop < 0 || height > p.reefTop + 4) continue;
+      const rho = Math.sqrt(this.local(p, qx, qy));
+      const R = p.reef;
+      if (rho > R + 2) continue;
+      const band = (1 - smoothstep(R + 0.4, R + 1.8, rho)) * smoothstep(R - 7.5, R - 4.5, rho) * Math.min(1, R / 8);
+      if (band > best) best = band;
+    }
+    return best;
   }
 
   strata(u: number, v: number) {

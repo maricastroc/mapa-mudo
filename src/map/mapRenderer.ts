@@ -1,4 +1,4 @@
-import type { Peak, TerrainField } from "./terrainField.ts";
+import type { FieldPoint, Peak, Shape, TerrainField } from "./terrainField.ts";
 import { bounds, cellExtremes, contains, traceContours, type Polyline } from "./contours.ts";
 
 export const SHEET = { w: 1440, h: 900 };
@@ -19,15 +19,18 @@ export type Scene = {
   portraitFrame: { x: number; y: number; r: number };
   highlight: string | null;
   newContour: string | null;
+  newContourKind: "rock" | "reef";
+  sea: number;
+  features: number;
   settle: number;
   settleFrom: number | null;
   highlightSettles: boolean;
   minInterval: number;
 };
 
-export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle";
+export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle" | "sea" | "features";
 export type Timing = { delay: number; duration: number };
-export type ReliefPoint = { id: string; x: number; y: number; mentions: number };
+export type ReliefPoint = FieldPoint;
 export type SceneTarget = { scene: Scene; timings: Partial<Record<Channel, Timing>>; relief: ReliefPoint[] };
 
 export type View = {
@@ -42,7 +45,7 @@ export type View = {
 type Frame = Scene["portraitFrame"];
 type RGB = [number, number, number];
 type Transition<T> = { from: T; to: T; start: number; duration: number };
-type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density" | "settle";
+type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density" | "settle" | "sea" | "features";
 type ContourLevel = { value: number; alpha: number; index: number; coastline: boolean; lines: Polyline[] };
 
 export function toScreen(v: { W: number; H: number; fit: number; camera: Camera }, x: number, y: number): [number, number] {
@@ -104,6 +107,8 @@ function readRGB(value: string, fallback: RGB): RGB {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
+const blend = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+
 const mix = (a: RGB, b: RGB, t: number) =>
   `rgb(${Math.round(a[0] + (b[0] - a[0]) * t)},${Math.round(a[1] + (b[1] - a[1]) * t)},${Math.round(a[2] + (b[2] - a[2]) * t)})`;
 
@@ -157,13 +162,15 @@ export class MapRenderer {
   private lensTransition: Transition<Lens>;
   private frameTransition: Transition<Frame>;
   private scalars: Record<ScalarChannel, Transition<number>>;
-  private peakTransitions = new Map<string, { amp: Transition<number>; presence: Transition<number> }>();
-  private targetMentions: Record<string, number> = {};
+  private peakTransitions = new Map<string, Record<"amp" | "presence" | "reef" | "reefTop", Transition<number>>>();
+  private targetRelief: Record<string, { recall: number; reef: number }> = {};
   private smoothedLevelExp: number | null = null;
   private terrainRange = { min: 0, max: 1 };
   private colors = {
     line: [154, 168, 177] as RGB,
     indexLine: [104, 124, 138] as RGB,
+    isobath: [166, 182, 193] as RGB,
+    isobathIndex: [111, 135, 150] as RGB,
     ink: [15, 42, 61] as RGB,
     accent: [200, 50, 26] as RGB,
     water: [207, 224, 232] as RGB,
@@ -196,7 +203,7 @@ export class MapRenderer {
       lens: { ...initial.scene.lens },
       portraitFrame: { ...initial.scene.portraitFrame },
     };
-    this.targetMentions = Object.fromEntries(initial.relief.map((r) => [r.id, r.mentions]));
+    this.targetRelief = Object.fromEntries(initial.relief.map((r) => [r.id, { recall: r.recall, reef: r.reef }]));
     const now = 0;
     this.cameraTransition = { from: this.scene.camera, to: this.scene.camera, start: now, duration: 0 };
     this.lensTransition = { from: this.scene.lens, to: this.scene.lens, start: now, duration: 0 };
@@ -211,6 +218,8 @@ export class MapRenderer {
       lockedInterval: still(this.scene.lockedInterval),
       density: still(this.scene.density),
       settle: still(this.scene.settle),
+      sea: still(this.scene.sea),
+      features: still(this.scene.features),
     };
     this.currentView = { W: 1, H: 1, fit: 1, camera: this.scene.camera, lens: this.scene.lens, newContour: null };
     this.readColors();
@@ -222,6 +231,8 @@ export class MapRenderer {
     this.colors = {
       line: readRGB(s.getPropertyValue("--terrain-line"), this.colors.line),
       indexLine: readRGB(s.getPropertyValue("--terrain-line-index"), this.colors.indexLine),
+      isobath: readRGB(s.getPropertyValue("--isobath"), this.colors.isobath),
+      isobathIndex: readRGB(s.getPropertyValue("--isobath-index"), this.colors.isobathIndex),
       ink: readRGB(s.getPropertyValue("--ink"), this.colors.ink),
       accent: readRGB(s.getPropertyValue("--accent"), this.colors.accent),
       water: readRGB(s.getPropertyValue("--water"), this.colors.water),
@@ -276,36 +287,39 @@ export class MapRenderer {
       lockedInterval: transition(this.scene.lockedInterval, target.scene.lockedInterval, "intervalLock"),
       density: transition(this.scene.density, target.scene.density, "density"),
       settle: transition(target.scene.settleFrom ?? this.scene.settle, target.scene.settle, "settle"),
+      sea: transition(this.scene.sea, target.scene.sea, "sea"),
+      features: transition(this.scene.features, target.scene.features, "features"),
     };
     const present = new Set<string>();
     for (const r of target.relief) {
       present.add(r.id);
-      const peak = this.field.peak(r.id) ?? (r.mentions > 0 ? this.field.addPeak(r) : undefined);
-      if (!peak) continue;
-      this.schedulePeak(peak, peak.baseAmp + (r.mentions - peak.baseMentions), r.mentions > 0 ? 1 : 0, transition);
+      if (!this.field.peak(r.id) && r.recall <= 0 && r.reef <= 0) continue;
+      this.field.addPeak(r);
+      this.schedulePeak(r.id, this.field.target(r), transition);
     }
     for (const peak of this.field.peaks) {
-      if (!present.has(peak.id)) this.schedulePeak(peak, peak.amp, 0, transition);
+      if (!present.has(peak.id)) this.schedulePeak(peak.id, { amp: peak.amp, presence: 0, reef: 0, reefTop: peak.reefTop }, transition);
     }
-    this.targetMentions = Object.fromEntries(target.relief.map((r) => [r.id, r.mentions]));
+    this.targetRelief = Object.fromEntries(target.relief.map((r) => [r.id, { recall: r.recall, reef: r.reef }]));
     this.scene.highlight = target.scene.highlight;
     this.scene.newContour = target.scene.newContour;
+    this.scene.newContourKind = target.scene.newContourKind;
     this.scene.highlightSettles = target.scene.highlightSettles;
     this.scene.minInterval = target.scene.minInterval;
     if (instant) this.smoothedLevelExp = null;
     this.wake();
   }
 
-  private schedulePeak(
-    peak: Peak,
-    amp: number,
-    presence: number,
-    transition: <T>(from: T, to: T, c: Channel) => Transition<T>,
-  ) {
-    if (Math.abs(amp - peak.amp) < 1e-9 && Math.abs(presence - peak.presence) < 1e-9) return;
-    this.peakTransitions.set(peak.id, {
-      amp: transition(peak.amp, amp, "peaks"),
-      presence: transition(peak.presence, presence, "peaks"),
+  private schedulePeak(id: string, shape: Shape, transition: <T>(from: T, to: T, c: Channel) => Transition<T>) {
+    const current = this.field.shape(id);
+    if (!current) return;
+    const keys = ["amp", "presence", "reef", "reefTop"] as const;
+    if (keys.every((k) => Math.abs(current[k] - shape[k]) < 1e-9)) return;
+    this.peakTransitions.set(id, {
+      amp: transition(current.amp, shape.amp, "peaks"),
+      presence: transition(current.presence, shape.presence, "peaks"),
+      reef: transition(current.reef, shape.reef, "peaks"),
+      reefTop: transition(current.reefTop, shape.reefTop, "peaks"),
     });
   }
 
@@ -353,11 +367,8 @@ export class MapRenderer {
       const t = progress(tr.amp, now);
       if (now < tr.amp.start + tr.amp.duration) animating = true;
       const e = 1 - Math.pow(1 - t, 3);
-      this.field.setAmplitude(
-        id,
-        tr.amp.from + (tr.amp.to - tr.amp.from) * e,
-        tr.presence.from + (tr.presence.to - tr.presence.from) * e,
-      );
+      const at = (c: Transition<number>) => c.from + (c.to - c.from) * e;
+      this.field.setShape(id, { amp: at(tr.amp), presence: at(tr.presence), reef: at(tr.reef), reefTop: at(tr.reefTop) });
       if (t >= 1) this.peakTransitions.delete(id);
     }
     return animating;
@@ -394,19 +405,19 @@ export class MapRenderer {
     const wT = (1 - e) * (1 - r);
     const wE = e * (1 - r);
     const groundT = ground ? 1 - e : wT;
+    const sea = clamp(scene.sea, 0, 1);
+    const features = clamp(scene.features, 0, 1);
     const pf = scene.portraitFrame;
     const G = this.G;
+    const active: Peak[] = this.field.activePeaks(ox, oy, ox + (cols * cell) / scale, oy + (rows * cell) / scale);
 
     if (groundT > 0.002) {
-      const x1 = ox + (cols * cell) / scale;
-      const y1 = oy + (rows * cell) / scale;
-      const active: Peak[] = this.field.activePeaks(ox, oy, x1, y1);
       let tmin = Infinity;
       let tmax = -Infinity;
       for (let j = 0; j < rows; j++) {
         const wy = oy + j * worldCell;
         for (let i = 0; i < cols; i++) {
-          const v = this.field.terrain(ox + i * worldCell, wy, octaves, active);
+          const v = this.field.terrain(ox + i * worldCell, wy, octaves, active, sea, features);
           T[j * cols + i] = v;
           if (v < tmin) tmin = v;
           if (v > tmax) tmax = v;
@@ -435,7 +446,7 @@ export class MapRenderer {
     }
 
     const targetExp = Math.max(
-      Math.log2(Math.max(1e-9, vmax - Math.max(vmin, wT > 0.5 ? 0 : vmin)) / scene.density),
+      Math.log2(Math.max(1e-9, vmax - vmin) / scene.density),
       Math.log2(Math.max(1e-9, scene.minInterval)),
     );
     if (this.smoothedLevelExp === null || this.reducedMotion) this.smoothedLevelExp = targetExp;
@@ -453,7 +464,6 @@ export class MapRenderer {
     if (last - first > 220) first = last - 220;
     for (let m = first; m <= last; m++) {
       const value = m * levelStep;
-      if (value < 0 && wT > 0.5) continue;
       let zeros = 30;
       if (m !== 0) {
         zeros = 0;
@@ -466,7 +476,7 @@ export class MapRenderer {
       const s = kb + zeros - kEf;
       const alpha = clamp(s + 1, 0, 1);
       if (alpha < 0.02) continue;
-      const coastline = m === 0 && wT > 0.5;
+      const coastline = m === 0 && wT > 0.5 && sea > 0.5;
       levels.push({
         value,
         alpha,
@@ -480,7 +490,7 @@ export class MapRenderer {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
-    if (wT > 0.01) this.paintWater(cols, rows, wT);
+    if (wT * sea > 0.01) this.paintWater(cols, rows, wT * sea);
 
     const thin = clamp(this.fit, 0.75, 1.3);
     ctx.lineJoin = "round";
@@ -489,7 +499,6 @@ export class MapRenderer {
       ctx.globalAlpha = alpha;
       ctx.strokeStyle = color;
       ctx.lineWidth = width;
-      ctx.setLineDash(level.coastline ? [6 * thin, 5 * thin] : []);
       ctx.beginPath();
       for (const l of level.lines) strokePolyline(ctx, l, cell);
       ctx.stroke();
@@ -497,12 +506,16 @@ export class MapRenderer {
 
     const lens = scene.lens;
     const lensShape = () => ctx.roundRect(lens.x - lens.w / 2, lens.y - lens.h / 2, lens.w, lens.h, Math.min(lens.r, lens.w / 2, lens.h / 2));
+    const levelColor = (level: ContourLevel) => {
+      if (level.coastline) return mix(this.colors.ink, this.colors.ink, 0);
+      const land = blend(this.colors.line, this.colors.indexLine, level.index);
+      if (level.value >= 0 || sea <= 0) return mix(land, land, 0);
+      return mix(land, blend(this.colors.isobath, this.colors.isobathIndex, level.index), sea);
+    };
     const paintLevels = (opacity: number) => {
       for (const level of levels) {
-        const color = level.coastline
-          ? mix(this.colors.indexLine, this.colors.indexLine, 0)
-          : mix(this.colors.line, this.colors.indexLine, level.index);
-        paint(level, color, opacity * level.alpha * (0.85 + 0.15 * level.index), thin * (0.9 + 0.8 * level.index) * (level.coastline ? 1.3 : 1));
+        const alpha = level.coastline ? 0.9 : level.alpha * (0.85 + 0.15 * level.index);
+        paint(level, levelColor(level), opacity * alpha, level.coastline ? thin * 1.5 : thin * (0.9 + 0.8 * level.index));
       }
     };
 
@@ -515,8 +528,7 @@ export class MapRenderer {
       ctx.clip("evenodd");
       for (const level of levels) {
         const lines = traceContours(G, cols, rows, level.value, this.gmin, this.gmax);
-        const color = mix(this.colors.line, this.colors.indexLine, level.index);
-        paint({ ...level, lines }, color, mask * level.alpha * (0.85 + 0.15 * level.index), thin * (0.9 + 0.8 * level.index));
+        paint({ ...level, lines, coastline: false }, levelColor({ ...level, coastline: false }), mask * level.alpha * (0.85 + 0.15 * level.index), thin * (0.9 + 0.8 * level.index));
       }
       if (mask < 0.998) paintLevels(1 - mask);
       ctx.restore();
@@ -529,6 +541,8 @@ export class MapRenderer {
     } else {
       paintLevels(1);
     }
+
+    if (wT > 0.5 && sea * features > 0.02) this.paintCoral(active, ox, oy, scale, cols, rows, wT * sea * features);
 
     if (lens.o > 0.01 && scene.lensInk > 0.01) {
       ctx.save();
@@ -553,6 +567,7 @@ export class MapRenderer {
         const ink = mix(this.colors.ink, this.colors.ink, 0);
         const emphasis = scene.highlightSettles ? 1 - clamp(scene.settle, 0, 1) : 1;
         for (const level of levels) {
+          if (level.value < 0) continue;
           const rings = level.lines.filter((l) => {
             if (!l.closed) return false;
             const c = bounds(l.pts);
@@ -566,9 +581,10 @@ export class MapRenderer {
     let newContour: View["newContour"] = null;
     if (scene.newContour) {
       const p = this.field.peak(scene.newContour);
-      const mentions = this.targetMentions[scene.newContour];
-      if (p && mentions !== undefined) {
-        const value = p.baseLevel + mentions;
+      const relief = this.targetRelief[scene.newContour];
+      if (p && relief) {
+        const reef = scene.newContourKind === "reef";
+        const value = reef ? 0 : p.baseLevel + relief.recall * this.field.step;
         const [sx, sy] = toScreen({ W, H, fit: this.fit, camera: cam }, p.summitX, p.summitY);
         const gx = sx / cell;
         const gy = sy / cell;
@@ -580,7 +596,8 @@ export class MapRenderer {
             return cb.x1 - cb.x0 < ca.x1 - ca.x0 ? b : a;
           });
           const emphasis = 1 - clamp(scene.settle, 0, 1);
-          if (emphasis > 0.01) paint({ value, alpha: 1, index: 0, coastline: false, lines: [ring] }, accent, emphasis, thin * (1.2 + 1.6 * emphasis));
+          const tone = reef ? accent : mix(this.colors.ink, this.colors.ink, 0);
+          if (emphasis > 0.01) paint({ value, alpha: 1, index: 0, coastline: false, lines: [ring] }, tone, emphasis, thin * (1.2 + 1.6 * emphasis));
           const c = bounds(ring.pts);
           newContour = {
             x: ((c.x0 + c.x1) / 2) * cell,
@@ -598,6 +615,58 @@ export class MapRenderer {
     return settling;
   }
 
+  private paintCoral(active: Peak[], ox: number, oy: number, scale: number, cols: number, rows: number, weight: number) {
+    if (scale > 16) return;
+    const reefs = active.filter((p) => p.reef > 0.5 && p.reefTop >= 0);
+    if (reefs.length === 0) return;
+    const { ctx, cell, T, W, H } = this;
+    const closeness = Math.max(1, scale / this.fit);
+    const spacing = Math.pow(2, Math.round(Math.log2((3.4 * Math.pow(closeness, 0.45)) / scale)));
+    const radius = clamp(0.95 * this.fit * Math.pow(closeness, 0.2), 0.75, 1.8);
+    const height = (sx: number, sy: number) => {
+      const gx = clamp(sx / cell, 0, cols - 1.001);
+      const gy = clamp(sy / cell, 0, rows - 1.001);
+      const i = Math.floor(gx);
+      const j = Math.floor(gy);
+      const fx = gx - i;
+      const fy = gy - j;
+      const k = j * cols + i;
+      const top = T[k] + (T[k + 1] - T[k]) * fx;
+      const bottom = T[k + cols] + (T[k + cols + 1] - T[k + cols]) * fx;
+      return top + (bottom - top) * fy;
+    };
+    const jitter = (i: number, j: number, seed: number) => {
+      let h = Math.imul(i, 374761393) ^ Math.imul(j, 668265263) ^ seed;
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296 - 0.5;
+    };
+    ctx.save();
+    ctx.globalAlpha = 0.95 * weight;
+    ctx.fillStyle = mix(this.colors.accent, this.colors.accent, 0);
+    ctx.beginPath();
+    for (const p of reefs) {
+      const extent = (p.reef + 2) * Math.max(p.ex, p.ey) + 24;
+      const x0 = Math.max(p.cx - extent, ox);
+      const x1 = Math.min(p.cx + extent, ox + W / scale);
+      const y0 = Math.max(p.cy - extent, oy);
+      const y1 = Math.min(p.cy + extent, oy + H / scale);
+      for (let i = Math.floor(x0 / spacing); i <= Math.ceil(x1 / spacing); i++) {
+        for (let j = Math.floor(y0 / spacing); j <= Math.ceil(y1 / spacing); j++) {
+          const wx = (i + 0.7 * jitter(i, j, 11)) * spacing;
+          const wy = (j + 0.7 * jitter(i, j, 29)) * spacing;
+          const sx = (wx - ox) * scale;
+          const sy = (wy - oy) * scale;
+          if (sx < 0 || sy < 0 || sx > W || sy > H) continue;
+          if (this.field.coral(wx, wy, [p], height(sx, sy)) < 0.5) continue;
+          ctx.moveTo(sx + radius, sy);
+          ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+        }
+      }
+    }
+    ctx.fill();
+    ctx.restore();
+  }
+
   private paintWater(cols: number, rows: number, weight: number) {
     if (!this.waterImage || this.waterImage.width !== cols || this.waterImage.height !== rows) {
       this.waterCanvas.width = cols;
@@ -609,7 +678,8 @@ export class MapRenderer {
     const maxAlpha = 255 * this.colors.waterAlpha * weight;
     const T = this.T;
     for (let k = 0; k < cols * rows; k++) {
-      const a = clamp(-T[k] / 5, 0, 1);
+      const t = T[k];
+      const a = t >= 0 ? 0 : t > -16 ? 1 : t > -28 ? 0.42 : 0;
       data[4 * k] = r;
       data[4 * k + 1] = g;
       data[4 * k + 2] = b;

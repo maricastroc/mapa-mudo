@@ -4,9 +4,9 @@ import type { Catalog, Participations } from "../content/scientists/types.ts";
 import { CATALOG } from "../content/scientists/catalog.ts";
 import { FEATURED } from "../content/scientists/featured.ts";
 import { FEATURED_FIXTURES } from "../content/scientists/fixtures.ts";
-import { INITIAL_PARTICIPATIONS, SHEET_LAYOUT } from "./source.ts";
-import { chooseDiscovery, recordMention } from "./participations.ts";
-import { autoPosition, MIN_SPACING, sheetPoints, wasSaidBeforeMention, type SheetLayout } from "./sheetLayout.ts";
+import { EMPTY_COLLECTIVE, fromCounts, record } from "./collective.ts";
+import { INITIAL_COLLECTIVE, SHEET_LAYOUT } from "./source.ts";
+import { autoPosition, MIN_SPACING, sheetPoints, type SheetLayout } from "./sheetLayout.ts";
 
 const catalog: Catalog = {
   featured: FEATURED_FIXTURES,
@@ -23,21 +23,24 @@ const layout: SheetLayout = {
 };
 
 test("featured scientists stay on the sheet as silent points even with zero mentions", () => {
-  const points = sheetPoints(catalog, layout, {});
+  const points = sheetPoints(catalog, layout, EMPTY_COLLECTIVE);
   const featured = points.find((p) => p.scientistId === FEATURED_FIXTURES[0].id);
   assert.ok(featured);
-  assert.equal(featured.mentions, 0);
+  assert.equal(featured.recall + featured.reef, 0);
   assert.equal(featured.code, "017");
 });
 
-test("known scientists only appear once they have mentions", () => {
+test("known scientists only appear once they have been named, as rock or as reef", () => {
   assert.equal(
-    sheetPoints(catalog, layout, {}).some((p) => p.scientistId === "k2"),
+    sheetPoints(catalog, layout, EMPTY_COLLECTIVE).some((p) => p.scientistId === "k2"),
     false,
   );
-  const mentioned = sheetPoints(catalog, layout, recordMention({}, "k2")).find((p) => p.scientistId === "k2");
-  assert.ok(mentioned);
-  assert.equal(mentioned.mentions, 1);
+  const remembered = sheetPoints(catalog, layout, record(EMPTY_COLLECTIVE, { kind: "recall", id: "k2", at: 1 })).find((p) => p.scientistId === "k2");
+  assert.ok(remembered);
+  assert.deepEqual([remembered.recall, remembered.reef], [1, 0]);
+  const discovered = sheetPoints(catalog, layout, record(EMPTY_COLLECTIVE, { kind: "discovery", id: "k2", at: 1 })).find((p) => p.scientistId === "k2");
+  assert.ok(discovered);
+  assert.deepEqual([discovered.recall, discovered.reef], [0, 1]);
 });
 
 test("automatic placement is deterministic and keeps away from fixed points", () => {
@@ -52,29 +55,21 @@ test("automatic placement is deterministic and keeps away from fixed points", ()
 });
 
 test("vacancies are kept as unnamed points", () => {
-  const vacancy = sheetPoints(catalog, layout, {}).find((p) => p.key === "vacancy-900");
+  const vacancy = sheetPoints(catalog, layout, EMPTY_COLLECTIVE).find((p) => p.key === "vacancy-900");
   assert.ok(vacancy);
   assert.equal(vacancy.scientistId, null);
   assert.equal(vacancy.name, null);
 });
 
 test("participations are independent from the editorial catalog", () => {
-  const participations = recordMention(recordMention({}, "k1"), "k1");
-  assert.deepEqual(participations, { k1: 2 });
+  const twice = record(record(EMPTY_COLLECTIVE, { kind: "recall", id: "k1", at: 1 }), { kind: "recall", id: "k1", at: 2 });
+  assert.deepEqual(twice.recall, { k1: 2 });
   assert.equal("hints" in catalog.known[0], false);
 });
 
-test("the discovery chosen for 'não sei' is the least mentioned, rotating among ties", () => {
-  assert.equal(chooseDiscovery(FEATURED_FIXTURES, {})?.id, FEATURED_FIXTURES[0].id);
-  assert.equal(chooseDiscovery([], {}), null);
-  const [a, b, c] = FEATURED.slice(0, 3);
-  assert.equal(chooseDiscovery([a, b, c], {}, 1)?.id, b.id);
-  assert.equal(chooseDiscovery([a, b, c], { [b.id]: 2 }, 1)?.id, c.id);
-});
-
 test("curated featured scientists get stable, non-overlapping sheet positions", () => {
-  const first = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS);
-  const second = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_PARTICIPATIONS);
+  const first = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_COLLECTIVE);
+  const second = sheetPoints(CATALOG, SHEET_LAYOUT, INITIAL_COLLECTIVE);
   assert.deepEqual(first, second);
   const featured = first.filter((p) => p.featured);
   assert.equal(featured.length, FEATURED.length);
@@ -85,22 +80,6 @@ test("curated featured scientists get stable, non-overlapping sheet positions", 
     }
   }
 });
-
-test("a name counts as already mapped only when it had been said before this mention", () => {
-  const featuredId = FEATURED_FIXTURES[0].id;
-  const once = sheetPoints(catalog, layout, recordMention({}, featuredId)).find((p) => p.scientistId === featuredId);
-  assert.ok(once);
-  assert.equal(wasSaidBeforeMention(once), false);
-
-  const twice = sheetPoints(catalog, layout, recordMention(recordMention({}, featuredId), featuredId)).find((p) => p.scientistId === featuredId);
-  assert.ok(twice);
-  assert.equal(wasSaidBeforeMention(twice), true);
-
-  const created = sheetPoints(catalog, layout, recordMention({}, "k2")).find((p) => p.scientistId === "k2");
-  assert.ok(created);
-  assert.equal(wasSaidBeforeMention(created), false);
-});
-
 
 const EMPTY_SHEET: SheetLayout = { points: {}, order: [], vacancies: [] };
 
@@ -115,7 +94,7 @@ function crowd(count: number) {
 
 test("the sheet holds 50 scientists with every summit at least the minimum spacing apart", () => {
   const { catalog: big, participations } = crowd(50 - FEATURED.length);
-  const points = sheetPoints(big, EMPTY_SHEET, participations);
+  const points = sheetPoints(big, EMPTY_SHEET, fromCounts(participations));
   assert.equal(points.length, 50);
   for (const p of points) {
     const underTitle = p.x <= 500 && p.y <= 310;
@@ -132,9 +111,9 @@ test("the sheet holds 50 scientists with every summit at least the minimum spaci
 
 test("a new name never moves the points already on the map", () => {
   const { catalog: big, participations } = crowd(30);
-  const withoutOne: Participations = Object.fromEntries(Object.entries(participations).filter(([id]) => id !== "extra-3"));
+  const withoutOne = fromCounts(Object.fromEntries(Object.entries(participations).filter(([id]) => id !== "extra-3")));
   const before = new Map(sheetPoints(big, EMPTY_SHEET, withoutOne).map((p) => [p.key, `${p.x},${p.y}`]));
-  const after = sheetPoints(big, EMPTY_SHEET, recordMention(withoutOne, "extra-3"));
+  const after = sheetPoints(big, EMPTY_SHEET, record(withoutOne, { kind: "discovery", id: "extra-3", at: 1 }));
   for (const p of after) if (before.has(p.key)) assert.equal(`${p.x},${p.y}`, before.get(p.key), p.key);
   assert.ok(after.some((p) => p.key === "extra-3"));
 });

@@ -5,9 +5,10 @@ import { shownSources } from "@/content/scientists/catalog";
 import { scientistProfile } from "@/content/scientists/profile";
 import { FICTIONAL_NOTICE } from "@/content/scientists/fixtures";
 import type { DiscoveryScenery, FeaturedScientist } from "@/content/scientists/types";
-import { wasSaidBeforeMention, type SheetPoint } from "@/participation/sheetLayout";
+import { presenceAt, type SheetPoint } from "@/participation/sheetLayout";
 import { Actions, type ResponseHandlers } from "./Actions";
-import type { State, Step } from "./state";
+import { describeCounts } from "./MapOverlays";
+import { MAX_HINT, type State, type Step } from "./state";
 import type { Screen } from "./screen";
 import { ProfilePlane } from "./ProfilePlane";
 import { CARTOUCHE, NEXT_ACTION } from "./collectiveLayout";
@@ -26,7 +27,7 @@ export type Commands = {
   openProfile: () => void;
   openProfileOf: (id: string) => void;
   closeProfile: () => void;
-  seeAgain: () => void;
+  hint: () => void;
   name: (text: string) => void;
   seeMap: () => void;
   anotherName: () => void;
@@ -42,6 +43,7 @@ export type PlaneContext = {
   points: SheetPoint[];
   illustrative: boolean;
   speech: string | null;
+  sharedSilence: number | null;
 };
 
 type PlaneProps = { state: State; screen: Screen; commands: Commands; reducedMotion: boolean; context: PlaneContext };
@@ -125,28 +127,31 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
           : `FOLHA 01 — CIÊNCIA DELAS · MAPA MUDO${context.illustrative ? " · RELEVO ILUSTRATIVO" : ""}`}
       </SheetHeader>
       <div className="absolute inset-0 transition-transform duration-500 compact:contents" style={lift}>
+        {again && (
+          <p className="absolute top-[150px] left-[64px] text-[40px] leading-[1.25] font-medium compact:static compact:text-[22px]">
+            <PaperStrip className="px-4 py-1.5 compact:px-2">Agora você sabe.</PaperStrip>
+          </p>
+        )}
         <Heading className="display absolute top-[228px] left-[64px] text-[150px] leading-none compact:static compact:text-[60px]">
           <span className="block w-fit bg-paper px-4 compact:px-2">DIGA</span>
           <span className="block w-fit bg-paper px-4 compact:px-2">UM NOME.</span>
         </Heading>
-        <p
-          key={again ? "knows" : "ask"}
-          className={`absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px] ${again ? "fade-in" : ""}`}
-          style={{ animationDelay: "2400ms" }}
-        >
-          <PaperStrip className="px-4 py-1.5 compact:px-2">{again ? "Agora você sabe." : "Diga o nome de uma cientista brasileira."}</PaperStrip>
-        </p>
+        {!again && (
+          <p className="absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px]">
+            <PaperStrip className="px-4 py-1.5 compact:px-2">Diga o nome de uma cientista brasileira.</PaperStrip>
+          </p>
+        )}
         <div ref={actions} className="absolute top-[618px] left-[52px] compact:static">
           <Actions
             speak={{ label: "Falar", accent: again }}
             type
             extras={
               again
-                ? [{ label: "Ver de novo", onClick: commands.seeAgain }]
-                : [
-                    { label: "Não sei", onClick: commands.dontKnow },
+                ? [
+                    ...(state.hint < MAX_HINT ? [{ label: state.hint === 0 ? "Mostrar o retrato" : "Mostrar o nome", onClick: commands.hint }] : []),
                     { label: "Ver o mapa", arrow: true, onClick: commands.seeMap },
                   ]
+                : [{ label: "Não sei", onClick: commands.dontKnow }]
             }
             speech={context.speech}
             response={state.response}
@@ -155,17 +160,34 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
           />
         </div>
       </div>
+      {again && state.hint > 0 && (
+        <span className="sr-only" role="status">
+          {state.hint >= MAX_HINT
+            ? `O nome dela é ${context.discovery?.canonicalName ?? ""}.`
+            : "O retrato dela apareceu no mapa, no ponto destacado."}
+        </span>
+      )}
     </Stage>
   );
 }
 
-function NoName({ screen, commands }: PlaneProps) {
+function NoName({ screen, commands, context }: PlaneProps) {
   return (
     <Stage screen={screen}>
       <SheetHeader>FOLHA 01 — MAPA MUDO · 1 PONTO SELECIONADO</SheetHeader>
-      <p className="fade-in absolute top-[236px] left-[64px] text-[32px] font-medium compact:static compact:text-[20px]">
-        <PaperStrip className="px-4 py-1.5 compact:px-2">Não veio nenhum nome?</PaperStrip>
-      </p>
+      <div className="absolute bottom-[612px] left-[64px] flex flex-col items-start gap-2 compact:static compact:gap-1.5">
+        <p className="fade-in text-[32px] font-medium compact:text-[20px]">
+          <PaperStrip className="px-4 py-1.5 compact:px-2">Não veio nenhum nome?</PaperStrip>
+        </p>
+        {context.sharedSilence !== null && (
+          <p className="fade-in text-[24px] leading-[1.35] font-medium [animation-delay:120ms] compact:text-[17px]">
+            <PaperStrip className="px-4 py-1 compact:px-2">Até agora, {context.sharedSilence} pessoas também não lembraram.</PaperStrip>
+          </p>
+        )}
+        <p className="fade-in text-[24px] leading-[1.35] text-ink-soft [animation-delay:200ms] compact:text-[17px]">
+          <PaperStrip className="px-4 py-1 compact:px-2">Esse silêncio diz muito sobre quem aprendemos a reconhecer.</PaperStrip>
+        </p>
+      </div>
       <Heading className="display fade-in absolute top-[304px] left-[64px] text-[92px] leading-[1.06] [animation-delay:250ms] compact:static compact:text-[40px]">
         <span className="block w-fit bg-paper px-4 compact:px-2">ENTÃO VAMOS</span>
         <span className="block w-fit bg-paper px-4 compact:px-2">DESCOBRIR UMA.</span>
@@ -355,9 +377,38 @@ function HumanScale({ state, screen, commands, context }: PlaneProps) {
   );
 }
 
+function contributionCopy(kind: State["saidKind"], said: SheetPoint | undefined) {
+  const recall = said?.recall ?? 0;
+  const reef = said?.reef ?? 0;
+  if (kind === "recall") {
+    if (recall === 1 && reef > 0) {
+      return {
+        first: true,
+        kicker: "PARABÉNS · LEMBRADA SEM PISTA",
+        heading: "A descoberta virou memória.",
+        note: "Ela foi conhecida aqui antes. Você chegou sabendo o nome dela.",
+      };
+    }
+    if (recall === 1) {
+      return { first: true, kicker: "PARABÉNS · LEMBRADA SEM PISTA", heading: "Ela veio à tona.", note: "Você foi a primeira pessoa a chegar sabendo este nome." };
+    }
+    return { first: false, kicker: "LEMBRADA SEM PISTA", heading: "Este nome já estava no mapa.", note: "Agora seu relevo cresce." };
+  }
+  if (reef === 1 && recall === 0) {
+    return {
+      first: true,
+      kicker: "CONHECIDA NESTA FEIRA",
+      heading: "O ponto agora tem nome.",
+      note: "Ela veio à tona: você foi a primeira pessoa a conhecê-la nesta feira.",
+    };
+  }
+  return { first: false, kicker: "CONHECIDA NESTA FEIRA", heading: "Este nome já estava no mapa.", note: "Agora o recife dela cresce." };
+}
+
 function NameSaid({ state, screen, commands, context }: PlaneProps) {
   const said = context.points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
-  const first = said ? !wasSaidBeforeMention(said) : true;
+  const copy = contributionCopy(state.saidKind, said);
+  const first = copy.first;
   const profileId = said?.featured && said.scientistId ? said.scientistId : null;
   const ready = CONTRIBUTION_TIMING.settle + CONTRIBUTION_TIMING.settleFor - 400;
   const seeMap = (
@@ -374,15 +425,13 @@ function NameSaid({ state, screen, commands, context }: PlaneProps) {
     <Stage screen={screen}>
       <div className="absolute top-[84px] left-[64px] flex w-[500px] flex-col items-start gap-4 compact:static compact:w-full compact:gap-2">
         <p className="fade-in font-primary text-[14px] font-semibold tracking-[0.18em] text-iris-blue [animation-delay:1200ms]">
-          <PaperStrip className="px-2 py-1">{first ? "PARABÉNS · DITO EM VOZ ALTA" : "DITO EM VOZ ALTA"}</PaperStrip>
+          <PaperStrip className="px-2 py-1">{copy.kicker}</PaperStrip>
         </p>
         <Heading className="fade-in text-[52px] leading-[1.14] font-semibold tracking-[-0.02em] [animation-delay:1400ms] compact:text-[30px]">
-          <PaperStrip className="px-3 compact:px-2">{first ? "O ponto agora tem nome." : "Este nome já estava no mapa."}</PaperStrip>
+          <PaperStrip className="px-3 compact:px-2">{copy.heading}</PaperStrip>
         </Heading>
         <p className="fade-in text-[23px] leading-[1.45] text-ink-soft [animation-delay:3900ms] compact:text-[17px]">
-          <PaperStrip className="px-3 py-0.5 compact:px-2">
-            {first ? "Você foi a primeira pessoa a dizer este nome nesta feira." : "Agora seu relevo cresce."}
-          </PaperStrip>
+          <PaperStrip className="px-3 py-0.5 compact:px-2">{copy.note}</PaperStrip>
         </p>
         <p className="fade-in font-notation text-[12px] tracking-[0.06em] text-ink-soft [animation-delay:4300ms]">
           <PaperStrip className="px-2 py-1">EQUIDISTÂNCIA DESTA VISTA: 1 NOME DITO</PaperStrip>
@@ -405,41 +454,45 @@ function NameSaid({ state, screen, commands, context }: PlaneProps) {
         )}
       </div>
       <span className="sr-only" role="status">
-        {first
-          ? `Parabéns. ${said?.name ?? ""} +1. O ponto agora tem nome: a primeira curva de nível surgiu no relevo.`
-          : `${said?.name ?? ""} +1. Este nome já estava no mapa: uma nova curva de nível surgiu no topo do relevo.`}
+        {`${said?.name ?? ""} +1. ${copy.heading} ${copy.note}`}
       </span>
     </Stage>
   );
 }
 
-function LegendMark({ kind }: { kind: "named" | "silent" | "relief" }) {
-  if (kind === "relief") {
+function LegendMark({ kind }: { kind: "rock" | "reef" | "silent" }) {
+  if (kind === "rock" || kind === "reef") {
     return (
       <svg aria-hidden="true" viewBox="0 0 16 12" className="h-[15px] w-5 overflow-visible compact:h-3 compact:w-4">
-        <g fill="none" stroke="var(--terrain-line-index)" strokeWidth={1}>
-          <ellipse cx={8} cy={6} rx={7.5} ry={5.5} />
-          <ellipse cx={8} cy={6} rx={4.8} ry={3.4} />
-          <ellipse cx={8} cy={6} rx={2} ry={1.4} />
-        </g>
+        <ellipse cx={8} cy={6} rx={7.5} ry={5.5} fill="var(--paper)" stroke="var(--ink)" strokeWidth={1.4} />
+        {kind === "rock" ? (
+          <g fill="none" stroke="var(--terrain-line-index)" strokeWidth={1}>
+            <ellipse cx={8} cy={6} rx={4.6} ry={3.3} />
+            <ellipse cx={8} cy={6} rx={1.8} ry={1.3} />
+          </g>
+        ) : (
+          <g fill="var(--accent)">
+            {Array.from({ length: 12 }, (_, i) => {
+              const t = (i / 12) * Math.PI * 2;
+              return <circle key={i} cx={8 + 5.2 * Math.cos(t)} cy={6 + 3.6 * Math.sin(t)} r={0.85} />;
+            })}
+          </g>
+        )}
       </svg>
     );
   }
-  const filled = kind === "named";
   return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 10 9"
-      className={`h-[12px] w-[13px] overflow-visible compact:h-[9px] compact:w-[10px] ${filled ? "" : "opacity-55"}`}
-    >
-      <path d="M5 0.8 L9.3 8.2 L0.7 8.2 Z" fill={filled ? "var(--ink)" : "none"} stroke={filled ? "var(--ink)" : "var(--ink-soft)"} strokeWidth={1.1} />
+    <svg aria-hidden="true" viewBox="0 0 10 9" className="h-[12px] w-[13px] overflow-visible opacity-55 compact:h-[9px] compact:w-[10px]">
+      <path d="M5 0.8 L9.3 8.2 L0.7 8.2 Z" fill="none" stroke="var(--ink-soft)" strokeWidth={1.1} />
     </svg>
   );
 }
 
 function Collective({ state, screen, commands, context }: PlaneProps) {
   const [celebrate] = useState(() => state.previous !== "profile");
-  const named = context.points.filter((p) => p.name !== null && p.mentions > 0);
+  const named = context.points.filter((p) => p.name !== null && presenceAt(p) > 0);
+  const remembered = named.filter((p) => p.recall > 0).length;
+  const builtHere = named.length - remembered;
   const silentCount = context.points.length - named.length;
   const said = named.find((p) => p.scientistId === state.saidId);
   const notices = [named.some((p) => p.fictional) ? "nomes fictícios" : null, context.illustrative ? "cotas ilustrativas" : null].filter(
@@ -452,17 +505,24 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
         style={screen.compact ? undefined : { left: CARTOUCHE.x, top: CARTOUCHE.y, width: CARTOUCHE.w }}
       >
         <p className="font-notation text-[15px] tracking-[0.08em] text-ink-soft compact:text-[12px]">FOLHA 01 · CIÊNCIA DELAS</p>
-        <Heading className="mt-1.5 text-[30px] leading-[1.08] font-bold tracking-[0.03em] whitespace-nowrap uppercase compact:text-[22px] compact:whitespace-normal">
+        <Heading className="mt-1.5 text-[30px] leading-[1.08] font-bold tracking-[0.03em] text-balance uppercase compact:text-[22px]">
           Mapa dos nomes ditos
         </Heading>
         <span aria-hidden="true" className="mt-4 block border-t border-ink/30 compact:mt-3" />
         <dl className="mt-3.5 grid grid-cols-[20px_1fr] items-center gap-x-3 gap-y-2 font-notation text-[16px] tracking-[0.02em] text-ink compact:mt-2.5 compact:gap-y-1.5 compact:text-[12px]">
           <dt className="flex justify-center">
-            <LegendMark kind="named" />
-            <span className="sr-only">Triângulo cheio</span>
+            <LegendMark kind="rock" />
+            <span className="sr-only">Ilha de rocha</span>
           </dt>
           <dd>
-            {named.length} {named.length === 1 ? "nome dito" : "nomes ditos"} · cota = menções
+            {remembered} {remembered === 1 ? "lembrada sem pista" : "lembradas sem pista"}
+          </dd>
+          <dt className="flex justify-center">
+            <LegendMark kind="reef" />
+            <span className="sr-only">Ilha de recife</span>
+          </dt>
+          <dd>
+            {builtHere} {builtHere === 1 ? "conhecida nesta feira" : "conhecidas nesta feira"}
           </dd>
           <dt className="flex justify-center">
             <LegendMark kind="silent" />
@@ -471,11 +531,6 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
           <dd className="text-ink-soft">
             {silentCount} {silentCount === 1 ? "ponto ainda mudo" : "pontos ainda mudos"}
           </dd>
-          <dt className="flex justify-center">
-            <LegendMark kind="relief" />
-            <span className="sr-only">Curvas de nível</span>
-          </dt>
-          <dd className="text-ink-soft">relevo: quanto mais dito, mais alto</dd>
         </dl>
         {notices.length > 0 && (
           <p className="mt-3 font-notation text-[13px] tracking-[0.03em] text-ink-soft compact:text-[11px]">{notices.join(" · ")}</p>
@@ -483,7 +538,7 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
       </div>
       {said && celebrate && (
         <p className="sr-only" role="status">
-          {said.name} agora tem {said.mentions} {said.mentions === 1 ? "menção" : "menções"} no mapa coletivo.
+          {said.name} agora tem {describeCounts(said)} no mapa coletivo.
         </p>
       )}
       <div
@@ -551,7 +606,7 @@ export function mapDescription(state: State, context: PlaneContext) {
   const point = `ponto ${context.code}`;
   switch (state.step) {
     case "opening":
-      return "Mapa topográfico mudo: relevo com pontos marcados por triângulos, todos sem nome.";
+      return "Mapa mudo: um mar com pontos marcados por triângulos, todos sem nome.";
     case "noName":
       return `Mapa mudo com o ${point} selecionado por uma mira.`;
     case "clue1": {
@@ -573,10 +628,14 @@ export function mapDescription(state: State, context: PlaneContext) {
     case "profile":
       return `Escala 1:1: o retrato de ${context.discovery?.canonicalName ?? "uma cientista"} continua à direita enquanto a ficha dela é lida.`;
     case "askAgain":
-      return `Mapa mudo inteiro. O ${point} agora mostra o retrato de ${context.discovery?.canonicalName ?? "uma cientista"}, esperando que o nome seja dito.`;
+      if (state.hint >= MAX_HINT) return `Mapa mudo inteiro. O ${point} mostra o retrato e o nome de ${context.discovery?.canonicalName ?? "uma cientista"}.`;
+      if (state.hint > 0) return `Mapa mudo inteiro. O ${point}, da cientista que você acabou de conhecer, mostra o retrato dela, ainda sem o nome.`;
+      return `Mapa mudo inteiro. O ${point}, da cientista que você acabou de conhecer, aparece destacado, esperando que o nome seja dito.`;
     case "nameSaid":
-      return `Aproximação ao relevo de ${name}: uma nova curva de nível surge ao redor do topo e depois se integra às demais.`;
+      return state.saidKind === "recall"
+        ? `Aproximação à ilha de ${name}: uma nova curva de nível surge ao redor do topo e depois se integra às demais.`
+        : `Aproximação a ${name}: o recife dela, conhecido nesta feira, se alarga ao redor do ponto.`;
     case "collective":
-      return `Mapa dos nomes ditos: cada nome marca o topo do seu relevo; quanto mais dito, mais alto o relevo.${name ? ` A curva nova de ${name} aparece destacada e depois se integra ao mapa.` : ""}`;
+      return `Mapa dos nomes ditos: ilhas de rocha para as cientistas lembradas sem pista, mais altas a cada lembrança; ilhas de recife para as conhecidas nesta feira, mais largas a cada pessoa; no alto, o mar dos nomes não ditos.${name ? ` O contorno de ${name} aparece destacado e depois se integra ao mapa.` : ""}`;
   }
 }

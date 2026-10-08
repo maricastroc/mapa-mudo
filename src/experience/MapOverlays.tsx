@@ -5,21 +5,23 @@ import { useMemo, useRef, useState, type CSSProperties } from "react";
 import { Tooltip } from "react-tooltip";
 import type { ScientistPhoto } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
+import { TRENCH_CAPTION, TRENCH_SERIES, trenchDepths, trenchRing } from "@/map/trench";
+import { isAboveWater, type NameKind } from "@/participation/collective";
 import { cellExtremes, traceContours } from "@/map/contours";
 import { MapAnchor, useMapView } from "@/map/MapCanvas";
 import { toScreen, type Camera } from "@/map/mapRenderer";
-import type { SheetPoint } from "@/participation/sheetLayout";
+import { presenceAt, type SheetPoint } from "@/participation/sheetLayout";
 import { markPhotoMissing, PHOTO_CLASS, useAvailablePhoto } from "./PortraitPhoto";
+import { discoveryNameShown, isLayerActive, medallionShown, sheetMarkTone, type LensVariant, type SheetMarkTone } from "./layers";
 import { labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
 import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, toFieldPoint, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { ArrowIcon, TriangleMarker } from "./ui";
 
-const SHEET_STEPS: Step[] = ["opening", "noName", "askAgain", "collective"];
 const PORTRAIT_TOOLTIP = "portrait-name";
 
 export function mapPosition(field: TerrainField, p: SheetPoint) {
-  if (!p.scientistId || p.mentions <= 0) return { x: p.x, y: p.y };
+  if (!p.scientistId || presenceAt(p) <= 0) return { x: p.x, y: p.y };
   return field.summit(toFieldPoint(p));
 }
 
@@ -40,6 +42,46 @@ function SummitMark({ filled, unit }: { filled: boolean; unit: number }) {
       className={`absolute -translate-x-1/2 -translate-y-[60%] overflow-visible ${filled ? "" : "opacity-55"}`}
     >
       <path d="M5 0.8 L9.3 8.2 L0.7 8.2 Z" fill={filled ? "var(--ink)" : "none"} stroke={filled ? "var(--ink)" : "var(--ink-soft)"} strokeWidth={1.1} />
+    </svg>
+  );
+}
+
+function plural(n: number, one: string, many: string) {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
+export function describeCounts(p: SheetPoint) {
+  return [
+    p.recall > 0 ? `${plural(p.recall, "lembrança", "lembranças")} sem pista` : null,
+    p.reef > 0 ? `conhecida aqui por ${plural(p.reef, "pessoa", "pessoas")}` : null,
+  ]
+    .filter((t) => t !== null)
+    .join(", ");
+}
+
+function CoralDot() {
+  return <span aria-hidden="true" className="inline-block size-[0.62em] translate-y-[0.02em] self-center rounded-full bg-accent" />;
+}
+
+const POINT_MARKS: Record<SheetMarkTone, { w: number; h: number; fill: string; stroke: string; width: number }> = {
+  unknown: { w: 9, h: 8, fill: "none", stroke: "var(--isobath-index)", width: 1.2 },
+  revealed: { w: 9, h: 8, fill: "var(--accent)", stroke: "var(--accent)", width: 0.8 },
+  waiting: { w: 12, h: 11, fill: "var(--accent)", stroke: "var(--accent)", width: 0.8 },
+};
+
+function PointMark({ tone }: { tone: SheetMarkTone }) {
+  const m = POINT_MARKS[tone];
+  return (
+    <svg
+      aria-hidden="true"
+      width={m.w}
+      height={m.h}
+      viewBox={`0 0 ${m.w} ${m.h}`}
+      className="absolute top-0 left-0 block overflow-visible"
+      style={{ transform: `translate(${-m.w / 2}px, ${-m.h}px)` }}
+    >
+      {tone === "waiting" && <circle cx={m.w / 2} cy={m.h * 0.62} r={13} fill="none" stroke="var(--accent)" strokeWidth={1.5} />}
+      <path d={`M${m.w / 2} 0.6L${m.w - 0.6} ${m.h - 0.6}L0.6 ${m.h - 0.6}Z`} fill={m.fill} stroke={m.stroke} strokeWidth={m.width} />
     </svg>
   );
 }
@@ -75,16 +117,24 @@ function CollectiveMarkers({
     const items = points.map((p) => {
       const position = mapPosition(field, p);
       const [sx, sy] = toScreen(view, position.x, position.y);
-      return { p, position, sx, sy, named: p.name !== null && p.mentions > 0 };
+      return { p, position, sx, sy, named: p.name !== null && presenceAt(p) > 0 };
     });
     const fonts = new Map<string, number>();
     const labels = items
       .filter((i) => i.named)
       .map(({ p, sx, sy }) => {
         const said = p.scientistId !== null && p.scientistId === saidId;
-        const font = labelFontSize(p.mentions, unit);
+        const presence = presenceAt(p);
+        const font = labelFontSize(presence, unit);
         fonts.set(p.key, font);
-        return { key: p.key, x: sx, y: sy, ...labelSize(p.name ?? "", p.mentions, font, said ? 2 : 0), priority: said ? Number.POSITIVE_INFINITY : p.mentions };
+        const counts = p.reef > 0 ? (p.recall > 0 ? 1.9 : 1.1) : 0;
+        return {
+          key: p.key,
+          x: sx,
+          y: sy,
+          ...labelSize(p.name ?? "", presence, font, (said ? 2 : 0) + counts),
+          priority: said ? Number.POSITIVE_INFINITY : presence,
+        };
       });
     const placements = placeLabels({
       labels,
@@ -107,7 +157,7 @@ function CollectiveMarkers({
         return (
           <MapAnchor key={p.key} x={position.x} y={position.y} className={said ? "z-10" : undefined}>
             <span aria-hidden="true">
-              <SummitMark filled={named} unit={unit} />
+              <SummitMark filled={named && isAboveWater(p.recall, p.reef)} unit={unit} />
             </span>
             {named && placement && (
               <Label
@@ -115,7 +165,7 @@ function CollectiveMarkers({
                   ? {
                       type: "button" as const,
                       "data-profile-link": profileId,
-                      "aria-label": `${p.name}, ${p.mentions} ${p.mentions === 1 ? "menção" : "menções"}. Ver perfil`,
+                      "aria-label": `${p.name}: ${describeCounts(p)}. Ver perfil`,
                       onClick: () => onOpenProfile(profileId),
                     }
                   : { "aria-hidden": true })}
@@ -132,9 +182,17 @@ function CollectiveMarkers({
                 >
                   {p.name}
                 </span>
-                <span className="ml-[0.45em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
-                  {p.mentions}
-                </span>
+                {p.recall > 0 && (
+                  <span className="ml-[0.45em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
+                    {p.recall}
+                  </span>
+                )}
+                {p.reef > 0 && (
+                  <span className="ml-[0.45em] inline-flex items-baseline gap-[0.22em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
+                    <CoralDot />
+                    {p.reef}
+                  </span>
+                )}
                 {said && (
                   <span
                     className="ml-[0.4em] max-w-[3em] overflow-hidden bg-accent px-[0.3em] font-notation font-medium text-ink [text-shadow:none]"
@@ -178,7 +236,7 @@ export function SheetMarkers({
   returning: boolean;
   onOpenProfile: (id: string) => void;
 }) {
-  const onSheet = SHEET_STEPS.includes(step);
+  const onSheet = isLayerActive("sheetMarkers", step);
   if (step === "collective") {
     return (
       <nav aria-label="Nomes no mapa" className={visible(onSheet)}>
@@ -198,15 +256,14 @@ export function SheetMarkers({
   return (
     <div aria-hidden="true" className={visible(onSheet)}>
       {points.map((p) => {
-        const { x, y } = mapPosition(field, p);
-        const reserved = p.scientistId !== null && p.scientistId === discoveryId && (step === "noName" || step === "askAgain");
+        const selected = p.scientistId !== null && p.scientistId === discoveryId;
+        const tone = sheetMarkTone(presenceAt(p), selected, step);
         return (
-          <MapAnchor key={p.key} x={x} y={y}>
+          <MapAnchor key={p.key} x={p.x} y={p.y} className={tone === "waiting" ? "z-10" : undefined}>
             <div
-              className={`flex -translate-x-[6px] -translate-y-[11px] items-end gap-1.5 transition-opacity duration-500 ${reserved ? "opacity-0" : step === "noName" ? "opacity-40" : "opacity-100"}`}
+              className={`transition-opacity duration-500 ${selected && step === "noName" ? "opacity-0" : step === "noName" ? "opacity-40" : "opacity-100"}`}
             >
-              <TriangleMarker />
-              <span className="mb-[-1px] block h-0 w-[calc(var(--u)*70px)] border-b-[1.5px] border-ink" />
+              <PointMark tone={tone} />
             </div>
           </MapAnchor>
         );
@@ -217,7 +274,7 @@ export function SheetMarkers({
 
 export function PlaceNames({ step, geometry }: { step: Step; geometry: DiscoveryGeometry }) {
   return (
-    <div aria-hidden="true" className={visible(step === "clue1")}>
+    <div aria-hidden="true" className={visible(isLayerActive("placeNames", step))}>
       {geometry.places.map((l) => (
         <MapAnchor key={l.text} x={l.x} y={l.y}>
           <span
@@ -233,12 +290,11 @@ export function PlaceNames({ step, geometry }: { step: Step; geometry: Discovery
 }
 
 export function PointLabel({ step, geometry }: { step: Step; geometry: DiscoveryGeometry }) {
-  const text =
-    step === "noName"
+  const text = !isLayerActive("pointLabel", step)
+    ? null
+    : step === "noName"
       ? `PONTO ${geometry.code} · SEM NOME`
-      : step === "clue1" || step === "clue2"
-        ? `PONTO ${geometry.code}`
-        : null;
+      : `PONTO ${geometry.code}`;
   const onRight = step === "noName";
   return (
     <div aria-hidden="true" className={visible(text !== null)}>
@@ -267,7 +323,7 @@ export function Transect({ step, geometry, prefix }: { step: Step; geometry: Dis
     line.current?.setAttribute("points", pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" "));
     pts.forEach(([x, y], i) => groups.current[i]?.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`));
   });
-  const active = step === "clue2";
+  const active = isLayerActive("transect", step);
   return (
     <svg aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full overflow-visible ${visible(active)}`}>
       <polyline
@@ -317,26 +373,6 @@ export function Transect({ step, geometry, prefix }: { step: Step; geometry: Dis
       )}
     </svg>
   );
-}
-
-export type LensVariant = "none" | "crosshair" | "crosshairLong" | "dot" | "core" | "portrait";
-
-export function lensVariantFor(step: Step): LensVariant {
-  switch (step) {
-    case "noName":
-      return "crosshair";
-    case "clue1":
-      return "crosshairLong";
-    case "clue2":
-      return "dot";
-    case "clue3":
-      return "core";
-    case "humanScale":
-    case "profile":
-      return "portrait";
-    default:
-      return "none";
-  }
 }
 
 export function LensRing({ variant }: { variant: LensVariant }) {
@@ -429,6 +465,7 @@ export function usePortraitContourPaths(field: TerrainField, n = 72, levelCount 
 
 export function PortraitMedallion({
   step,
+  hint,
   field,
   geometry,
   name,
@@ -436,6 +473,7 @@ export function PortraitMedallion({
   onOpen,
 }: {
   step: Step;
+  hint: number;
   field: TerrainField;
   geometry: DiscoveryGeometry;
   name: string;
@@ -444,18 +482,19 @@ export function PortraitMedallion({
 }) {
   const paths = usePortraitContourPaths(field);
   const src = useAvailablePhoto(photo?.src);
-  const active = step === "askAgain";
+  const active = medallionShown(step, hint);
+  const named = discoveryNameShown(step, hint);
   return (
-    <div aria-hidden={!active} inert={!active} className={visible(active)}>
+    <div aria-hidden={!named} inert={!named} className={visible(active)}>
       <MapAnchor x={geometry.summit.x} y={geometry.summit.y}>
         <button
           type="button"
           data-medallion-button
-          data-tooltip-id={PORTRAIT_TOOLTIP}
-          data-tooltip-content={name}
+          data-tooltip-id={named ? PORTRAIT_TOOLTIP : undefined}
+          data-tooltip-content={named ? name : undefined}
           onClick={onOpen}
-          aria-label={`Ver perfil de ${name}`}
-          className={`group absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] cursor-pointer rounded-full outline-none ${active ? "pointer-events-auto" : ""}`}
+          aria-label={named ? `Ver perfil de ${name}` : undefined}
+          className={`group absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] rounded-full outline-none ${named ? "pointer-events-auto cursor-pointer" : ""}`}
         >
           <span
             aria-hidden="true"
@@ -475,12 +514,10 @@ export function PortraitMedallion({
             </svg>
           )}
         </button>
-        <div aria-hidden="true" className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[11px]">
-          <TriangleMarker tone="accent" />
-        </div>
       </MapAnchor>
       <Tooltip
         id={PORTRAIT_TOOLTIP}
+        isOpen={named}
         place="top"
         offset={12}
         opacity={1}
@@ -515,7 +552,7 @@ export function SummitPortrait({
   const src = useAvailablePhoto(photo?.src);
   if (!point || !point.scientistId) return null;
   const summit = mapPosition(field, point);
-  const active = step === "nameSaid";
+  const active = isLayerActive("summitPortrait", step);
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={summit.x} y={summit.y}>
@@ -541,14 +578,16 @@ export function SaidNameLabel({
   step,
   field,
   point,
+  kind,
   illustrative,
 }: {
   step: Step;
   field: TerrainField;
   point: SheetPoint | undefined;
+  kind: NameKind | null;
   illustrative: boolean;
 }) {
-  const active = step === "nameSaid";
+  const active = isLayerActive("saidName", step);
   const contourLabel = useRef<HTMLDivElement>(null);
   useMapView((v) => {
     const el = contourLabel.current;
@@ -564,7 +603,15 @@ export function SaidNameLabel({
   });
   if (!point || !point.name || !point.scientistId) return null;
   const summit = mapPosition(field, point);
-  const mentions = point.mentions;
+  const rock = kind === "recall";
+  const tally = rock
+    ? `LEMBRADA SEM PISTA ${point.recall === 1 ? "1 VEZ" : `${point.recall} VEZES`}`
+    : `CONHECIDA AQUI POR ${point.reef === 1 ? "1 PESSOA" : `${point.reef} PESSOAS`}`;
+  const contour = rock
+    ? "+1 CURVA DE NÍVEL · LEMBRADA SEM PISTA"
+    : point.reef === 1 && point.recall === 0
+      ? "RECIFE · VEIO À TONA"
+      : "+1 NO RECIFE · CONHECIDA NESTA FEIRA";
   const { elongation } = field.summit(toFieldPoint(point));
   return (
     <div aria-hidden="true" className={visible(active)}>
@@ -574,7 +621,7 @@ export function SaidNameLabel({
           style={{ top: `calc(var(--u) * ${Math.round(NEW_CONTOUR_RADIUS * elongation + 30)}px)` }}
         >
           <div
-            key={active ? `${point.key}-${mentions}` : "idle"}
+            key={active ? `${point.key}-${presenceAt(point)}` : "idle"}
             className="fade-in flex items-baseline gap-[0.3em] bg-paper px-[0.3em] text-[calc(var(--u)*58px)] leading-none font-bold tracking-[0.03em] whitespace-nowrap uppercase"
             style={{ animationDelay: "1500ms" }}
           >
@@ -587,17 +634,102 @@ export function SaidNameLabel({
             className="fade-in bg-paper px-2 font-notation text-[calc(var(--u)*13px)] tracking-[0.06em] whitespace-nowrap text-ink-soft"
             style={{ animationDelay: "3500ms" }}
           >
-            DITO {mentions} {mentions === 1 ? "VEZ" : "VEZES"} NESTA FEIRA{illustrative ? " · CONTAGEM ILUSTRATIVA" : ""}
+            {tally}
+            {illustrative ? " · CONTAGEM ILUSTRATIVA" : ""}
           </span>
         </div>
       </MapAnchor>
       <div ref={contourLabel} className="pointer-events-none absolute top-0 left-0 opacity-0 transition-opacity duration-500">
         <span className="flex items-center gap-2 bg-paper px-2 py-1 font-notation text-[calc(var(--u)*14px)] font-medium tracking-[0.06em] whitespace-nowrap text-ink">
-          <span className="block h-0 w-[calc(var(--u)*26px)] border-t-2 border-accent" />
-          +1 CURVA DE NÍVEL · DITO PELA {mentions}ª VEZ
+          <span className={`block h-0 w-[calc(var(--u)*26px)] border-t-2 ${rock ? "border-ink" : "border-accent"}`} />
+          {contour}
         </span>
       </div>
     </div>
+  );
+}
+
+const LABELED_DEPTHS = [1, 10, 100, 1000];
+
+export function SilenceTrench({ step, silences, count, unit }: { step: Step; silences: number; count: number | null; unit: number }) {
+  const rings = useMemo(() => TRENCH_SERIES.map((_, i) => trenchRing(i)), []);
+  const reached = trenchDepths(silences);
+  const paths = useRef<(SVGPathElement | null)[]>([]);
+  const labels = useRef<(SVGTextElement | null)[]>([]);
+  const caption = useRef<SVGGElement>(null);
+  useMapView((v) => {
+    reached.forEach((_, i) => {
+      const pts = rings[i].map((p) => toScreen(v, p.x, p.y));
+      paths.current[i]?.setAttribute("d", `M${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L")}Z`);
+      labels.current[i]?.setAttribute("x", (pts[0][0] - 4).toFixed(1));
+      labels.current[i]?.setAttribute("y", (pts[0][1] + 4).toFixed(1));
+    });
+    const [cx, cy] = toScreen(v, TRENCH_CAPTION.x, TRENCH_CAPTION.y);
+    caption.current?.setAttribute("transform", `translate(${cx.toFixed(1)} ${cy.toFixed(1)})`);
+  });
+  if (silences <= 0) return null;
+  return (
+    <svg aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full overflow-visible ${visible(isLayerActive("silenceTrench", step))}`}>
+      {reached.map((value, i) => (
+        <path
+          key={value}
+          ref={(el) => {
+            paths.current[i] = el;
+          }}
+          fill="none"
+          stroke={value === 10 || value === 100 || value === 1000 ? "var(--isobath-index)" : "var(--isobath)"}
+          strokeWidth={value === 10 || value === 100 || value === 1000 ? 1.1 : 0.8}
+        />
+      ))}
+      {reached.map((value, i) => (
+        <text
+          visibility={unit >= 0.8 && LABELED_DEPTHS.includes(value) ? undefined : "hidden"}
+          key={value}
+          ref={(el) => {
+            labels.current[i] = el;
+          }}
+          textAnchor="end"
+          className="font-notation"
+          fontSize={11}
+          fill="var(--ink-soft)"
+          opacity={0.8}
+          paintOrder="stroke"
+          stroke="var(--paper)"
+          strokeWidth={4}
+        >
+          {value}
+        </text>
+      ))}
+      <g ref={caption}>
+        <text
+          textAnchor="middle"
+          className="font-primary italic"
+          fontSize={13 * Math.max(0.85, unit)}
+          fontWeight={500}
+          letterSpacing="0.32em"
+          fill="var(--ink-soft)"
+          paintOrder="stroke"
+          stroke="var(--paper)"
+          strokeWidth={4}
+        >
+          MAR DOS NOMES NÃO DITOS
+        </text>
+        {count !== null && (
+          <text
+            y={19 * Math.max(0.85, unit)}
+            textAnchor="middle"
+            className="font-notation"
+            fontSize={12 * Math.max(0.85, unit)}
+            fill="var(--ink-soft)"
+            paintOrder="stroke"
+            stroke="var(--paper)"
+            strokeWidth={4}
+          >
+            {count} pessoas não lembraram nenhum nome
+          </text>
+        )}
+      </g>
+    </svg>
   );
 }
 
@@ -620,7 +752,8 @@ export function ScaleRuler({ showTrack, baseZoom }: { showTrack: boolean; baseZo
     const b = SCALE_STOPS[i + 1];
     const t = Math.max(0, Math.min(1, (lz - Math.log(a.z)) / (Math.log(b.z) - Math.log(a.z))));
     const position = i + t;
-    const scale = Math.exp(Math.log(a.scale) + (Math.log(b.scale) - Math.log(a.scale)) * t);
+    const zoom = v.camera.z / baseZoom;
+    const scale = zoom < 1 ? Math.round(SCALE_STOPS[0].scale / zoom / 100_000) * 100_000 : Math.exp(Math.log(a.scale) + (Math.log(b.scale) - Math.log(a.scale)) * t);
     if (label.current) label.current.textContent = `ESCALA 1:${formatScale(scale)}`;
     if (caret.current) caret.current.style.left = `${(position / (SCALE_STOPS.length - 1)) * 100}%`;
     if (track.current) {

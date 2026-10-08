@@ -1,4 +1,5 @@
-import type { Catalog, KnownScientist, Participations } from "../content/scientists/types.ts";
+import type { Catalog, KnownScientist } from "../content/scientists/types.ts";
+import { presenceOf, recallOf, reefOf, type Collective } from "./collective.ts";
 
 export type SheetLayout = {
   points: Record<string, { x: number; y: number; code: string }>;
@@ -12,7 +13,8 @@ export type SheetPoint = {
   code: string;
   x: number;
   y: number;
-  mentions: number;
+  recall: number;
+  reef: number;
   name: string | null;
   featured: boolean;
   fictional: boolean;
@@ -29,9 +31,10 @@ function reserved(x: number, y: number) {
   return MARGIN_RESERVES.some((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
 }
 
-export function wasSaidBeforeMention(point: SheetPoint) {
-  return point.mentions > 1;
+export function presenceAt(point: SheetPoint) {
+  return point.recall + point.reef;
 }
+
 export const MIN_SPACING = 80;
 const CANDIDATES = 512;
 
@@ -65,11 +68,11 @@ export function autoPosition(id: string, occupied: { x: number; y: number }[]) {
   return best;
 }
 
-export function sheetPoints(catalog: Catalog, layout: SheetLayout, participations: Participations): SheetPoint[] {
+export function sheetPoints(catalog: Catalog, layout: SheetLayout, collective: Collective): SheetPoint[] {
   const featuredById = new Map(catalog.featured.map((f) => [f.id, f]));
   const everyone: KnownScientist[] = [...catalog.featured, ...catalog.known.filter((k) => !featuredById.has(k.id))];
   const catalogIndex = new Map(everyone.map((s, i) => [s.id, i]));
-  const present = everyone.filter((s) => featuredById.has(s.id) || (participations[s.id] ?? 0) > 0);
+  const present = everyone.filter((s) => featuredById.has(s.id) || presenceOf(collective, s.id) > 0);
   const ordered = new Set(layout.order);
   const sorted = [
     ...layout.order.map((id) => present.find((s) => s.id === id)).filter((s): s is KnownScientist => s !== undefined),
@@ -91,7 +94,7 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, participation
     if (!layout.points[f.id] && !f.scenery?.map) place(f.id);
   }
   const presentIds = new Set(present.map((s) => s.id));
-  for (const id of Object.keys(participations)) {
+  for (const id of collective.order) {
     if (presentIds.has(id) && !featuredById.has(id) && !layout.points[id] && !autoPositions.has(id)) place(id);
   }
 
@@ -106,7 +109,8 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, participation
       code,
       x: position.x,
       y: position.y,
-      mentions: participations[s.id] ?? 0,
+      recall: recallOf(collective, s.id),
+      reef: reefOf(collective, s.id),
       name: s.canonicalName,
       featured: featuredById.has(s.id),
       fictional: s.fictional === true,
@@ -120,7 +124,8 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, participation
       code: v.code,
       x: v.x,
       y: v.y,
-      mentions: 0,
+      recall: 0,
+      reef: 0,
       name: null,
       featured: false,
       fictional: false,
