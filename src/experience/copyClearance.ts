@@ -13,7 +13,8 @@ export const SHEET_COPY: Record<SheetCopyStep, Box[]> = {
   askAgain: [
     { x0: 64, y0: 228, x1: 806, y1: 528 },
     { x0: 64, y0: 150, x1: 412, y1: 200 },
-    { x0: 68, y0: 618, x1: 760, y1: 712 },
+    { x0: 68, y0: 548, x1: 760, y1: 712 },
+    { x0: 56, y0: 566, x1: 784, y1: 854 },
   ],
 };
 
@@ -101,12 +102,12 @@ export function collectiveCamera(screen: Screen, discs: Disc[], boxes: Box[] = [
 const OVERVIEW_AREA = { x0: 846, y0: 112, x1: 1404, y1: 832 };
 const MARK_MARGIN = 14;
 
-export function overviewCamera(screen: Screen, points: { x: number; y: number }[]): Camera | null {
+export function overviewCamera(screen: Screen, points: { x: number; y: number }[], boxes: Box[] = []): Camera | null {
   if (points.length === 0) return null;
-  const x0 = Math.min(...points.map((p) => p.x)) - MARK_MARGIN;
-  const x1 = Math.max(...points.map((p) => p.x)) + MARK_MARGIN;
-  const y0 = Math.min(...points.map((p) => p.y)) - MARK_MARGIN;
-  const y1 = Math.max(...points.map((p) => p.y)) + MARK_MARGIN;
+  const x0 = Math.min(...points.map((p) => p.x - MARK_MARGIN), ...boxes.map((b) => b.x0));
+  const x1 = Math.max(...points.map((p) => p.x + MARK_MARGIN), ...boxes.map((b) => b.x1));
+  const y0 = Math.min(...points.map((p) => p.y - MARK_MARGIN), ...boxes.map((b) => b.y0));
+  const y1 = Math.max(...points.map((p) => p.y + MARK_MARGIN), ...boxes.map((b) => b.y1));
   const { W, H, fit, ox, oy } = screen;
   if (screen.compact) {
     const top = 56;

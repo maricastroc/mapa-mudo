@@ -1,5 +1,5 @@
 import type { Catalog, KnownScientist } from "../content/scientists/types.ts";
-import { presenceOf, recallOf, reefOf, type Collective } from "./collective.ts";
+import { presenceOf, recallOf, reefOf, returnedOf, type Collective } from "./collective.ts";
 
 export type SheetLayout = {
   points: Record<string, { x: number; y: number; code: string }>;
@@ -15,6 +15,7 @@ export type SheetPoint = {
   y: number;
   recall: number;
   reef: number;
+  returned: number;
   name: string | null;
   featured: boolean;
   fictional: boolean;
@@ -111,6 +112,7 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, collective: C
       y: position.y,
       recall: recallOf(collective, s.id),
       reef: reefOf(collective, s.id),
+      returned: returnedOf(collective, s.id),
       name: s.canonicalName,
       featured: featuredById.has(s.id),
       fictional: s.fictional === true,
@@ -126,6 +128,7 @@ export function sheetPoints(catalog: Catalog, layout: SheetLayout, collective: C
       y: v.y,
       recall: 0,
       reef: 0,
+      returned: 0,
       name: null,
       featured: false,
       fictional: false,

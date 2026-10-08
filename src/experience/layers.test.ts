@@ -61,32 +61,35 @@ test("going from the reveal to 'Agora você sabe' unmounts the photo and its but
   assert.deepEqual(activeLayers(askAgain.step).sort(), ["medallion", "sheetMarkers"]);
 });
 
-test("at the second question the portrait and the name stay hidden until the visitor asks for help", () => {
+test("at the second question her portrait marks the point at once, and the name only shows when asked", () => {
   const asking = walk(FULL_PATH).at(-1);
   assert.ok(asking);
   assert.equal(asking.hint, 0);
-  assert.equal(medallionShown(asking.step, asking.hint), false);
+  assert.equal(medallionShown(asking.step), true);
   assert.equal(discoveryNameShown(asking.step, asking.hint), false);
-  const portrait = experience.reduce(asking, { type: "hint" });
-  assert.equal(portrait.step, "askAgain");
-  assert.equal(medallionShown(portrait.step, portrait.hint), true);
-  assert.equal(discoveryNameShown(portrait.step, portrait.hint), false);
-  assert.equal(experience.reduce(portrait, { type: "openProfile" }).step, "askAgain");
-  const named = experience.reduce(portrait, { type: "hint" });
+  const named = experience.reduce(asking, { type: "hint" });
+  assert.equal(named.step, "askAgain");
   assert.equal(discoveryNameShown(named.step, named.hint), true);
   assert.equal(experience.reduce(named, { type: "hint" }).hint, named.hint);
-  const profile = experience.reduce(named, { type: "openProfile" });
+  const profile = experience.reduce(asking, { type: "openProfile" });
   assert.equal(profile.step, "profile");
   assert.deepEqual(portraitsAt(profile.step), ["portraitPhoto"]);
   const back = experience.reduce(profile, { type: "closeProfile" });
   assert.equal(back.step, "askAgain");
-  assert.equal(medallionShown(back.step, back.hint), true);
+  assert.equal(discoveryNameShown(back.step, back.hint), true);
+});
+
+test("the sea of unsaid names is named on the landing, after 'Não sei' and on the collective map, never during the discovery", () => {
+  for (const step of ["opening", "noName", "collective"] as Step[]) assert.equal(isLayerActive("seaOfUnsaid", step), true, step);
+  for (const step of ["clue1", "clue2", "clue3", "humanScale", "profile", "askAgain", "nameSaid"] as Step[]) {
+    assert.equal(isLayerActive("seaOfUnsaid", step), false, step);
+  }
 });
 
 test("the medallion and the name never show outside the second question, whatever the help level", () => {
   for (const step of ["opening", "noName", "clue1", "clue2", "clue3", "humanScale", "profile", "nameSaid", "collective"] as Step[]) {
     for (const hint of [0, 1, 2]) {
-      assert.equal(medallionShown(step, hint), false, `${step} ${hint}`);
+      assert.equal(medallionShown(step), false, `${step} ${hint}`);
       assert.equal(discoveryNameShown(step, hint), false, `${step} ${hint}`);
     }
   }

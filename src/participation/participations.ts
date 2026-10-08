@@ -35,9 +35,12 @@ export function chooseDiscovery(
   collective: Collective,
   offered: Record<string, number> = {},
   order: readonly string[] = [],
+  exclude: readonly string[] = [],
 ): FeaturedScientist | null {
   if (candidates.length === 0) return null;
-  const leastPresent = fewestBy(candidates, (c) => presenceOf(collective, c.id));
+  const fresh = candidates.filter((c) => !exclude.includes(c.id));
+  const pool = fresh.length > 0 ? fresh : candidates;
+  const leastPresent = fewestBy(pool, (c) => presenceOf(collective, c.id));
   const leastOffered = fewestBy(leastPresent, (c) => offered[c.id] ?? 0);
   return inCuratorialOrder(leastOffered, order)[0];
 }

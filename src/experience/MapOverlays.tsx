@@ -6,14 +6,14 @@ import { Tooltip } from "react-tooltip";
 import type { ScientistPhoto } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
 import { TRENCH_CAPTION, TRENCH_SERIES, trenchDepths, trenchRing } from "@/map/trench";
-import { isAboveWater, type NameKind } from "@/participation/collective";
+import { isAboveWater, unnamedCount, type Collective, type NameKind } from "@/participation/collective";
 import { cellExtremes, traceContours } from "@/map/contours";
 import { MapAnchor, useMapView } from "@/map/MapCanvas";
 import { toScreen, type Camera } from "@/map/mapRenderer";
 import { presenceAt, type SheetPoint } from "@/participation/sheetLayout";
 import { markPhotoMissing, PHOTO_CLASS, useAvailablePhoto } from "./PortraitPhoto";
 import { discoveryNameShown, isLayerActive, medallionShown, sheetMarkTone, type LensVariant, type SheetMarkTone } from "./layers";
-import { labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
+import { FORCED_LABEL, labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
 import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, toFieldPoint, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { ArrowIcon, TriangleMarker } from "./ui";
@@ -57,6 +57,15 @@ export function describeCounts(p: SheetPoint) {
   ]
     .filter((t) => t !== null)
     .join(", ");
+}
+
+export function explainedPoints(points: SheetPoint[]) {
+  const named = points.filter((p) => p.name !== null);
+  const rock = named.filter((p) => p.recall > 0).sort((a, b) => b.recall - a.recall || a.key.localeCompare(b.key))[0];
+  const reef = named
+    .filter((p) => p.reef > 0)
+    .sort((a, b) => Number(a.recall > 0) - Number(b.recall > 0) || b.reef - a.reef || a.key.localeCompare(b.key))[0];
+  return { rock: rock?.key ?? null, reef: reef?.key ?? null };
 }
 
 function CoralDot() {
@@ -119,6 +128,7 @@ function CollectiveMarkers({
       const [sx, sy] = toScreen(view, position.x, position.y);
       return { p, position, sx, sy, named: p.name !== null && presenceAt(p) > 0 };
     });
+    const explained = explainedPoints(points);
     const fonts = new Map<string, number>();
     const labels = items
       .filter((i) => i.named)
@@ -127,13 +137,14 @@ function CollectiveMarkers({
         const presence = presenceAt(p);
         const font = labelFontSize(presence, unit);
         fonts.set(p.key, font);
-        const counts = p.reef > 0 ? (p.recall > 0 ? 1.9 : 1.1) : 0;
+        const words = (explained.rock === p.key ? 6 : 0) + (explained.reef === p.key ? 9.5 : 0) + (p.returned > 0 ? 4.4 : 0);
+        const counts = (p.reef > 0 ? (p.recall > 0 ? 1.9 : 1.1) : 0) + words;
         return {
           key: p.key,
           x: sx,
           y: sy,
           ...labelSize(p.name ?? "", presence, font, (said ? 2 : 0) + counts),
-          priority: said ? Number.POSITIVE_INFINITY : presence,
+          priority: said ? Number.POSITIVE_INFINITY : explained.rock === p.key || explained.reef === p.key ? FORCED_LABEL + presence : presence,
         };
       });
     const placements = placeLabels({
@@ -143,7 +154,7 @@ function CollectiveMarkers({
       bounds: { x0: 10, y0: 10, x1: view.W - 10, y1: view.H - 10 },
     });
     const order = new Map([...labels].sort((a, b) => b.priority - a.priority).map((l, i) => [l.key, i]));
-    return { items, fonts, placements, order };
+    return { items, fonts, placements, order, explained };
   }, [field, points, saidId, view, unit, obstacles]);
 
   return (
@@ -184,13 +195,18 @@ function CollectiveMarkers({
                 </span>
                 {p.recall > 0 && (
                   <span className="ml-[0.45em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
-                    {p.recall}
+                    {layout.explained.rock === p.key ? `${p.recall} ${p.recall === 1 ? "lembrou" : "lembraram"}` : p.recall}
                   </span>
                 )}
                 {p.reef > 0 && (
                   <span className="ml-[0.45em] inline-flex items-baseline gap-[0.22em] font-notation text-ink-soft" style={{ fontSize: font * 0.74 }}>
                     <CoralDot />
-                    {p.reef}
+                    {layout.explained.reef === p.key ? `${p.reef} ${p.reef === 1 ? "conheceu" : "conheceram"} aqui` : p.reef}
+                  </span>
+                )}
+                {p.returned > 0 && (
+                  <span className="ml-[0.45em] font-notation font-medium text-ink" style={{ fontSize: font * 0.74 }}>
+                    voltou
                   </span>
                 )}
                 {said && (
@@ -482,7 +498,7 @@ export function PortraitMedallion({
 }) {
   const paths = usePortraitContourPaths(field);
   const src = useAvailablePhoto(photo?.src);
-  const active = medallionShown(step, hint);
+  const active = medallionShown(step);
   const named = discoveryNameShown(step, hint);
   return (
     <div aria-hidden={!named} inert={!named} className={visible(active)}>
@@ -607,11 +623,7 @@ export function SaidNameLabel({
   const tally = rock
     ? `LEMBRADA SEM PISTA ${point.recall === 1 ? "1 VEZ" : `${point.recall} VEZES`}`
     : `CONHECIDA AQUI POR ${point.reef === 1 ? "1 PESSOA" : `${point.reef} PESSOAS`}`;
-  const contour = rock
-    ? "+1 CURVA DE NÍVEL · LEMBRADA SEM PISTA"
-    : point.reef === 1 && point.recall === 0
-      ? "RECIFE · VEIO À TONA"
-      : "+1 NO RECIFE · CONHECIDA NESTA FEIRA";
+  const contour = rock ? "+1 · A ROCHA SOBE" : point.reef === 1 && point.recall === 0 ? "RECIFE · VEIO À TONA" : "+1 · O RECIFE CRESCE";
   const { elongation } = field.summit(toFieldPoint(point));
   return (
     <div aria-hidden="true" className={visible(active)}>
@@ -637,6 +649,12 @@ export function SaidNameLabel({
             {tally}
             {illustrative ? " · CONTAGEM ILUSTRATIVA" : ""}
           </span>
+          <span
+            className="fade-in bg-paper px-2 font-notation text-[calc(var(--u)*12px)] tracking-[0.08em] whitespace-nowrap text-ink-soft"
+            style={{ animationDelay: "3800ms" }}
+          >
+            FEIRA DO CONHECIMENTO 2026 · FOLHA 01 · PONTO {point.code}
+          </span>
         </div>
       </MapAnchor>
       <div ref={contourLabel} className="pointer-events-none absolute top-0 left-0 opacity-0 transition-opacity duration-500">
@@ -649,87 +667,55 @@ export function SaidNameLabel({
   );
 }
 
-const LABELED_DEPTHS = [1, 10, 100, 1000];
+function SeaCaption({ u, large }: { u: number; large: boolean }) {
+  return (
+    <div className="map-label absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap">
+      <span className="font-primary font-medium tracking-[0.3em] text-ink-soft italic" style={{ fontSize: (large ? 16 : 13) * u }}>
+        MAR DOS NOMES NÃO DITOS
+      </span>
+    </div>
+  );
+}
 
-export function SilenceTrench({ step, silences, count, unit }: { step: Step; silences: number; count: number | null; unit: number }) {
+export function SeaOfUnsaid({ step, collective, unit }: { step: Step; collective: Collective; unit: number }) {
   const rings = useMemo(() => TRENCH_SERIES.map((_, i) => trenchRing(i)), []);
-  const reached = trenchDepths(silences);
+  const reached = trenchDepths(unnamedCount(collective));
   const paths = useRef<(SVGPathElement | null)[]>([]);
-  const labels = useRef<(SVGTextElement | null)[]>([]);
-  const caption = useRef<SVGGElement>(null);
   useMapView((v) => {
     reached.forEach((_, i) => {
       const pts = rings[i].map((p) => toScreen(v, p.x, p.y));
       paths.current[i]?.setAttribute("d", `M${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L")}Z`);
-      labels.current[i]?.setAttribute("x", (pts[0][0] - 4).toFixed(1));
-      labels.current[i]?.setAttribute("y", (pts[0][1] + 4).toFixed(1));
     });
-    const [cx, cy] = toScreen(v, TRENCH_CAPTION.x, TRENCH_CAPTION.y);
-    caption.current?.setAttribute("transform", `translate(${cx.toFixed(1)} ${cy.toFixed(1)})`);
   });
-  if (silences <= 0) return null;
+  const active = isLayerActive("seaOfUnsaid", step);
+  const u = Math.max(0.85, unit);
   return (
-    <svg aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full overflow-visible ${visible(isLayerActive("silenceTrench", step))}`}>
-      {reached.map((value, i) => (
-        <path
-          key={value}
-          ref={(el) => {
-            paths.current[i] = el;
-          }}
-          fill="none"
-          stroke={value === 10 || value === 100 || value === 1000 ? "var(--isobath-index)" : "var(--isobath)"}
-          strokeWidth={value === 10 || value === 100 || value === 1000 ? 1.1 : 0.8}
-        />
-      ))}
-      {reached.map((value, i) => (
-        <text
-          visibility={unit >= 0.8 && LABELED_DEPTHS.includes(value) ? undefined : "hidden"}
-          key={value}
-          ref={(el) => {
-            labels.current[i] = el;
-          }}
-          textAnchor="end"
-          className="font-notation"
-          fontSize={11}
-          fill="var(--ink-soft)"
-          opacity={0.8}
-          paintOrder="stroke"
-          stroke="var(--paper)"
-          strokeWidth={4}
-        >
-          {value}
-        </text>
-      ))}
-      <g ref={caption}>
-        <text
-          textAnchor="middle"
-          className="font-primary italic"
-          fontSize={13 * Math.max(0.85, unit)}
-          fontWeight={500}
-          letterSpacing="0.32em"
-          fill="var(--ink-soft)"
-          paintOrder="stroke"
-          stroke="var(--paper)"
-          strokeWidth={4}
-        >
-          MAR DOS NOMES NÃO DITOS
-        </text>
-        {count !== null && (
-          <text
-            y={19 * Math.max(0.85, unit)}
-            textAnchor="middle"
-            className="font-notation"
-            fontSize={12 * Math.max(0.85, unit)}
-            fill="var(--ink-soft)"
-            paintOrder="stroke"
-            stroke="var(--paper)"
-            strokeWidth={4}
-          >
-            {count} pessoas não lembraram nenhum nome
-          </text>
-        )}
-      </g>
-    </svg>
+    <div aria-hidden="true" className={visible(active)}>
+      {reached.length > 0 && (
+        <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+          {reached.map((value, i) => (
+            <path
+              key={value}
+              ref={(el) => {
+                paths.current[i] = el;
+              }}
+              fill="none"
+              stroke={value === 10 || value === 100 || value === 1000 ? "var(--isobath-index)" : "var(--isobath)"}
+              strokeWidth={value === 10 || value === 100 || value === 1000 ? 1.1 : 0.8}
+            />
+          ))}
+        </svg>
+      )}
+      {step === "noName" ? (
+        <div className="absolute top-[calc(var(--u)*120px)] right-[calc(var(--u)*240px)]">
+          <SeaCaption u={u} large />
+        </div>
+      ) : (
+        <MapAnchor x={TRENCH_CAPTION.x} y={TRENCH_CAPTION.y}>
+          <SeaCaption u={u} large={step === "collective"} />
+        </MapAnchor>
+      )}
+    </div>
   );
 }
 

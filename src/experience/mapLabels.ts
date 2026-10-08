@@ -11,6 +11,8 @@ const GAP = 5;
 const PADDING = 6;
 const AREA_PER_LABEL = 42000;
 const AMBIGUITY = 12;
+export const FORCED_LABEL = 1e6;
+
 const SIDES: Side[] = ["east", "northeast", "southeast", "west", "northwest", "southwest", "north", "south"];
 
 function letterWidth(letter: string) {
@@ -22,7 +24,7 @@ function letterWidth(letter: string) {
 
 export function labelFontSize(mentions: number, unit: number) {
   const tier = Math.min(1, Math.max(0, Math.log10(Math.max(1, mentions)) / 2.5));
-  return Math.max(13, (15 + 4 * tier) * unit);
+  return Math.max(15, (17 + 5 * tier) * unit);
 }
 
 export function labelSize(name: string, mentions: number, fontSize: number, extra = 0) {
@@ -97,7 +99,7 @@ export function placeLabels({
   };
   const budget = Math.max(6, Math.floor(((bounds.x1 - bounds.x0) * (bounds.y1 - bounds.y0)) / AREA_PER_LABEL));
   for (const label of ordered) {
-    const forced = label.priority === Number.POSITIVE_INFINITY;
+    const forced = label.priority >= FORCED_LABEL;
     if (!forced && placed.size >= budget) continue;
     if (place(label, (box) => free(box) && clear(box, label))) continue;
     if (!forced) continue;

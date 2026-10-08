@@ -10,7 +10,7 @@ export type Layer =
   | "medallion"
   | "summitPortrait"
   | "saidName"
-  | "silenceTrench";
+  | "seaOfUnsaid";
 
 export const LAYER_STEPS: Record<Layer, readonly Step[]> = {
   sheetMarkers: ["opening", "noName", "askAgain", "collective"],
@@ -22,7 +22,7 @@ export const LAYER_STEPS: Record<Layer, readonly Step[]> = {
   medallion: ["askAgain"],
   summitPortrait: ["nameSaid"],
   saidName: ["nameSaid"],
-  silenceTrench: ["collective"],
+  seaOfUnsaid: ["opening", "noName", "collective"],
 };
 
 export function isLayerActive(layer: Layer, step: Step) {
@@ -33,8 +33,8 @@ export function activeLayers(step: Step) {
   return (Object.keys(LAYER_STEPS) as Layer[]).filter((layer) => isLayerActive(layer, step));
 }
 
-export function medallionShown(step: Step, hint: number) {
-  return isLayerActive("medallion", step) && hint >= 1;
+export function medallionShown(step: Step) {
+  return isLayerActive("medallion", step);
 }
 
 export function discoveryNameShown(step: Step, hint: number) {

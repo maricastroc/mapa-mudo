@@ -70,13 +70,15 @@ test("the sea of the collective map stays out of the discovery and reveal scenes
   for (const step of ["opening", "noName", "askAgain", "nameSaid", "collective"] as Step[]) assert.equal(sceneAt(step, id, screen).target.scene.sea, 1, step);
 });
 
-test("rocks and reefs show only when a name is said and on the collective map", () => {
+test("the islands already named stay visible on every view of the whole sheet, and leave the discovery to her own terrain", () => {
   const screen = SCREENS[0];
   const id = "ruth-nussenzweig";
-  for (const step of ["opening", "noName", "clue1", "clue2", "clue3", "humanScale", "profile", "askAgain"] as Step[]) {
+  for (const step of ["clue1", "clue2", "clue3", "humanScale", "profile"] as Step[]) {
     assert.equal(sceneAt(step, id, screen).target.scene.features, 0, step);
   }
-  for (const step of ["nameSaid", "collective"] as Step[]) assert.equal(sceneAt(step, id, screen).target.scene.features, 1, step);
+  for (const step of ["opening", "noName", "askAgain", "nameSaid", "collective"] as Step[]) {
+    assert.equal(sceneAt(step, id, screen).target.scene.features, 1, step);
+  }
 });
 
 test("the landing shows the whole sheet at a smaller scale beside the question, with every point clear of the copy", () => {

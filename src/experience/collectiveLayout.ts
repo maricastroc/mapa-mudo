@@ -13,8 +13,10 @@ export function collectiveObstacles(screen: Screen, unit: number): Box[] {
   return [column, scale, { x0: screen.W - 800, y0: screen.H - 42, x1: screen.W, y1: screen.H }];
 }
 
+export const SEA_TITLE = { w: 360, h: 28 };
+
 export function trenchCaptionBox(view: { W: number; H: number; fit: number; camera: Camera }, unit: number): Box {
   const [x, y] = toScreen(view, TRENCH_CAPTION.x, TRENCH_CAPTION.y);
-  const half = 205 * Math.max(0.85, unit);
-  return { x0: x - half, y0: y - 16 * unit, x1: x + half, y1: y + 26 * unit };
+  const u = Math.max(0.85, unit);
+  return { x0: x - (SEA_TITLE.w / 2) * u, y0: y - (SEA_TITLE.h / 2) * u, x1: x + (SEA_TITLE.w / 2) * u, y1: y + (SEA_TITLE.h / 2) * u };
 }

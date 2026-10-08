@@ -35,10 +35,10 @@ test("known scientists only appear once they have been named, as rock or as reef
     sheetPoints(catalog, layout, EMPTY_COLLECTIVE).some((p) => p.scientistId === "k2"),
     false,
   );
-  const remembered = sheetPoints(catalog, layout, record(EMPTY_COLLECTIVE, { kind: "recall", id: "k2", at: 1 })).find((p) => p.scientistId === "k2");
+  const remembered = sheetPoints(catalog, layout, record(EMPTY_COLLECTIVE, { uid: "s1", kind: "recall", id: "k2", at: 1 })).find((p) => p.scientistId === "k2");
   assert.ok(remembered);
   assert.deepEqual([remembered.recall, remembered.reef], [1, 0]);
-  const discovered = sheetPoints(catalog, layout, record(EMPTY_COLLECTIVE, { kind: "discovery", id: "k2", at: 1 })).find((p) => p.scientistId === "k2");
+  const discovered = sheetPoints(catalog, layout, record(EMPTY_COLLECTIVE, { uid: "s2", kind: "discovery", id: "k2", at: 1 })).find((p) => p.scientistId === "k2");
   assert.ok(discovered);
   assert.deepEqual([discovered.recall, discovered.reef], [0, 1]);
 });
@@ -62,7 +62,7 @@ test("vacancies are kept as unnamed points", () => {
 });
 
 test("participations are independent from the editorial catalog", () => {
-  const twice = record(record(EMPTY_COLLECTIVE, { kind: "recall", id: "k1", at: 1 }), { kind: "recall", id: "k1", at: 2 });
+  const twice = record(record(EMPTY_COLLECTIVE, { uid: "s3", kind: "recall", id: "k1", at: 1 }), { uid: "s4", kind: "recall", id: "k1", at: 2 });
   assert.deepEqual(twice.recall, { k1: 2 });
   assert.equal("hints" in catalog.known[0], false);
 });
@@ -113,7 +113,7 @@ test("a new name never moves the points already on the map", () => {
   const { catalog: big, participations } = crowd(30);
   const withoutOne = fromCounts(Object.fromEntries(Object.entries(participations).filter(([id]) => id !== "extra-3")));
   const before = new Map(sheetPoints(big, EMPTY_SHEET, withoutOne).map((p) => [p.key, `${p.x},${p.y}`]));
-  const after = sheetPoints(big, EMPTY_SHEET, record(withoutOne, { kind: "discovery", id: "extra-3", at: 1 }));
+  const after = sheetPoints(big, EMPTY_SHEET, record(withoutOne, { uid: "s5", kind: "discovery", id: "extra-3", at: 1 }));
   for (const p of after) if (before.has(p.key)) assert.equal(`${p.x},${p.y}`, before.get(p.key), p.key);
   assert.ok(after.some((p) => p.key === "extra-3"));
 });
