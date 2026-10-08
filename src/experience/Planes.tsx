@@ -8,7 +8,7 @@ import type { DiscoveryScenery, FeaturedScientist } from "@/content/scientists/t
 import { presenceAt, type SheetPoint } from "@/participation/sheetLayout";
 import { Actions, type ResponseHandlers } from "./Actions";
 import { describeCounts } from "./MapOverlays";
-import type { State, Step } from "./state";
+import { MAX_HINT, type State, type Step } from "./state";
 import type { Screen } from "./screen";
 import { ProfilePlane } from "./ProfilePlane";
 import { CARTOUCHE, NEXT_ACTION } from "./collectiveLayout";
@@ -27,7 +27,7 @@ export type Commands = {
   openProfile: () => void;
   openProfileOf: (id: string) => void;
   closeProfile: () => void;
-  seeAgain: () => void;
+  hint: () => void;
   name: (text: string) => void;
   seeMap: () => void;
   anotherName: () => void;
@@ -127,23 +127,31 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
           : `FOLHA 01 — CIÊNCIA DELAS · MAPA MUDO${context.illustrative ? " · RELEVO ILUSTRATIVO" : ""}`}
       </SheetHeader>
       <div className="absolute inset-0 transition-transform duration-500 compact:contents" style={lift}>
+        {again && (
+          <p className="absolute top-[150px] left-[64px] text-[40px] leading-[1.25] font-medium compact:static compact:text-[22px]">
+            <PaperStrip className="px-4 py-1.5 compact:px-2">Agora você sabe.</PaperStrip>
+          </p>
+        )}
         <Heading className="display absolute top-[228px] left-[64px] text-[150px] leading-none compact:static compact:text-[60px]">
           <span className="block w-fit bg-paper px-4 compact:px-2">DIGA</span>
           <span className="block w-fit bg-paper px-4 compact:px-2">UM NOME.</span>
         </Heading>
-        <p
-          key={again ? "knows" : "ask"}
-          className={`absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px] ${again ? "fade-in" : ""}`}
-          style={{ animationDelay: "2400ms" }}
-        >
-          <PaperStrip className="px-4 py-1.5 compact:px-2">{again ? "Agora você sabe." : "Diga o nome de uma cientista brasileira."}</PaperStrip>
-        </p>
+        {!again && (
+          <p className="absolute top-[548px] left-[64px] text-[32px] leading-[1.25] font-medium compact:static compact:text-[20px]">
+            <PaperStrip className="px-4 py-1.5 compact:px-2">Diga o nome de uma cientista brasileira.</PaperStrip>
+          </p>
+        )}
         <div ref={actions} className="absolute top-[618px] left-[52px] compact:static">
           <Actions
             speak={{ label: "Falar", accent: again }}
             type
             extras={
-              again ? [{ label: "Ver de novo", onClick: commands.seeAgain }] : [{ label: "Não sei", onClick: commands.dontKnow }]
+              again
+                ? [
+                    ...(state.hint < MAX_HINT ? [{ label: state.hint === 0 ? "Mostrar o retrato" : "Mostrar o nome", onClick: commands.hint }] : []),
+                    { label: "Ver o mapa", arrow: true, onClick: commands.seeMap },
+                  ]
+                : [{ label: "Não sei", onClick: commands.dontKnow }]
             }
             speech={context.speech}
             response={state.response}
@@ -152,6 +160,13 @@ function SayAName({ state, screen, commands, reducedMotion, context, again }: Pl
           />
         </div>
       </div>
+      {again && state.hint > 0 && (
+        <span className="sr-only" role="status">
+          {state.hint >= MAX_HINT
+            ? `O nome dela é ${context.discovery?.canonicalName ?? ""}.`
+            : "O retrato dela apareceu no mapa, no ponto destacado."}
+        </span>
+      )}
     </Stage>
   );
 }
@@ -160,24 +175,24 @@ function NoName({ screen, commands, context }: PlaneProps) {
   return (
     <Stage screen={screen}>
       <SheetHeader>FOLHA 01 — MAPA MUDO · 1 PONTO SELECIONADO</SheetHeader>
-      <div className="absolute top-[196px] left-[64px] flex flex-col items-start gap-2.5 compact:static compact:gap-1.5">
+      <div className="absolute bottom-[612px] left-[64px] flex flex-col items-start gap-2 compact:static compact:gap-1.5">
         <p className="fade-in text-[32px] font-medium compact:text-[20px]">
           <PaperStrip className="px-4 py-1.5 compact:px-2">Não veio nenhum nome?</PaperStrip>
         </p>
         {context.sharedSilence !== null && (
-          <p className="fade-in text-[24px] leading-[1.35] font-medium [animation-delay:450ms] compact:text-[17px]">
+          <p className="fade-in text-[24px] leading-[1.35] font-medium [animation-delay:120ms] compact:text-[17px]">
             <PaperStrip className="px-4 py-1 compact:px-2">Até agora, {context.sharedSilence} pessoas também não lembraram.</PaperStrip>
           </p>
         )}
-        <p className="fade-in text-[24px] leading-[1.35] text-ink-soft [animation-delay:850ms] compact:text-[17px]">
+        <p className="fade-in text-[24px] leading-[1.35] text-ink-soft [animation-delay:200ms] compact:text-[17px]">
           <PaperStrip className="px-4 py-1 compact:px-2">Esse silêncio diz muito sobre quem aprendemos a reconhecer.</PaperStrip>
         </p>
       </div>
-      <Heading className="display fade-in absolute top-[364px] left-[64px] text-[92px] leading-[1.06] [animation-delay:1200ms] compact:static compact:text-[40px]">
+      <Heading className="display fade-in absolute top-[304px] left-[64px] text-[92px] leading-[1.06] [animation-delay:250ms] compact:static compact:text-[40px]">
         <span className="block w-fit bg-paper px-4 compact:px-2">ENTÃO VAMOS</span>
         <span className="block w-fit bg-paper px-4 compact:px-2">DESCOBRIR UMA.</span>
       </Heading>
-      <div className="fade-in absolute top-[600px] left-[64px] [animation-delay:1800ms] compact:static">
+      <div className="fade-in absolute top-[540px] left-[64px] [animation-delay:900ms] compact:static">
         <Button variant="primary" arrow onClick={commands.approach}>
           Aproximar
         </Button>
@@ -613,7 +628,9 @@ export function mapDescription(state: State, context: PlaneContext) {
     case "profile":
       return `Escala 1:1: o retrato de ${context.discovery?.canonicalName ?? "uma cientista"} continua à direita enquanto a ficha dela é lida.`;
     case "askAgain":
-      return `Mapa mudo inteiro. O ${point} agora mostra o retrato de ${context.discovery?.canonicalName ?? "uma cientista"}, esperando que o nome seja dito.`;
+      if (state.hint >= MAX_HINT) return `Mapa mudo inteiro. O ${point} mostra o retrato e o nome de ${context.discovery?.canonicalName ?? "uma cientista"}.`;
+      if (state.hint > 0) return `Mapa mudo inteiro. O ${point}, da cientista que você acabou de conhecer, mostra o retrato dela, ainda sem o nome.`;
+      return `Mapa mudo inteiro. O ${point}, da cientista que você acabou de conhecer, aparece destacado, esperando que o nome seja dito.`;
     case "nameSaid":
       return state.saidKind === "recall"
         ? `Aproximação à ilha de ${name}: uma nova curva de nível surge ao redor do topo e depois se integra às demais.`

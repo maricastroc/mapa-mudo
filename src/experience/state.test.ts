@@ -281,10 +281,11 @@ test("continuing from the profile behaves like continuing from the human scale",
   assert.equal(counted.collective.reef[discovery.id], 1);
 });
 
-test("the profile can also be opened from the waiting point on the map and returns there", () => {
+test("the profile can also be opened from the waiting point on the map once the name is shown, and returns there", () => {
   const asking = run(DISCOVERY_PATH);
   assert.equal(asking.step, "askAgain");
-  const profile = run([{ type: "openProfile" }], asking);
+  assert.equal(run([{ type: "openProfile" }], asking).step, "askAgain");
+  const profile = run([{ type: "hint" }, { type: "hint" }, { type: "openProfile" }], asking);
   assert.equal(profile.step, "profile");
   assert.equal(profile.profileReturn, "askAgain");
   const back = run([{ type: "closeProfile" }], profile);
@@ -310,6 +311,34 @@ test("the collective map can no longer be opened before the first answer", () =>
   const state = run([{ type: "seeMap" }]);
   assert.equal(state.step, "opening");
   assert.equal(run([{ type: "dontKnow" }, { type: "seeMap" }]).step, "noName");
+});
+
+test("help at the second question never turns the answer into a memory", () => {
+  const asking = run(DISCOVERY_PATH);
+  const discovery = FEATURED.find((s) => s.id === asking.discoveryId);
+  assert.ok(discovery);
+  for (const hints of [0, 1, 2]) {
+    const helped = run(Array.from({ length: hints }, () => ({ type: "hint" }) as Action), asking);
+    assert.equal(helped.hint, hints);
+    const said = run([{ type: "name", text: discovery.canonicalName }], helped);
+    assert.equal(said.saidKind, "discovery");
+    assert.equal(said.collective.recall[discovery.id] ?? 0, 0);
+    assert.equal(said.collective.reef[discovery.id], 1);
+  }
+  const again = run([{ type: "hint" }, { type: "hint" }, { type: "seeMap" }, { type: "anotherName" }], asking);
+  assert.equal(again.hint, 0);
+});
+
+test("after a discovery, the second question also leads to the collective map without counting a name", () => {
+  const asking = run(DISCOVERY_PATH);
+  assert.equal(asking.step, "askAgain");
+  const map = run([{ type: "seeMap" }], asking);
+  assert.equal(map.step, "collective");
+  assert.equal(map.saidId, null);
+  assert.deepEqual(map.collective, asking.collective);
+  assert.deepEqual(map.events, asking.events);
+  const next = run([{ type: "anotherName" }, { type: "name", text: FEATURED[0].canonicalName }], map);
+  assert.equal(next.saidKind, "recognition");
 });
 
 test("the installation map only names scientists from the curated package", () => {

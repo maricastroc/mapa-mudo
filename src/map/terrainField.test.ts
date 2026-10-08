@@ -125,3 +125,38 @@ test("coral marks the rim of an emerged reef, not its middle", () => {
   }
   assert.ok(rim > 0.9);
 });
+
+test("discovery scenes see the seabed relief under a reef instead of its flat top", () => {
+  const { field } = fieldWith([{ id: "reef", x: 720, y: 560, recall: 0, reef: 8 }]);
+  assert.ok(Math.abs(field.terrain(720, 560, 12, field.peaks, 1) - REEF_LAND) < 0.5);
+  let low = Infinity;
+  let high = -Infinity;
+  for (let y = 530; y <= 590; y += 3) {
+    for (let x = 690; x <= 750; x += 3) {
+      const h = field.terrain(x, y, 12, field.peaks, 0);
+      assert.equal(h, field.ground(x, y, 12, field.peaks));
+      low = Math.min(low, h);
+      high = Math.max(high, h);
+    }
+  }
+  assert.ok(high < 0, `seabed top ${high.toFixed(2)}`);
+  assert.ok(high - low > 1, `seabed varies ${(high - low).toFixed(2)}`);
+});
+
+test("without island features the sheet shows only the seabed, the same as an empty map", () => {
+  const { field } = fieldWith([
+    { id: "rock", x: 720, y: 560, recall: 6, reef: 0 },
+    { id: "reef", x: 900, y: 400, recall: 0, reef: 5 },
+  ]);
+  const { field: empty } = fieldWith([]);
+  for (const [x, y] of [
+    [720, 560],
+    [735, 570],
+    [900, 400],
+    [880, 410],
+    [300, 300],
+  ]) {
+    assert.equal(field.terrain(x, y, SHEET_OCTAVES, field.peaks, 1, 0), empty.terrain(x, y, SHEET_OCTAVES, empty.peaks, 1, 0));
+  }
+  assert.ok(field.terrain(720, 560, SHEET_OCTAVES, field.peaks, 1, 1) > 0);
+});

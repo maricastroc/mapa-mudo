@@ -1,10 +1,11 @@
 import type { FeaturedScientist } from "@/content/scientists/types";
 import type { TerrainField } from "@/map/terrainField";
-import { SHEET, type Camera, type Channel, type Lens, type Scene, type SceneTarget, type Timing } from "@/map/mapRenderer";
+import { SHEET, type Camera, type Channel, type Lens, type Scene, type SceneTarget, type Timing } from "../map/mapRenderer.ts";
 import type { SheetPoint } from "@/participation/sheetLayout";
 import type { State, Step } from "./state";
 import type { Screen } from "./screen";
-import { sceneryFor } from "./scenery";
+import { clearOfCopy, overviewCamera } from "./copyClearance.ts";
+import { sceneryFor } from "./scenery.ts";
 
 export type Point = { x: number; y: number };
 
@@ -46,7 +47,7 @@ export function discoveryGeometry(
     return { code: "", summit: center, transect: [center], sample: center, places: [], hasCore: false };
   }
   const scenery = sceneryFor(discovery);
-  const summit = field.summit(toFieldPoint(point));
+  const summit = { x: point.x, y: point.y };
   const plan = scenery.transect;
   const transect = plan
     ? Array.from({ length: plan.points }, (_, k) => ({
@@ -78,6 +79,8 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
     highlight: null,
     newContour: null,
     newContourKind: "rock",
+    sea: 1,
+    features: 0,
     settle: 0,
     settleFrom: null,
     highlightSettles: false,
@@ -148,9 +151,9 @@ export function sceneFor(
   const sheet = compact
     ? camera({ x: 800, y: 380 }, 1, [W * 0.5, H * 0.27])
     : camera({ x: SHEET.w / 2, y: SHEET.h / 2 }, 1, [ox + (SHEET.w / 2) * fit, oy + (SHEET.h / 2) * fit]);
-  const summitOnScreen = (): [number, number] => {
-    const e = sheet.z * fit;
-    return [sheet.ax * W + (geometry.summit.x - sheet.x) * e, sheet.ay * H + (geometry.summit.y - sheet.y) * e];
+  const summitOnScreen = (view: Camera = sheet): [number, number] => {
+    const e = view.z * fit;
+    return [view.ax * W + (geometry.summit.x - view.x) * e, view.ay * H + (geometry.summit.y - view.y) * e];
   };
   const frame = (center: [number, number], d: number) => ({ x: center[0], y: center[1], r: ((d * u) / 2) * 0.97 });
   const placement = portraitPlacement(screen);
@@ -165,24 +168,28 @@ export function sceneFor(
 
   const step: Step = state.step;
   switch (step) {
-    case "opening":
-      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 900, 0), minInterval: SHEET_MIN_INTERVAL });
-      timings = { camera: t(0, 2600), lens: t(0, 500), portrait: t(0, 1400), strata: NO_TIMING, intervalLock: t(0, 1200) };
+    case "opening": {
+      const overview = overviewCamera(screen, points.filter((p) => p.scientistId !== null)) ?? sheet;
+      scene = withDefaults({ ...fixed, camera: overview, lens: circle(summitOnScreen(overview), 900, 0), minInterval: 2 * SHEET_MIN_INTERVAL });
+      timings = { camera: t(0, 2600), lens: t(0, 500), portrait: t(0, 1400), strata: NO_TIMING, intervalLock: t(0, 1200), sea: t(0, 1800), features: t(0, 1800) };
       break;
-    case "noName":
+    }
+    case "noName": {
+      const view = clearOfCopy("noName", screen, sheet, geometry.summit);
       scene = withDefaults({
         ...fixed,
-        camera: sheet,
-        lens: circle(summitOnScreen(), 110, 1),
+        camera: view,
+        lens: circle(summitOnScreen(view), 110, 1),
         lensInk: 0.5,
         minInterval: SHEET_MIN_INTERVAL,
       });
-      timings = { lens: t(350, 1300), lensInk: t(900, 800) };
+      timings = { camera: t(0, 1300), lens: t(350, 1300), lensInk: t(900, 800) };
       break;
+    }
     case "clue1": {
       const a = at(900, 540, 0.5, 0.3);
-      scene = withDefaults({ ...approaching, camera: camera(geometry.summit, 6, a), lens: circle(a, 150, 1), lensInk: 0.9 });
-      timings = { camera: t(0, 2700), lens: t(500, 1500), lensInk: t(900, 900) };
+      scene = withDefaults({ ...approaching, camera: camera(geometry.summit, 6, a), lens: circle(a, 150, 1), lensInk: 0.9, sea: 0 });
+      timings = { camera: t(0, 2700), lens: t(500, 1500), lensInk: t(900, 900), sea: t(0, 1800) };
       break;
     }
     case "clue2": {
@@ -192,7 +199,7 @@ export function sceneFor(
         a[0] + (geometry.summit.x - geometry.sample.x) * e,
         a[1] + (geometry.summit.y - geometry.sample.y) * e,
       ];
-      scene = withDefaults({ ...approaching, camera: camera(geometry.sample, 40, a), lens: circle(summitAt, 92, 1), lensInk: 0.9 });
+      scene = withDefaults({ ...approaching, camera: camera(geometry.sample, 40, a), lens: circle(summitAt, 92, 1), lensInk: 0.9, sea: 0 });
       timings = { camera: t(0, 2500), lens: t(400, 1600) };
       break;
     }
@@ -206,6 +213,7 @@ export function sceneFor(
           lensInk: 1,
           strata: 1,
           density: 34,
+          sea: 0,
         });
         timings = { camera: t(0, 2700), strata: t(800, 2000), density: t(800, 2000), lens: t(1100, 1500) };
         break;
@@ -218,6 +226,7 @@ export function sceneFor(
         portrait: 1,
         portraitMask: 1,
         density: 26,
+        sea: 0,
       });
       timings = {
         camera: t(0, 2700),
@@ -239,9 +248,12 @@ export function sceneFor(
         strata: geometry.hasCore ? 1 : 0,
         portrait: 1,
         density: 30,
+        sea: 0,
       });
       timings = {
         camera: t(0, 2600),
+        sea: t(0, 1800),
+        features: t(0, 1800),
         portrait: t(400, 2400),
         portraitMask: t(600, 2200),
         strata: NO_TIMING,
@@ -250,8 +262,9 @@ export function sceneFor(
       };
       break;
     }
-    case "askAgain":
-      scene = withDefaults({ ...fixed, camera: sheet, lens: circle(summitOnScreen(), 70, 0), minInterval: SHEET_MIN_INTERVAL });
+    case "askAgain": {
+      const view = clearOfCopy("askAgain", screen, sheet, geometry.summit);
+      scene = withDefaults({ ...fixed, camera: view, lens: circle(summitOnScreen(view), 70, 0), minInterval: SHEET_MIN_INTERVAL });
       timings = {
         camera: t(250, 3000),
         portrait: t(0, 1500),
@@ -259,8 +272,10 @@ export function sceneFor(
         lens: t(0, 700),
         density: t(0, 1500),
         lensInk: t(0, 700),
+        sea: t(700, 2300),
       };
       break;
+    }
     case "nameSaid": {
       const point = points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
       const id = point?.scientistId ?? null;
@@ -279,6 +294,7 @@ export function sceneFor(
         highlight: id,
         newContour: id,
         newContourKind: kind,
+        features: 1,
         settle: 1,
         settleFrom: 0,
       });
@@ -289,6 +305,8 @@ export function sceneFor(
         lensInk: t(0, 600),
         peaks: t(growth, growthFor),
         settle: t(settle, settleFor),
+        sea: t(0, 1800),
+        features: t(0, 1800),
       };
       break;
     }
@@ -301,6 +319,7 @@ export function sceneFor(
         highlight: state.saidId,
         newContour: state.saidId,
         newContourKind: contributionKind(state),
+        features: 1,
         settle: 1,
         settleFrom: returning ? 1 : 0,
         highlightSettles: true,
@@ -312,6 +331,8 @@ export function sceneFor(
         lens: t(0, 500),
         lensInk: t(0, 500),
         settle: returning ? NO_TIMING : t(COLLECTIVE_SETTLE.delay, COLLECTIVE_SETTLE.duration),
+        sea: t(0, 1800),
+        features: t(0, 1800),
       };
       break;
     }

@@ -20,8 +20,8 @@ import {
   SheetMarkers,
   SilenceTrench,
   Transect,
-  lensVariantFor,
 } from "./MapOverlays";
+import { lensVariantFor } from "./layers";
 import { PLANE_LABELS, PlaneContent, mapDescription, type Commands, type PlaneContext } from "./Planes";
 import { discoveryGeometry, LEVELS_PER_MENTION, restCameraFor, sceneFor, toFieldPoint } from "./scenes";
 import { useReducedMotion, useScreen } from "./screen";
@@ -150,7 +150,7 @@ function LiveExperience() {
       openProfile: () => dispatch({ type: "openProfile" }),
       openProfileOf: (id: string) => dispatch({ type: "openProfile", id }),
       closeProfile: () => dispatch({ type: "closeProfile" }),
-      seeAgain: () => dispatch({ type: "seeAgain" }),
+      hint: () => dispatch({ type: "hint" }),
       name: (text: string) => dispatch({ type: "name", text }),
       seeMap: () => dispatch({ type: "seeMap" }),
       anotherName: () => dispatch({ type: "anotherName" }),
@@ -246,6 +246,7 @@ function LiveExperience() {
         ))}
         <PortraitMedallion
           step={state.step}
+          hint={state.hint}
           field={field}
           geometry={geometry}
           name={discovery?.canonicalName ?? ""}

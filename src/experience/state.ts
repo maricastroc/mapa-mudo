@@ -18,6 +18,8 @@ export type Step =
 
 export const CLUE_STEPS: Step[] = ["clue1", "clue2", "clue3"];
 
+export const MAX_HINT = 2;
+
 export type Candidate = { id: string; name: string };
 
 export type Response =
@@ -37,6 +39,7 @@ export type State = {
   events: CollectiveEvent[];
   fresh: boolean;
   silenceRecorded: boolean;
+  hint: number;
   discoveryId: string | null;
   saidId: string | null;
   saidKind: NameKind | null;
@@ -56,7 +59,7 @@ export type Action =
   | { type: "continue" }
   | { type: "openProfile"; id?: string }
   | { type: "closeProfile" }
-  | { type: "seeAgain" }
+  | { type: "hint" }
   | { type: "name"; text: string }
   | { type: "confirm"; id: string }
   | { type: "reject" }
@@ -128,6 +131,7 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
     events: [],
     fresh: true,
     silenceRecorded: false,
+    hint: 0,
     discoveryId: null,
     saidId: null,
     saidKind: null,
@@ -203,7 +207,7 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
       case "continue":
         if ((state.step !== "humanScale" && state.step !== "profile") || !state.discoveryId) return state;
         if (state.step === "profile" && state.profileReturn !== "humanScale") return state;
-        return state.alreadySaid ? say(state, state.discoveryId, "cued") : goTo(state, "askAgain");
+        return state.alreadySaid ? say(state, state.discoveryId, "cued") : goTo(state, "askAgain", { hint: 0 });
       case "openProfile": {
         if (action.id !== undefined) {
           if (state.step !== "nameSaid" && state.step !== "collective") return state;
@@ -211,6 +215,7 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
           return goTo(state, "profile", { discoveryId: action.id, profileReturn: state.step });
         }
         if ((state.step !== "humanScale" && state.step !== "askAgain") || !state.discoveryId) return state;
+        if (state.step === "askAgain" && state.hint < MAX_HINT) return state;
         return goTo(state, "profile", { profileReturn: state.step });
       }
       case "closeProfile": {
@@ -218,8 +223,8 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
         const back = state.profileReturn === "nameSaid" ? "collective" : (state.profileReturn ?? "humanScale");
         return goTo(state, back, { profileReturn: null });
       }
-      case "seeAgain":
-        return state.step === "askAgain" && state.discoveryId ? goTo(state, "humanScale") : state;
+      case "hint":
+        return state.step === "askAgain" && state.hint < MAX_HINT ? { ...state, hint: state.hint + 1 } : state;
       case "name": {
         const mode = modeOf(state.step);
         if (!mode) return state;
@@ -249,7 +254,7 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
         };
       }
       case "seeMap":
-        return state.step === "nameSaid" ? goTo(state, "collective") : state;
+        return state.step === "nameSaid" || state.step === "askAgain" ? goTo(state, "collective") : state;
       case "anotherName":
         return goTo(state, "opening", {
           saidId: null,
@@ -258,6 +263,7 @@ export function createExperience(catalog: Catalog, initialCollective: Collective
           discoveryId: null,
           profileReturn: null,
           silenceRecorded: false,
+          hint: 0,
         });
       case "restart":
         return {

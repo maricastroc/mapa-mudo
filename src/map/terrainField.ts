@@ -245,8 +245,8 @@ export class TerrainField {
     );
   }
 
-  private relief(x: number, y: number, octaves: number) {
-    return SEA_RELIEF * fbm(this.land, x / 260, y / 260, octaves, 0.58) * (1 - trenchCalm(x, y));
+  private relief(x: number, y: number, octaves: number, sea = 1) {
+    return SEA_RELIEF * fbm(this.land, x / 260, y / 260, octaves, 0.58) * (1 - trenchCalm(x, y) * sea);
   }
 
   private climb(p: Peak) {
@@ -282,22 +282,23 @@ export class TerrainField {
     return u * u + v * v;
   }
 
-  private groundAt(x: number, y: number, qx: number, qy: number, octaves: number, active: Peak[]) {
+  private groundAt(x: number, y: number, qx: number, qy: number, octaves: number, active: Peak[], sea = 1, features = 1) {
     let sum = 0;
     let weight = 0;
     let anchors = 0;
     for (let i = 0; i < active.length; i++) {
       const p = active[i];
-      if (p.presence <= 0) continue;
+      const presence = p.presence * features;
+      if (presence <= 0) continue;
       const e = this.local(p, qx, qy) * p.k;
       if (e > 10) continue;
       const g = Math.exp(-e);
-      sum += p.amp * g * p.presence;
-      const gd = g * g * p.presence;
+      sum += p.amp * g * presence;
+      const gd = g * g * presence;
       weight += gd;
       anchors += p.anchor * gd;
     }
-    const free = this.relief(x, y, octaves);
+    const free = this.relief(x, y, octaves, sea);
     const d = weight > 1 ? 1 : weight;
     const relief = weight > 1e-9 ? free * (1 - d) + (anchors / weight) * d : free;
     return SEA_FLOOR + relief + sum;
@@ -308,14 +309,15 @@ export class TerrainField {
     return this.groundAt(x, y, qx, qy, octaves, active);
   }
 
-  terrain(x: number, y: number, octaves: number, active: Peak[]) {
+  terrain(x: number, y: number, octaves: number, active: Peak[], sea = 1, features = 1) {
     const [qx, qy] = this.warped(x, y);
-    let h = this.groundAt(x, y, qx, qy, octaves, active);
+    let h = this.groundAt(x, y, qx, qy, octaves, active, sea, features);
+    if (sea <= 0 || features <= 0) return h;
     for (let i = 0; i < active.length; i++) {
       const p = active[i];
       if (p.reef <= 0 || p.reefTop <= h) continue;
       const rho = Math.sqrt(this.local(p, qx, qy));
-      const w = (1 - smoothstep(p.reef - 4, p.reef + REEF_SHELF, rho)) * Math.min(1, p.reef / 8);
+      const w = (1 - smoothstep(p.reef - 4, p.reef + REEF_SHELF, rho)) * Math.min(1, p.reef / 8) * sea * features;
       if (w > 0) h += (p.reefTop - h) * w;
     }
     return h;

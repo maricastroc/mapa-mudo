@@ -20,13 +20,15 @@ export type Scene = {
   highlight: string | null;
   newContour: string | null;
   newContourKind: "rock" | "reef";
+  sea: number;
+  features: number;
   settle: number;
   settleFrom: number | null;
   highlightSettles: boolean;
   minInterval: number;
 };
 
-export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle";
+export type Channel = "camera" | "strata" | "portrait" | "portraitMask" | "lens" | "lensInk" | "intervalLock" | "density" | "peaks" | "settle" | "sea" | "features";
 export type Timing = { delay: number; duration: number };
 export type ReliefPoint = FieldPoint;
 export type SceneTarget = { scene: Scene; timings: Partial<Record<Channel, Timing>>; relief: ReliefPoint[] };
@@ -43,7 +45,7 @@ export type View = {
 type Frame = Scene["portraitFrame"];
 type RGB = [number, number, number];
 type Transition<T> = { from: T; to: T; start: number; duration: number };
-type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density" | "settle";
+type ScalarChannel = "strata" | "portrait" | "portraitMask" | "lensInk" | "intervalLock" | "lockedInterval" | "density" | "settle" | "sea" | "features";
 type ContourLevel = { value: number; alpha: number; index: number; coastline: boolean; lines: Polyline[] };
 
 export function toScreen(v: { W: number; H: number; fit: number; camera: Camera }, x: number, y: number): [number, number] {
@@ -104,6 +106,8 @@ function readRGB(value: string, fallback: RGB): RGB {
   const n = parseInt(m[1], 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
+
+const blend = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 
 const mix = (a: RGB, b: RGB, t: number) =>
   `rgb(${Math.round(a[0] + (b[0] - a[0]) * t)},${Math.round(a[1] + (b[1] - a[1]) * t)},${Math.round(a[2] + (b[2] - a[2]) * t)})`;
@@ -214,6 +218,8 @@ export class MapRenderer {
       lockedInterval: still(this.scene.lockedInterval),
       density: still(this.scene.density),
       settle: still(this.scene.settle),
+      sea: still(this.scene.sea),
+      features: still(this.scene.features),
     };
     this.currentView = { W: 1, H: 1, fit: 1, camera: this.scene.camera, lens: this.scene.lens, newContour: null };
     this.readColors();
@@ -281,6 +287,8 @@ export class MapRenderer {
       lockedInterval: transition(this.scene.lockedInterval, target.scene.lockedInterval, "intervalLock"),
       density: transition(this.scene.density, target.scene.density, "density"),
       settle: transition(target.scene.settleFrom ?? this.scene.settle, target.scene.settle, "settle"),
+      sea: transition(this.scene.sea, target.scene.sea, "sea"),
+      features: transition(this.scene.features, target.scene.features, "features"),
     };
     const present = new Set<string>();
     for (const r of target.relief) {
@@ -397,6 +405,8 @@ export class MapRenderer {
     const wT = (1 - e) * (1 - r);
     const wE = e * (1 - r);
     const groundT = ground ? 1 - e : wT;
+    const sea = clamp(scene.sea, 0, 1);
+    const features = clamp(scene.features, 0, 1);
     const pf = scene.portraitFrame;
     const G = this.G;
     const active: Peak[] = this.field.activePeaks(ox, oy, ox + (cols * cell) / scale, oy + (rows * cell) / scale);
@@ -407,7 +417,7 @@ export class MapRenderer {
       for (let j = 0; j < rows; j++) {
         const wy = oy + j * worldCell;
         for (let i = 0; i < cols; i++) {
-          const v = this.field.terrain(ox + i * worldCell, wy, octaves, active);
+          const v = this.field.terrain(ox + i * worldCell, wy, octaves, active, sea, features);
           T[j * cols + i] = v;
           if (v < tmin) tmin = v;
           if (v > tmax) tmax = v;
@@ -466,7 +476,7 @@ export class MapRenderer {
       const s = kb + zeros - kEf;
       const alpha = clamp(s + 1, 0, 1);
       if (alpha < 0.02) continue;
-      const coastline = m === 0 && wT > 0.5;
+      const coastline = m === 0 && wT > 0.5 && sea > 0.5;
       levels.push({
         value,
         alpha,
@@ -480,7 +490,7 @@ export class MapRenderer {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
-    if (wT > 0.01) this.paintWater(cols, rows, wT);
+    if (wT * sea > 0.01) this.paintWater(cols, rows, wT * sea);
 
     const thin = clamp(this.fit, 0.75, 1.3);
     ctx.lineJoin = "round";
@@ -498,8 +508,9 @@ export class MapRenderer {
     const lensShape = () => ctx.roundRect(lens.x - lens.w / 2, lens.y - lens.h / 2, lens.w, lens.h, Math.min(lens.r, lens.w / 2, lens.h / 2));
     const levelColor = (level: ContourLevel) => {
       if (level.coastline) return mix(this.colors.ink, this.colors.ink, 0);
-      if (level.value < 0) return mix(this.colors.isobath, this.colors.isobathIndex, level.index);
-      return mix(this.colors.line, this.colors.indexLine, level.index);
+      const land = blend(this.colors.line, this.colors.indexLine, level.index);
+      if (level.value >= 0 || sea <= 0) return mix(land, land, 0);
+      return mix(land, blend(this.colors.isobath, this.colors.isobathIndex, level.index), sea);
     };
     const paintLevels = (opacity: number) => {
       for (const level of levels) {
@@ -531,7 +542,7 @@ export class MapRenderer {
       paintLevels(1);
     }
 
-    if (wT > 0.5) this.paintCoral(active, ox, oy, scale, cols, rows, wT);
+    if (wT > 0.5 && sea * features > 0.02) this.paintCoral(active, ox, oy, scale, cols, rows, wT * sea * features);
 
     if (lens.o > 0.01 && scene.lensInk > 0.01) {
       ctx.save();

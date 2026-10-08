@@ -12,12 +12,12 @@ import { MapAnchor, useMapView } from "@/map/MapCanvas";
 import { toScreen, type Camera } from "@/map/mapRenderer";
 import { presenceAt, type SheetPoint } from "@/participation/sheetLayout";
 import { markPhotoMissing, PHOTO_CLASS, useAvailablePhoto } from "./PortraitPhoto";
+import { discoveryNameShown, isLayerActive, medallionShown, sheetMarkTone, type LensVariant, type SheetMarkTone } from "./layers";
 import { labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
 import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, toFieldPoint, type DiscoveryGeometry } from "./scenes";
 import type { Step } from "./state";
 import { ArrowIcon, TriangleMarker } from "./ui";
 
-const SHEET_STEPS: Step[] = ["opening", "noName", "askAgain", "collective"];
 const PORTRAIT_TOOLTIP = "portrait-name";
 
 export function mapPosition(field: TerrainField, p: SheetPoint) {
@@ -61,6 +61,29 @@ export function describeCounts(p: SheetPoint) {
 
 function CoralDot() {
   return <span aria-hidden="true" className="inline-block size-[0.62em] translate-y-[0.02em] self-center rounded-full bg-accent" />;
+}
+
+const POINT_MARKS: Record<SheetMarkTone, { w: number; h: number; fill: string; stroke: string; width: number }> = {
+  unknown: { w: 9, h: 8, fill: "none", stroke: "var(--isobath-index)", width: 1.2 },
+  revealed: { w: 9, h: 8, fill: "var(--accent)", stroke: "var(--accent)", width: 0.8 },
+  waiting: { w: 12, h: 11, fill: "var(--accent)", stroke: "var(--accent)", width: 0.8 },
+};
+
+function PointMark({ tone }: { tone: SheetMarkTone }) {
+  const m = POINT_MARKS[tone];
+  return (
+    <svg
+      aria-hidden="true"
+      width={m.w}
+      height={m.h}
+      viewBox={`0 0 ${m.w} ${m.h}`}
+      className="absolute top-0 left-0 block overflow-visible"
+      style={{ transform: `translate(${-m.w / 2}px, ${-m.h}px)` }}
+    >
+      {tone === "waiting" && <circle cx={m.w / 2} cy={m.h * 0.62} r={13} fill="none" stroke="var(--accent)" strokeWidth={1.5} />}
+      <path d={`M${m.w / 2} 0.6L${m.w - 0.6} ${m.h - 0.6}L0.6 ${m.h - 0.6}Z`} fill={m.fill} stroke={m.stroke} strokeWidth={m.width} />
+    </svg>
+  );
 }
 
 function labelPosition(placement: LabelPlacement, x: number, y: number): CSSProperties {
@@ -213,7 +236,7 @@ export function SheetMarkers({
   returning: boolean;
   onOpenProfile: (id: string) => void;
 }) {
-  const onSheet = SHEET_STEPS.includes(step);
+  const onSheet = isLayerActive("sheetMarkers", step);
   if (step === "collective") {
     return (
       <nav aria-label="Nomes no mapa" className={visible(onSheet)}>
@@ -233,15 +256,14 @@ export function SheetMarkers({
   return (
     <div aria-hidden="true" className={visible(onSheet)}>
       {points.map((p) => {
-        const { x, y } = mapPosition(field, p);
-        const reserved = p.scientistId !== null && p.scientistId === discoveryId && (step === "noName" || step === "askAgain");
+        const selected = p.scientistId !== null && p.scientistId === discoveryId;
+        const tone = sheetMarkTone(presenceAt(p), selected, step);
         return (
-          <MapAnchor key={p.key} x={x} y={y}>
+          <MapAnchor key={p.key} x={p.x} y={p.y} className={tone === "waiting" ? "z-10" : undefined}>
             <div
-              className={`flex -translate-x-[6px] -translate-y-[11px] items-end gap-1.5 transition-opacity duration-500 ${reserved ? "opacity-0" : step === "noName" ? "opacity-40" : "opacity-100"}`}
+              className={`transition-opacity duration-500 ${selected && step === "noName" ? "opacity-0" : step === "noName" ? "opacity-40" : "opacity-100"}`}
             >
-              <TriangleMarker />
-              <span className="mb-[-1px] block h-0 w-[calc(var(--u)*70px)] border-b-[1.5px] border-ink" />
+              <PointMark tone={tone} />
             </div>
           </MapAnchor>
         );
@@ -252,7 +274,7 @@ export function SheetMarkers({
 
 export function PlaceNames({ step, geometry }: { step: Step; geometry: DiscoveryGeometry }) {
   return (
-    <div aria-hidden="true" className={visible(step === "clue1")}>
+    <div aria-hidden="true" className={visible(isLayerActive("placeNames", step))}>
       {geometry.places.map((l) => (
         <MapAnchor key={l.text} x={l.x} y={l.y}>
           <span
@@ -268,12 +290,11 @@ export function PlaceNames({ step, geometry }: { step: Step; geometry: Discovery
 }
 
 export function PointLabel({ step, geometry }: { step: Step; geometry: DiscoveryGeometry }) {
-  const text =
-    step === "noName"
+  const text = !isLayerActive("pointLabel", step)
+    ? null
+    : step === "noName"
       ? `PONTO ${geometry.code} · SEM NOME`
-      : step === "clue1" || step === "clue2"
-        ? `PONTO ${geometry.code}`
-        : null;
+      : `PONTO ${geometry.code}`;
   const onRight = step === "noName";
   return (
     <div aria-hidden="true" className={visible(text !== null)}>
@@ -302,7 +323,7 @@ export function Transect({ step, geometry, prefix }: { step: Step; geometry: Dis
     line.current?.setAttribute("points", pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" "));
     pts.forEach(([x, y], i) => groups.current[i]?.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`));
   });
-  const active = step === "clue2";
+  const active = isLayerActive("transect", step);
   return (
     <svg aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full overflow-visible ${visible(active)}`}>
       <polyline
@@ -352,26 +373,6 @@ export function Transect({ step, geometry, prefix }: { step: Step; geometry: Dis
       )}
     </svg>
   );
-}
-
-export type LensVariant = "none" | "crosshair" | "crosshairLong" | "dot" | "core" | "portrait";
-
-export function lensVariantFor(step: Step): LensVariant {
-  switch (step) {
-    case "noName":
-      return "crosshair";
-    case "clue1":
-      return "crosshairLong";
-    case "clue2":
-      return "dot";
-    case "clue3":
-      return "core";
-    case "humanScale":
-    case "profile":
-      return "portrait";
-    default:
-      return "none";
-  }
 }
 
 export function LensRing({ variant }: { variant: LensVariant }) {
@@ -464,6 +465,7 @@ export function usePortraitContourPaths(field: TerrainField, n = 72, levelCount 
 
 export function PortraitMedallion({
   step,
+  hint,
   field,
   geometry,
   name,
@@ -471,6 +473,7 @@ export function PortraitMedallion({
   onOpen,
 }: {
   step: Step;
+  hint: number;
   field: TerrainField;
   geometry: DiscoveryGeometry;
   name: string;
@@ -479,18 +482,19 @@ export function PortraitMedallion({
 }) {
   const paths = usePortraitContourPaths(field);
   const src = useAvailablePhoto(photo?.src);
-  const active = step === "askAgain";
+  const active = medallionShown(step, hint);
+  const named = discoveryNameShown(step, hint);
   return (
-    <div aria-hidden={!active} inert={!active} className={visible(active)}>
+    <div aria-hidden={!named} inert={!named} className={visible(active)}>
       <MapAnchor x={geometry.summit.x} y={geometry.summit.y}>
         <button
           type="button"
           data-medallion-button
-          data-tooltip-id={PORTRAIT_TOOLTIP}
-          data-tooltip-content={name}
+          data-tooltip-id={named ? PORTRAIT_TOOLTIP : undefined}
+          data-tooltip-content={named ? name : undefined}
           onClick={onOpen}
-          aria-label={`Ver perfil de ${name}`}
-          className={`group absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] cursor-pointer rounded-full outline-none ${active ? "pointer-events-auto" : ""}`}
+          aria-label={named ? `Ver perfil de ${name}` : undefined}
+          className={`group absolute -translate-x-1/2 -translate-y-[calc(100%+var(--u)*14px)] rounded-full outline-none ${named ? "pointer-events-auto cursor-pointer" : ""}`}
         >
           <span
             aria-hidden="true"
@@ -510,12 +514,10 @@ export function PortraitMedallion({
             </svg>
           )}
         </button>
-        <div aria-hidden="true" className="absolute top-0 left-0 -translate-x-[6px] -translate-y-[11px]">
-          <TriangleMarker tone="accent" />
-        </div>
       </MapAnchor>
       <Tooltip
         id={PORTRAIT_TOOLTIP}
+        isOpen={named}
         place="top"
         offset={12}
         opacity={1}
@@ -550,7 +552,7 @@ export function SummitPortrait({
   const src = useAvailablePhoto(photo?.src);
   if (!point || !point.scientistId) return null;
   const summit = mapPosition(field, point);
-  const active = step === "nameSaid";
+  const active = isLayerActive("summitPortrait", step);
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={summit.x} y={summit.y}>
@@ -585,7 +587,7 @@ export function SaidNameLabel({
   kind: NameKind | null;
   illustrative: boolean;
 }) {
-  const active = step === "nameSaid";
+  const active = isLayerActive("saidName", step);
   const contourLabel = useRef<HTMLDivElement>(null);
   useMapView((v) => {
     const el = contourLabel.current;
@@ -667,7 +669,7 @@ export function SilenceTrench({ step, silences, count, unit }: { step: Step; sil
   });
   if (silences <= 0) return null;
   return (
-    <svg aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full overflow-visible ${visible(step === "collective")}`}>
+    <svg aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full overflow-visible ${visible(isLayerActive("silenceTrench", step))}`}>
       {reached.map((value, i) => (
         <path
           key={value}
@@ -750,7 +752,8 @@ export function ScaleRuler({ showTrack, baseZoom }: { showTrack: boolean; baseZo
     const b = SCALE_STOPS[i + 1];
     const t = Math.max(0, Math.min(1, (lz - Math.log(a.z)) / (Math.log(b.z) - Math.log(a.z))));
     const position = i + t;
-    const scale = Math.exp(Math.log(a.scale) + (Math.log(b.scale) - Math.log(a.scale)) * t);
+    const zoom = v.camera.z / baseZoom;
+    const scale = zoom < 1 ? Math.round(SCALE_STOPS[0].scale / zoom / 100_000) * 100_000 : Math.exp(Math.log(a.scale) + (Math.log(b.scale) - Math.log(a.scale)) * t);
     if (label.current) label.current.textContent = `ESCALA 1:${formatScale(scale)}`;
     if (caret.current) caret.current.style.left = `${(position / (SCALE_STOPS.length - 1)) * 100}%`;
     if (track.current) {
