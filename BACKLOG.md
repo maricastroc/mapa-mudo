@@ -16,11 +16,15 @@
 - Medalhão do retorno pequeno.
 - Rótulos de 11–13px pequenos para leitura à distância.
 - Saturação do mar no tema ÍRIS (tema escuro removido nesta iteração; a questão volta se houver variante escura).
-- Possível conflito semântico entre relevo físico (mangue, nível do mar) e relevo de menções.
-- Primeira menção de uma cientista `known`: o anel +1 nasce sobre um platô e aparece grande, porque o zoom foi calibrado para picos altos.
-- Picos de fixture com poucas menções (2–3) podem não fechar o anel +1 em encostas; os picos criados em execução usam platô, mas os do baseline não, para não mudar o terreno validado.
+- Uma rocha nova na encosta de uma ilha grande pode não fechar o anel +1 (o contorno se funde ao da vizinha).
+- No fim da feira os recifes ficam parecidos entre si, porque as descobertas se distribuem por igual; considerar variar a forma.
 
 ## Conteúdo e dados
+
+- Limiar de emersão do recife (`REEF_SURFACES_AT = 1`) e amostra mínima para contar o silêncio (`SILENCE_SAMPLE_MIN = 20`) são ajustáveis em `src/participation/collective.ts`. Simulação com distribuição honesta: limiar 3 só faz o primeiro recife aflorar perto de 100 visitantes; limiar 5, perto de 400.
+- Classificação por visita: "Diga outro nome" continua a mesma visita (resposta conta como reconhecimento); "Reiniciar" ou 90 s sem toque abrem visita nova. Quem chega antes dos 90 s e toca "Diga outro nome" entra como reconhecimento, não como lembrança.
+- Nomes fora do catálogo (fila de conferência) não contam como lembrança nem como silêncio.
+- Dados coletivos ficam só no `localStorage` do totem (`diga-um-nome:events:v2`); não há exportação nem cópia de segurança. A chave antiga `…:contributions:v1` é preservada e ignorada.
 
 - Curadoria factual das ~20 `FeaturedScientist` (feita fora do código).
 - Dicionário ampliado `KnownScientist` real, com aliases.

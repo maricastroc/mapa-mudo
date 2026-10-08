@@ -28,7 +28,11 @@ export const SCALE_STOPS = [
 export const LEVELS_PER_MENTION = 8;
 
 export function toFieldPoint(p: SheetPoint) {
-  return { id: p.scientistId ?? p.key, x: p.x, y: p.y, mentions: p.mentions * LEVELS_PER_MENTION };
+  return { id: p.scientistId ?? p.key, x: p.x, y: p.y, recall: p.recall, reef: p.reef };
+}
+
+export function contributionKind(state: State): "rock" | "reef" {
+  return state.saidKind === "recall" ? "rock" : "reef";
 }
 
 export function discoveryGeometry(
@@ -73,6 +77,7 @@ function withDefaults(scene: Partial<Scene> & Pick<Scene, "camera" | "lens" | "p
     density: 28,
     highlight: null,
     newContour: null,
+    newContourKind: "rock",
     settle: 0,
     settleFrom: null,
     highlightSettles: false,
@@ -260,8 +265,9 @@ export function sceneFor(
       const point = points.find((p) => p.scientistId !== null && p.scientistId === state.saidId);
       const id = point?.scientistId ?? null;
       const fieldPoint = point ? toFieldPoint(point) : null;
+      const kind = contributionKind(state);
       const summit = fieldPoint ? field.summit(fieldPoint) : geometry.summit;
-      const ring = fieldPoint ? field.growthRadius(fieldPoint) : 20;
+      const ring = fieldPoint ? (kind === "rock" ? field.growthRadius(fieldPoint) : field.reefRadiusOf(fieldPoint)) : 20;
       const a = at(820, 430, 0.5, 0.3);
       const { growth, growthFor, settle, settleFor } = CONTRIBUTION_TIMING;
       scene = withDefaults({
@@ -272,6 +278,7 @@ export function sceneFor(
         lockedInterval: Math.log2(LEVELS_PER_MENTION),
         highlight: id,
         newContour: id,
+        newContourKind: kind,
         settle: 1,
         settleFrom: 0,
       });
@@ -293,6 +300,7 @@ export function sceneFor(
         lens: circle(summitOnScreen(), 70, 0),
         highlight: state.saidId,
         newContour: state.saidId,
+        newContourKind: contributionKind(state),
         settle: 1,
         settleFrom: returning ? 1 : 0,
         highlightSettles: true,
