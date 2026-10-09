@@ -22,9 +22,11 @@ function letterWidth(letter: string) {
   return 0.68;
 }
 
-export function labelFontSize(mentions: number, unit: number) {
+export const MIN_LABEL_SIZE = 15;
+
+export function labelFontSize(mentions: number, unit: number, floor = MIN_LABEL_SIZE) {
   const tier = Math.min(1, Math.max(0, Math.log10(Math.max(1, mentions)) / 2.5));
-  return Math.max(15, (17 + 5 * tier) * unit);
+  return Math.max(floor, (17 + 5 * tier) * unit);
 }
 
 export function labelSize(name: string, mentions: number, fontSize: number, extra = 0) {
@@ -87,9 +89,16 @@ export function placeLabels({
     const own = distanceToBox(box, label.x, label.y);
     return !named.some((m) => m.key !== label.key && distanceToBox(box, m.x, m.y) < own + AMBIGUITY);
   };
+  const slide = (box: Box, side: Side): Box => {
+    if (side !== "north" && side !== "south") return box;
+    const w = box.x1 - box.x0;
+    if (w > bounds.x1 - bounds.x0) return box;
+    const x0 = Math.min(Math.max(box.x0, bounds.x0), bounds.x1 - w);
+    return { ...box, x0, x1: x0 + w };
+  };
   const place = (label: LabelRequest, accept: (box: Box) => boolean) => {
     for (const side of SIDES) {
-      const box = candidateBox(label, side);
+      const box = slide(candidateBox(label, side), side);
       if (!fits(box) || !accept(box)) continue;
       placed.set(label.key, { key: label.key, side, box });
       taken.push(box);

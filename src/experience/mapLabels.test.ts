@@ -107,3 +107,14 @@ test("the overview keeps a label budget so the relief stays ahead of the names",
   assert.equal(small.has("N0"), false);
   assert.ok(mean(kept) > mean(dropped));
 });
+
+test("on a narrow screen the label of the name just said slides back inside the screen instead of disappearing", () => {
+  const phone = { x0: 10, y0: 10, x1: 380, y1: 680 };
+  const said = { key: "said", x: 100, y: 200, ...labelSize("MARIA LAURA MOUZINHO LEITE LOPES", 1, labelFontSize(1, 0.72, 12), 2), priority: Number.POSITIVE_INFINITY };
+  const placed = placeLabels({ labels: [said], markers: [{ ...said, named: true }], obstacles: [{ x0: 0, y0: 262, x1: 390, y1: 690 }], bounds: phone }).get("said");
+  assert.ok(placed);
+  assert.ok(placed.box.x0 >= phone.x0 && placed.box.x1 <= phone.x1, `${placed.box.x0}..${placed.box.x1}`);
+  assert.ok(placed.box.x0 <= said.x && said.x <= placed.box.x1);
+  assert.ok(Math.max(placed.box.y0 - said.y, said.y - placed.box.y1, 0) <= 14);
+  assert.ok(placed.box.y1 <= 262);
+});

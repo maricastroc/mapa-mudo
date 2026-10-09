@@ -114,6 +114,15 @@ export function portraitPlacement(screen: Screen) {
 
 export const NEW_CONTOUR_RADIUS = 112;
 
+const SAID_ANCHOR = { x: 820, y: 430, cx: 0.5, cy: 0.17 };
+
+const SAID_NAME_MARGIN = 16;
+
+export function saidNameRoom(screen: Screen) {
+  const x = screen.compact ? SAID_ANCHOR.cx * screen.W : screen.ox + SAID_ANCHOR.x * screen.fit;
+  return 2 * (Math.min(x, screen.W - x) - SAID_NAME_MARGIN);
+}
+
 export const CONTRIBUTION_TIMING = { growth: 2600, growthFor: 1800, settle: 5900, settleFor: 1300 };
 
 export const COLLECTIVE_SETTLE = { delay: 4200, duration: 1600 };
@@ -289,7 +298,7 @@ export function sceneFor(
       const kind = contributionKind(state);
       const summit = fieldPoint ? field.summit(fieldPoint) : geometry.summit;
       const ring = fieldPoint ? (kind === "rock" ? field.growthRadius(fieldPoint) : field.reefRadiusOf(fieldPoint)) : 20;
-      const a = at(820, 430, 0.5, 0.3);
+      const a = at(SAID_ANCHOR.x, SAID_ANCHOR.y, SAID_ANCHOR.cx, SAID_ANCHOR.cy);
       const { growth, growthFor, settle, settleFor } = CONTRIBUTION_TIMING;
       scene = withDefaults({
         ...fixed,
