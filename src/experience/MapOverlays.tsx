@@ -13,9 +13,11 @@ import { toScreen, type Camera } from "@/map/mapRenderer";
 import { presenceAt, type SheetPoint } from "@/participation/sheetLayout";
 import { markPhotoMissing, PHOTO_CLASS, useAvailablePhoto } from "./PortraitPhoto";
 import { discoveryNameShown, isLayerActive, medallionShown, sheetMarkTone, type LensVariant, type SheetMarkTone } from "./layers";
-import { FORCED_LABEL, labelFontSize, labelSize, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
-import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, toFieldPoint, type DiscoveryGeometry } from "./scenes";
+import { FORCED_LABEL, labelFontSize, labelSize, MIN_LABEL_SIZE, placeLabels, type Box, type LabelPlacement } from "./mapLabels";
+import { COLLECTIVE_SETTLE, NEW_CONTOUR_RADIUS, SCALE_STOPS, saidNameRoom, toFieldPoint, type DiscoveryGeometry } from "./scenes";
+import type { Screen } from "./screen";
 import type { Step } from "./state";
+import { lineWidthInEm } from "./typography";
 import { ArrowIcon, TriangleMarker } from "./ui";
 
 const PORTRAIT_TOOLTIP = "portrait-name";
@@ -68,6 +70,10 @@ export function explainedPoints(points: SheetPoint[]) {
   return { rock: rock?.key ?? null, reef: reef?.key ?? null };
 }
 
+const UNEXPLAINED: { rock: string | null; reef: string | null } = { rock: null, reef: null };
+
+const COMPACT_MIN_LABEL_SIZE = 12;
+
 function CoralDot() {
   return <span aria-hidden="true" className="inline-block size-[0.62em] translate-y-[0.02em] self-center rounded-full bg-accent" />;
 }
@@ -97,7 +103,7 @@ function PointMark({ tone }: { tone: SheetMarkTone }) {
 
 function labelPosition(placement: LabelPlacement, x: number, y: number): CSSProperties {
   const top = placement.box.y0 - y;
-  if (placement.side === "north" || placement.side === "south") return { top, left: 0, transform: "translateX(-50%)" };
+  if (placement.side === "north" || placement.side === "south") return { top, left: (placement.box.x0 + placement.box.x1) / 2 - x, transform: "translateX(-50%)" };
   if (placement.side === "west" || placement.side === "northwest" || placement.side === "southwest") return { top, right: x - placement.box.x1 };
   return { top, left: placement.box.x0 - x };
 }
@@ -108,6 +114,7 @@ function CollectiveMarkers({
   saidId,
   view,
   unit,
+  compact,
   obstacles,
   returning,
   onOpenProfile,
@@ -117,6 +124,7 @@ function CollectiveMarkers({
   saidId: string | null;
   view: LabelView;
   unit: number;
+  compact: boolean;
   obstacles: Box[];
   returning: boolean;
   onOpenProfile: (id: string) => void;
@@ -128,14 +136,14 @@ function CollectiveMarkers({
       const [sx, sy] = toScreen(view, position.x, position.y);
       return { p, position, sx, sy, named: p.name !== null && presenceAt(p) > 0 };
     });
-    const explained = explainedPoints(points);
+    const explained = compact ? UNEXPLAINED : explainedPoints(points);
     const fonts = new Map<string, number>();
     const labels = items
       .filter((i) => i.named)
       .map(({ p, sx, sy }) => {
         const said = p.scientistId !== null && p.scientistId === saidId;
         const presence = presenceAt(p);
-        const font = labelFontSize(presence, unit);
+        const font = labelFontSize(presence, unit, compact ? COMPACT_MIN_LABEL_SIZE : MIN_LABEL_SIZE);
         fonts.set(p.key, font);
         const words = (explained.rock === p.key ? 6 : 0) + (explained.reef === p.key ? 9.5 : 0) + (p.returned > 0 ? 4.4 : 0);
         const counts = (p.reef > 0 ? (p.recall > 0 ? 1.9 : 1.1) : 0) + words;
@@ -155,7 +163,7 @@ function CollectiveMarkers({
     });
     const order = new Map([...labels].sort((a, b) => b.priority - a.priority).map((l, i) => [l.key, i]));
     return { items, fonts, placements, order, explained };
-  }, [field, points, saidId, view, unit, obstacles]);
+  }, [field, points, saidId, view, unit, compact, obstacles]);
 
   return (
     <>
@@ -237,6 +245,7 @@ export function SheetMarkers({
   saidId,
   view,
   unit,
+  compact,
   obstacles,
   returning,
   onOpenProfile,
@@ -248,6 +257,7 @@ export function SheetMarkers({
   saidId: string | null;
   view: LabelView;
   unit: number;
+  compact: boolean;
   obstacles: Box[];
   returning: boolean;
   onOpenProfile: (id: string) => void;
@@ -262,6 +272,7 @@ export function SheetMarkers({
           saidId={saidId}
           view={view}
           unit={unit}
+          compact={compact}
           obstacles={obstacles}
           returning={returning}
           onOpenProfile={onOpenProfile}
@@ -554,6 +565,14 @@ export function PortraitMedallion({
   );
 }
 
+const SUMMIT_PORTRAIT_RADIUS = 44;
+
+const SAID_NAME_SIZE = 58;
+
+const SAID_NAME_GAP = 30;
+
+const SAID_NAME_PADDING_EM = 0.92;
+
 export function SummitPortrait({
   step,
   field,
@@ -596,12 +615,16 @@ export function SaidNameLabel({
   point,
   kind,
   illustrative,
+  screen,
+  unit,
 }: {
   step: Step;
   field: TerrainField;
   point: SheetPoint | undefined;
   kind: NameKind | null;
   illustrative: boolean;
+  screen: Screen;
+  unit: number;
 }) {
   const active = isLayerActive("saidName", step);
   const contourLabel = useRef<HTMLDivElement>(null);
@@ -614,7 +637,7 @@ export function SaidNameLabel({
     const width = el.offsetWidth;
     const fitsRight = c.x + c.r + 18 + width < v.W - 16;
     const x = fitsRight ? c.x + c.r + 18 : Math.min(v.W - 16 - width, Math.max(16, c.x - width / 2));
-    const y = fitsRight ? c.y - c.r * 0.35 : Math.min(v.H - 48, c.y + c.r + 14);
+    const y = fitsRight ? c.y - c.r * 0.35 : Math.max(16, c.y - c.r - 14 - el.offsetHeight);
     el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
   });
   if (!point || !point.name || !point.scientistId) return null;
@@ -625,17 +648,17 @@ export function SaidNameLabel({
     : `CONHECIDA AQUI POR ${point.reef === 1 ? "1 PESSOA" : `${point.reef} PESSOAS`}`;
   const contour = rock ? "+1 · A ROCHA SOBE" : point.reef === 1 && point.recall === 0 ? "RECIFE · VEIO À TONA" : "+1 · O RECIFE CRESCE";
   const { elongation } = field.summit(toFieldPoint(point));
+  const ring = NEW_CONTOUR_RADIUS * elongation * screen.fit;
+  const top = Math.max(ring, SUMMIT_PORTRAIT_RADIUS * unit) + SAID_NAME_GAP * unit;
+  const nameSize = Math.min(SAID_NAME_SIZE * unit, saidNameRoom(screen) / (lineWidthInEm(`${point.name} +1`) + SAID_NAME_PADDING_EM));
   return (
     <div aria-hidden="true" className={visible(active)}>
       <MapAnchor x={summit.x} y={summit.y}>
-        <div
-          className="absolute left-0 flex -translate-x-1/2 flex-col items-center gap-1.5"
-          style={{ top: `calc(var(--u) * ${Math.round(NEW_CONTOUR_RADIUS * elongation + 30)}px)` }}
-        >
+        <div className="absolute left-0 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ top }}>
           <div
             key={active ? `${point.key}-${presenceAt(point)}` : "idle"}
-            className="fade-in flex items-baseline gap-[0.3em] bg-paper px-[0.3em] text-[calc(var(--u)*58px)] leading-none font-bold tracking-[0.03em] whitespace-nowrap uppercase"
-            style={{ animationDelay: "1500ms" }}
+            className="fade-in flex items-baseline gap-[0.3em] bg-paper px-[0.3em] leading-none font-bold tracking-[0.03em] whitespace-nowrap uppercase"
+            style={{ animationDelay: "1500ms", fontSize: nameSize }}
           >
             <span>{point.name}</span>
             <span className="fade-in bg-accent px-[0.16em] text-ink" style={{ animationDelay: "3300ms" }}>

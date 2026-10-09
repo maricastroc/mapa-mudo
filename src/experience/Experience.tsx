@@ -50,6 +50,8 @@ const STEPS_WITHOUT_SCALE_TRACK: Step[] = ["nameSaid", "collective", "opening", 
 
 const IDLE_RESET_MS = 90_000;
 
+const DEFAULT_FOOTER_HEIGHT = 44;
+
 const SYNC_EVERY_MS = 30_000;
 
 const ACTIVITY_EVENTS = ["pointerdown", "keydown", "wheel", "touchstart"] as const;
@@ -222,6 +224,16 @@ function LiveExperience() {
     [],
   );
 
+  const footer = useRef<HTMLElement>(null);
+  const [footerHeight, setFooterHeight] = useState(DEFAULT_FOOTER_HEIGHT);
+  useEffect(() => {
+    const el = footer.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => setFooterHeight(el.offsetHeight));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const unit = screen.compact ? 0.72 : screen.fit;
   const labelView = useMemo(() => ({ W: screen.W, H: screen.H, fit: screen.fit, camera: rest }), [screen, rest]);
   const obstacles = useMemo(
@@ -243,7 +255,7 @@ function LiveExperience() {
     <main
       data-layout={screen.compact ? "compact" : "stage"}
       className="fixed inset-0 overflow-clip bg-paper text-ink select-none"
-      style={{ "--u": unit } as CSSProperties}
+      style={{ "--u": unit, "--footer": `${footerHeight}px` } as CSSProperties}
     >
       <MapCanvas
         field={field}
@@ -261,6 +273,7 @@ function LiveExperience() {
           saidId={state.saidId}
           view={labelView}
           unit={unit}
+          compact={screen.compact}
           obstacles={obstacles}
           returning={state.previous === "profile"}
           onOpenProfile={commands.openProfileOf}
@@ -283,6 +296,8 @@ function LiveExperience() {
           point={points.find((p) => p.scientistId !== null && p.scientistId === state.saidId)}
           kind={state.saidKind}
           illustrative={PARTICIPATIONS_ARE_ILLUSTRATIVE}
+          screen={screen}
+          unit={unit}
         />
         {planes.map((p) => (
           <ZoomPlane
@@ -318,7 +333,7 @@ function LiveExperience() {
         />
         <ScaleRuler showTrack={!STEPS_WITHOUT_SCALE_TRACK.includes(state.step)} baseZoom={screen.compact ? 1.7 : 1} />
       </MapCanvas>
-      <footer className="pointer-events-none fixed right-2 bottom-0 z-10 flex items-center gap-4 bg-paper/80 pl-3 text-[12px] text-ink-soft">
+      <footer ref={footer} className="pointer-events-none fixed right-2 bottom-0 z-10 flex items-center gap-4 bg-paper/80 pl-3 text-[12px] text-ink-soft">
         <p className="font-primary tracking-[0.14em] uppercase compact:hidden">
           <span className="font-bold text-iris-blue">Íris</span> · Laboratório de Inovação e Dados · Governo do Ceará
         </p>

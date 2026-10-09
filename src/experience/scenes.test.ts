@@ -6,7 +6,7 @@ import { TerrainField } from "../map/terrainField.ts";
 import { EMPTY_COLLECTIVE, fromCounts, REEF_SURFACES_AT } from "../participation/collective.ts";
 import { sheetPoints } from "../participation/sheetLayout.ts";
 import { SHEET_LAYOUT } from "../participation/source.ts";
-import { collectiveArea, collidesWithCopy } from "./copyClearance.ts";
+import { collectiveArea, collidesWithCopy, COMPACT_COPY_TOP } from "./copyClearance.ts";
 import { discoveryGeometry, LEVELS_PER_MENTION, sceneFor, toFieldPoint } from "./scenes.ts";
 import type { Screen } from "./screen.ts";
 import { createExperience, type Step } from "./state.ts";
@@ -16,7 +16,7 @@ function screenOf(W: number, H: number): Screen {
   return { W, H, fit, ox: (W - SHEET.w * fit) / 2, oy: (H - SHEET.h * fit) / 2, compact: W < 820 || W / H < 1.05 };
 }
 
-const SCREENS = [screenOf(1440, 900), screenOf(1470, 707), screenOf(1280, 720), screenOf(1920, 1080), screenOf(430, 900), screenOf(768, 1024)];
+const SCREENS = [screenOf(1440, 900), screenOf(1470, 707), screenOf(1280, 720), screenOf(1920, 1080), screenOf(430, 900), screenOf(390, 690), screenOf(768, 1024)];
 const experience = createExperience(CATALOG, EMPTY_COLLECTIVE, () => 1000);
 const points = sheetPoints(CATALOG, SHEET_LAYOUT, EMPTY_COLLECTIVE);
 const field = new TerrainField([], LEVELS_PER_MENTION, REEF_SURFACES_AT);
@@ -127,5 +127,11 @@ test("the collective map frames every island beside the left column and on scree
       assert.ok(x - r >= area.x0 - 1 && x + r <= area.x1 + 1, `${where} leaves the map area horizontally`);
       assert.ok(y - r >= area.y0 - 1 && y + r <= area.y1 + 1, `${where} leaves the map area vertically`);
     }
+  }
+});
+
+test("on phones the collective map ends above the copy, so no island hides behind the legend", () => {
+  for (const screen of SCREENS.filter((s) => s.compact)) {
+    assert.ok(collectiveArea(screen).y1 <= COMPACT_COPY_TOP * screen.H, `${screen.W}x${screen.H}`);
   }
 });

@@ -30,7 +30,7 @@ export const POINT_FOOTPRINT: Record<SheetCopyStep, Box[]> = {
 };
 
 const MARGIN = 24;
-const COMPACT_COPY_TOP = 0.38;
+export const COMPACT_COPY_TOP = 0.38;
 
 export function footprintAt(step: SheetCopyStep, x: number, y: number, scale = 1): Box[] {
   return POINT_FOOTPRINT[step].map((b) => ({ x0: x + b.x0 * scale, y0: y + b.y0 * scale, x1: x + b.x1 * scale, y1: y + b.y1 * scale }));
@@ -66,13 +66,13 @@ export const COLLECTIVE_COLUMN = { x0: 0, y0: 0, x1: CARTOUCHE.x + CARTOUCHE.w +
 
 const SHEET_HEIGHT = 900;
 const COLLECTIVE_GAP = 28;
-const COMPACT_COLLECTIVE_COPY = 352;
+const COMPACT_MAP_GAP = 8;
 
 export type Disc = { x: number; y: number; r: number };
 
 export function collectiveArea(screen: Screen) {
   const { W, H, fit, ox, oy } = screen;
-  if (screen.compact) return { x0: 12, y0: 52, x1: W - 12, y1: H - COMPACT_COLLECTIVE_COPY };
+  if (screen.compact) return { x0: 12, y0: 52, x1: W - 12, y1: COMPACT_COPY_TOP * H - COMPACT_MAP_GAP };
   return {
     x0: ox + (COLLECTIVE_COLUMN.x1 + COLLECTIVE_GAP) * fit,
     y0: Math.max(Math.max(0, oy) + 28 * fit, 36 * fit + 44),
@@ -111,7 +111,7 @@ export function overviewCamera(screen: Screen, points: { x: number; y: number }[
   const { W, H, fit, ox, oy } = screen;
   if (screen.compact) {
     const top = 56;
-    const bottom = COMPACT_COPY_TOP * H - 8;
+    const bottom = COMPACT_COPY_TOP * H - COMPACT_MAP_GAP;
     const z = Math.min((W - 32) / ((x1 - x0) * fit), (bottom - top) / ((y1 - y0) * fit));
     return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, z, ax: 0.5, ay: (top + bottom) / 2 / H };
   }

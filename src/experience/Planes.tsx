@@ -70,7 +70,7 @@ function handlersFrom(c: Commands): ResponseHandlers {
 function Stage({ screen, children }: { screen: Screen; children: ReactNode }) {
   if (screen.compact) {
     return (
-      <div className="pointer-events-auto absolute inset-x-0 bottom-0 flex max-h-[62%] flex-col items-start gap-3 overflow-y-auto overscroll-contain px-4 pt-4 pb-14">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-(--footer) flex max-h-[calc(62%_-_var(--footer))] flex-col items-start gap-3 overflow-y-auto overscroll-contain px-4 pt-4 pb-3">
         {children}
       </div>
     );
@@ -676,7 +676,7 @@ function Collective({ state, screen, commands, context }: PlaneProps) {
         </p>
       )}
       <div
-        className="fade-in absolute flex flex-col items-start gap-3 [animation-delay:2600ms] compact:static compact:flex-row compact:flex-wrap"
+        className="fade-in absolute flex flex-col items-start gap-3 [animation-delay:2600ms] compact:sticky compact:-bottom-3 compact:-mx-4 compact:-mb-3 compact:flex-row compact:flex-wrap compact:self-stretch compact:border-t compact:border-ink/15 compact:bg-paper compact:px-4 compact:py-3"
         style={screen.compact ? undefined : { left: NEXT_ACTION.x, top: NEXT_ACTION.y - 76 }}
       >
         <Button variant="outline" arrow onClick={commands.discoverAnother}>
