@@ -1,0 +1,93 @@
+"use client";
+
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useReducedMotion } from "@/experience/screen";
+import { BENCHES, benchById, type BenchId, type BenchRecord } from "./benches.ts";
+import { IntroCard } from "./IntroCard.tsx";
+import { Reveal } from "./Reveal.tsx";
+import { TitleScreen } from "./TitleScreen.tsx";
+import { JohnsonBench } from "./johnson/JohnsonBench.tsx";
+import { TrajectoryCheck } from "./johnson/TrajectoryCheck.tsx";
+
+const IDLE_MS = 90_000;
+
+type View =
+  | { kind: "title" }
+  | { kind: "bench"; id: BenchId; stage: "intro" | "play" | "reveal"; record: BenchRecord | null; run: number };
+
+function stayStill() {
+  return () => {};
+}
+
+function requestedBench() {
+  const bench = benchById(new URLSearchParams(window.location.search).get("bench"));
+  return bench?.available ? bench.id : null;
+}
+
+function useRequestedBench() {
+  return useSyncExternalStore(stayStill, requestedBench, () => null);
+}
+
+export function Lab() {
+  const reducedMotion = useReducedMotion();
+  const requested = useRequestedBench();
+  const [chosen, setView] = useState<View | null>(null);
+  const [done, setDone] = useState<ReadonlySet<BenchId>>(() => new Set());
+  const view: View = chosen ?? (requested ? { kind: "bench", id: requested, stage: "intro", record: null, run: 0 } : { kind: "title" });
+
+  const open = useCallback((id: BenchId) => {
+    setView({ kind: "bench", id, stage: "intro", record: null, run: Date.now() });
+  }, []);
+
+  const toTitle = useCallback(() => setView({ kind: "title" }), []);
+
+  const pass = useCallback(() => {
+    setDone(new Set());
+    setView({ kind: "title" });
+  }, []);
+
+  useEffect(() => {
+    let timer = window.setTimeout(pass, IDLE_MS);
+    const reset = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(pass, IDLE_MS);
+    };
+    window.addEventListener("pointerdown", reset);
+    window.addEventListener("keydown", reset);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", reset);
+      window.removeEventListener("keydown", reset);
+    };
+  }, [pass]);
+
+  const startNext = () => {
+    const next = BENCHES.find((b) => b.available && !done.has(b.id)) ?? BENCHES.find((b) => b.available);
+    if (next) open(next.id);
+  };
+
+  if (view.kind === "title") {
+    return <TitleScreen done={done} onStart={startNext} onOpen={open} />;
+  }
+
+  const bench = benchById(view.id);
+  if (!bench) return null;
+
+  if (view.stage === "reveal") {
+    const demo =
+      bench.id === "johnson" && bench.reveal.demo ? <TrajectoryCheck copy={bench.reveal.demo} quote={bench.reveal.quote} reducedMotion={reducedMotion} /> : null;
+    return <Reveal bench={bench} record={view.record} done={done} demo={demo} onNext={toTitle} onPass={pass} />;
+  }
+
+  const complete = (record: BenchRecord) => {
+    setDone((d) => new Set(d).add(bench.id));
+    setView({ kind: "bench", id: bench.id, stage: "reveal", record, run: view.run });
+  };
+
+  return (
+    <div className="absolute inset-0" key={`${view.id}-${view.run}`}>
+      {bench.id === "johnson" && <JohnsonBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
+      {view.stage === "intro" && <IntroCard bench={bench} onStart={() => setView({ ...view, stage: "play" })} />}
+    </div>
+  );
+}

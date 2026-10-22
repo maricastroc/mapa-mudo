@@ -19,6 +19,12 @@ Reiniciar (rodapé) e o reinício automático depois de 90 segundos sem toque co
 - Nada identifica quem participou: cada registro guarda o tipo de resposta, a cientista (ou a referência, como "estrangeira" ou "homem") e a hora. Os nomes para conferência são o texto digitado pela pessoa; revise antes de publicar.
 - A coluna `ja_estava_no_mapa` da exportação indica lembranças de nomes que já apareciam no mapa coletivo, e `voltou` indica nomes apresentados no estande e depois lembrados sem pista. A fila vê a tela, então essas lembranças não são medidas independentes de conhecimento prévio.
 
+## Elas em Jogo (laboratório de descobertas)
+
+- `http://localhost:3000/lab` abre o laboratório; `http://localhost:3000/lab?bench=johnson` vai direto para a bancada de Katherine Johnson.
+- 90 segundos sem toque voltam para a tela inicial e zeram as bancadas da visita.
+- Bancada de Katherine Johnson: "Resgate no mar", jogo de pegar com 10 cápsulas e 6 destroços em cerca de 30 segundos; o som pode ser desligado no canto da tela. Foto: NASA, 1966 (domínio público).
+
 ## Desenvolvimento
 
 `npm run dev`, `npm test`, `npm run typecheck`, `npm run lint`.

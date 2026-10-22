@@ -133,6 +133,59 @@ body {
   animation: fade-out 900ms ease-in both;
 }
 
+@keyframes lab-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lab-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.5) rotate(var(--stamp-tilt, -7deg));
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.95) rotate(var(--stamp-tilt, -7deg));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--stamp-tilt, -7deg));
+  }
+}
+
+@keyframes lab-ink {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+.lab-rise {
+  animation: lab-rise 620ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.lab-stamp {
+  animation: lab-stamp 520ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+.lab-ink {
+  animation: lab-ink 1100ms ease-out both;
+}
+
+.lab-hand {
+  font-family: var(--font-caveat), cursive;
+}
+
 @layer components {
   .react-tooltip {
     position: absolute;
