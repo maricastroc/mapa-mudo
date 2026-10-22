@@ -1,155 +1,162 @@
 export type Point = { x: number; y: number };
 
-export const VIEW = { w: 600, h: 360, top: 96 };
-export const EARTH = { cx: 300, cy: 700, r: 430 };
-export const ORBIT_R = 560;
-export const ATMOSPHERE_R = 458;
+const DEG = Math.PI / 180;
 
-const LAUNCH_ANGLE = -0.55;
-const JOIN_ANGLE = -0.32;
-const RETRO_ANGLE = 0.3;
-const SPLASH_ANGLE = 0.46;
+export const VIEW = { w: 600, h: 300 };
+export const GLOBE = { cx: 190, cy: 168, r: 112 };
+export const ORBIT = { rx: 166, ry: 56, tilt: -10 * DEG };
+export const RETRO_THETA = 0.55;
+export const LAPS = 3;
+export const LANDING: Point = { x: GLOBE.cx + 0.55 * GLOBE.r, y: GLOBE.cy + 0.42 * GLOBE.r };
+export const CARD = { x: 380, y: 52, w: 200, h: 196 };
 
-function polar(r: number, angle: number): Point {
-  return { x: EARTH.cx + r * Math.sin(angle), y: EARTH.cy - r * Math.cos(angle) };
+export const T = {
+  computing: 2.6,
+  verify: 4.0,
+  confirmed: 5.3,
+  landing: 5.4,
+  depart: 5.8,
+  splash: 7.8,
+  closing: 8.0,
+  end: 9.0,
+};
+
+export const ROW_COUNT = 4;
+
+export type Act = "challenge" | "computing" | "landing" | "closing";
+
+export function actAt(t: number): Act {
+  if (t < T.computing) return "challenge";
+  if (t < T.landing) return "computing";
+  if (t < T.closing) return "landing";
+  return "closing";
 }
 
-function tangent(angle: number): Point {
-  return { x: Math.cos(angle), y: Math.sin(angle) };
+export function clamp01(v: number) {
+  return Math.max(0, Math.min(1, v));
 }
 
-function cubic(a: Point, b: Point, c: Point, d: Point, steps: number) {
-  const out: Point[] = [];
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const u = 1 - t;
-    out.push({
-      x: u * u * u * a.x + 3 * u * u * t * b.x + 3 * u * t * t * c.x + t * t * t * d.x,
-      y: u * u * u * a.y + 3 * u * u * t * b.y + 3 * u * t * t * c.y + t * t * t * d.y,
-    });
-  }
-  return out;
+export function ease(t: number) {
+  const k = clamp01(t);
+  return k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
 }
 
-export const LAUNCH = polar(EARTH.r, LAUNCH_ANGLE);
-export const SPLASH = polar(EARTH.r, SPLASH_ANGLE);
-export const RETRO = polar(ORBIT_R, RETRO_ANGLE);
-
-const join = polar(ORBIT_R, JOIN_ANGLE);
-const joinDir = tangent(JOIN_ANGLE);
-const retroDir = tangent(RETRO_ANGLE);
-
-export const ASCENT = cubic(LAUNCH, { x: LAUNCH.x, y: LAUNCH.y - 64 }, { x: join.x - 38 * joinDir.x, y: join.y - 38 * joinDir.y }, join, 40);
-
-export const ORBIT: Point[] = Array.from({ length: 61 }, (_, i) => polar(ORBIT_R, JOIN_ANGLE + ((RETRO_ANGLE - JOIN_ANGLE) * i) / 60));
-
-export const DESCENT = cubic(RETRO, { x: RETRO.x + 46 * retroDir.x, y: RETRO.y + 46 * retroDir.y }, { x: SPLASH.x + 18, y: SPLASH.y - 70 }, SPLASH, 50);
-
-export const ROUTE: Point[] = [...ASCENT, ...ORBIT.slice(1), ...DESCENT.slice(1)];
-
-export function cumulative(points: Point[]) {
-  const lengths = [0];
-  for (let i = 1; i < points.length; i++) {
-    lengths.push(lengths[i - 1] + Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y));
-  }
-  return lengths;
+function rotate(x: number, y: number): Point {
+  const c = Math.cos(ORBIT.tilt);
+  const s = Math.sin(ORBIT.tilt);
+  return { x: GLOBE.cx + x * c - y * s, y: GLOBE.cy + x * s + y * c };
 }
 
-const ROUTE_LENGTHS = cumulative(ROUTE);
-export const ROUTE_LENGTH = ROUTE_LENGTHS[ROUTE_LENGTHS.length - 1];
-export const ORBIT_FROM = cumulative(ASCENT)[ASCENT.length - 1] / ROUTE_LENGTH;
-export const ORBIT_TO = (cumulative(ASCENT)[ASCENT.length - 1] + cumulative(ORBIT)[ORBIT.length - 1]) / ROUTE_LENGTH;
-const DESCENT_LENGTHS = cumulative(DESCENT);
-export const DESCENT_LENGTH = DESCENT_LENGTHS[DESCENT_LENGTHS.length - 1];
+export function orbitPoint(theta: number): Point {
+  return rotate(ORBIT.rx * Math.cos(theta), ORBIT.ry * Math.sin(theta));
+}
 
-function along(points: Point[], lengths: number[], distance: number): { point: Point; direction: Point; index: number } {
-  const total = lengths[lengths.length - 1];
-  const d = Math.max(0, Math.min(total, distance));
-  let i = 1;
-  while (i < lengths.length - 1 && lengths[i] < d) i++;
-  const a = points[i - 1];
-  const b = points[i];
-  const span = lengths[i] - lengths[i - 1] || 1;
-  const k = (d - lengths[i - 1]) / span;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
+export function orbitHeading(theta: number): Point {
+  const p = rotate(-ORBIT.rx * Math.sin(theta), ORBIT.ry * Math.cos(theta));
+  const dx = p.x - GLOBE.cx;
+  const dy = p.y - GLOBE.cy;
   const len = Math.hypot(dx, dy) || 1;
-  return { point: { x: a.x + dx * k, y: a.y + dy * k }, direction: { x: dx / len, y: dy / len }, index: i };
+  return { x: dx / len, y: dy / len };
 }
 
-export function routeAt(fraction: number) {
-  return along(ROUTE, ROUTE_LENGTHS, fraction * ROUTE_LENGTH);
+export function inFront(theta: number) {
+  return Math.sin(theta) > 0;
 }
 
-export function descentAt(fraction: number) {
-  return along(DESCENT, DESCENT_LENGTHS, fraction * DESCENT_LENGTH);
+export function orbitPath(from: number, to: number, steps = 90) {
+  const points: Point[] = [];
+  for (let i = 0; i <= steps; i++) points.push(orbitPoint(from + ((to - from) * i) / steps));
+  return points;
 }
 
-export function routeUpTo(fraction: number): Point[] {
-  if (fraction <= 0) return [ROUTE[0]];
-  const { point, index } = routeAt(fraction);
-  return [...ROUTE.slice(0, index), point];
-}
+const START = orbitPoint(RETRO_THETA);
+const HEADING = orbitHeading(RETRO_THETA);
 
-export function descentUpTo(fraction: number): Point[] {
-  if (fraction <= 0) return [DESCENT[0]];
-  const { point, index } = descentAt(fraction);
-  return [...DESCENT.slice(0, index), point];
-}
-
-function fractionOf(target: Point) {
-  let best = 0;
-  let bestDistance = Infinity;
-  for (let i = 0; i < ROUTE.length; i++) {
-    const d = Math.hypot(ROUTE[i].x - target.x, ROUTE[i].y - target.y);
-    if (d < bestDistance) {
-      bestDistance = d;
-      best = i;
-    }
-  }
-  return ROUTE_LENGTHS[best] / ROUTE_LENGTH;
-}
-
-export type CheckpointId = "launch" | "orbit" | "retro" | "splash";
-
-export type Checkpoint = { id: CheckpointId; label: string; at: Point; fraction: number; labelSide: "above" | "below" | "left" | "right" };
-
-const ORBIT_TOP = polar(ORBIT_R, 0);
-
-export const CHECKPOINTS: Checkpoint[] = [
-  { id: "launch", label: "lançamento", at: LAUNCH, fraction: 0, labelSide: "right" },
-  { id: "orbit", label: "3 voltas na Terra", at: ORBIT_TOP, fraction: fractionOf(ORBIT_TOP), labelSide: "below" },
-  { id: "retro", label: "retrofoguetes", at: RETRO, fraction: fractionOf(RETRO), labelSide: "above" },
-  { id: "splash", label: "resgate", at: SPLASH, fraction: 1, labelSide: "left" },
+export const DESCENT: [Point, Point, Point, Point] = [
+  START,
+  { x: START.x + HEADING.x * 30, y: START.y + HEADING.y * 30 },
+  { x: LANDING.x + 14, y: LANDING.y - 28 },
+  LANDING,
 ];
+
+export function bezier([a, b, c, d]: [Point, Point, Point, Point], k: number): Point {
+  const u = 1 - k;
+  return {
+    x: u * u * u * a.x + 3 * u * u * k * b.x + 3 * u * k * k * c.x + k * k * k * d.x,
+    y: u * u * u * a.y + 3 * u * u * k * b.y + 3 * u * k * k * c.y + k * k * k * d.y,
+  };
+}
+
+export function curvePoints(curve: [Point, Point, Point, Point], from = 0, to = 1, steps = 40) {
+  const points: Point[] = [];
+  for (let i = 0; i <= steps; i++) points.push(bezier(curve, from + ((to - from) * i) / steps));
+  return points;
+}
 
 export function toPath(points: Point[]) {
   return points.map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" ");
 }
 
-export const TIMING = { check: 2.2, pause: 0.25, fly: 3.4, settle: 0.8 };
-export const TOTAL_SECONDS = TIMING.check + TIMING.pause + TIMING.fly + TIMING.settle;
+export const GUESSES: [Point, Point, Point, Point][] = [0.22, 0.4, 0.72, 0.9].map((theta, i) => {
+  const from = orbitPoint(theta);
+  const heading = orbitHeading(theta);
+  const ends: Point[] = [
+    { x: GLOBE.cx + 0.88 * GLOBE.r, y: GLOBE.cy + 0.18 * GLOBE.r },
+    { x: GLOBE.cx + 0.2 * GLOBE.r, y: GLOBE.cy + 0.62 * GLOBE.r },
+    { x: GLOBE.cx - 0.25 * GLOBE.r, y: GLOBE.cy + 0.8 * GLOBE.r },
+    { x: GLOBE.cx + 0.72 * GLOBE.r, y: GLOBE.cy + 0.55 * GLOBE.r },
+  ];
+  const to = ends[i];
+  return [from, { x: from.x + heading.x * 34, y: from.y + heading.y * 34 }, { x: to.x + 10, y: to.y - 30 }, to];
+});
 
-export type DemoPhase = "idle" | "checking" | "flying" | "done";
+const ORBIT_SPEED = (2 * Math.PI * LAPS) / T.depart;
 
-export function flightFraction(fly: number) {
-  const u = Math.max(0, Math.min(1, fly));
-  const a = 0.2;
-  const b = 0.56;
-  if (u < a) {
-    const k = u / a;
-    return ORBIT_FROM * (k * k * (3 - 2 * k) * 0.6 + k * 0.4);
-  }
-  if (u < b) return ORBIT_FROM + ((u - a) / (b - a)) * (ORBIT_TO - ORBIT_FROM);
-  const k = (u - b) / (1 - b);
-  return ORBIT_TO + (1 - Math.pow(1 - k, 1.8)) * (1 - ORBIT_TO);
+export type CapsuleState = { stage: "orbit" | "descent" | "landed"; point: Point; heading: Point; front: boolean; k: number; lap: number };
+
+export function descentProgress(t: number) {
+  const k = clamp01((t - T.depart) / (T.splash - T.depart));
+  return 1 - Math.pow(1 - k, 1.7);
 }
 
-export function phaseAt(seconds: number): { phase: DemoPhase; check: number; fly: number } {
-  if (seconds < 0) return { phase: "idle", check: 0, fly: 0 };
-  if (seconds < TIMING.check) return { phase: "checking", check: seconds / TIMING.check, fly: 0 };
-  const flyStart = TIMING.check + TIMING.pause;
-  if (seconds < flyStart) return { phase: "checking", check: 1, fly: 0 };
-  if (seconds < flyStart + TIMING.fly) return { phase: "flying", check: 1, fly: (seconds - flyStart) / TIMING.fly };
-  return { phase: "done", check: 1, fly: 1 };
+export function capsuleAt(t: number): CapsuleState {
+  if (t < T.depart) {
+    const theta = RETRO_THETA - (T.depart - Math.max(0, t)) * ORBIT_SPEED;
+    const lap = Math.min(LAPS, Math.floor((Math.max(0, t) * ORBIT_SPEED) / (2 * Math.PI)) + 1);
+    return { stage: "orbit", point: orbitPoint(theta), heading: orbitHeading(theta), front: inFront(theta), k: 0, lap };
+  }
+  const k = descentProgress(t);
+  const point = bezier(DESCENT, k);
+  const ahead = bezier(DESCENT, Math.min(1, k + 0.02));
+  const behind = bezier(DESCENT, Math.max(0, k - 0.02));
+  const dx = ahead.x - behind.x;
+  const dy = ahead.y - behind.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return { stage: t >= T.splash ? "landed" : "descent", point, heading: { x: dx / len, y: dy / len }, front: true, k, lap: LAPS };
+}
+
+export const FOCUS = (() => {
+  const w = VIEW.w / 1.9;
+  const h = VIEW.h / 1.9;
+  const cx = (START.x + LANDING.x) / 2 - 22;
+  const cy = (START.y + LANDING.y) / 2 + 2;
+  return { x: cx - w / 2, y: cy - h / 2, w, h };
+})();
+
+export function viewBoxAt(zoom: number) {
+  const z = clamp01(zoom);
+  return {
+    x: FOCUS.x * z,
+    y: FOCUS.y * z,
+    w: VIEW.w + (FOCUS.w - VIEW.w) * z,
+    h: VIEW.h + (FOCUS.h - VIEW.h) * z,
+  };
+}
+
+export function zoomAt(t: number) {
+  return ease((t - T.landing) / 1.2);
+}
+
+export function cardOpacity(t: number) {
+  return ease((t - T.computing) / 0.5) * (1 - ease((t - T.landing) / 0.6));
 }

@@ -1,55 +1,64 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CHECKPOINTS, DESCENT, EARTH, flightFraction, LAUNCH, ORBIT_FROM, ORBIT_TO, phaseAt, ROUTE, routeAt, SPLASH, TOTAL_SECONDS, VIEW } from "./trajectoryCheck.ts";
+import {
+  actAt,
+  CARD,
+  cardOpacity,
+  capsuleAt,
+  DESCENT,
+  FOCUS,
+  GLOBE,
+  GUESSES,
+  LANDING,
+  orbitPoint,
+  RETRO_THETA,
+  T,
+  VIEW,
+  viewBoxAt,
+  zoomAt,
+} from "./trajectoryCheck.ts";
 
-test("the whole route stays inside the drawing", () => {
-  for (const p of ROUTE) {
-    assert.ok(p.x >= 0 && p.x <= VIEW.w && p.y >= VIEW.top + 20 && p.y <= VIEW.h, `${p.x},${p.y}`);
+const inGlobe = (p: { x: number; y: number }) => Math.hypot(p.x - GLOBE.cx, p.y - GLOBE.cy) < GLOBE.r;
+
+test("the three moments follow each other in a few seconds", () => {
+  assert.equal(actAt(0), "challenge");
+  assert.equal(actAt(T.computing + 0.1), "computing");
+  assert.equal(actAt(T.landing + 0.1), "landing");
+  assert.equal(actAt(T.end), "closing");
+  assert.ok(T.computing < T.verify && T.verify < T.confirmed && T.confirmed <= T.landing && T.depart < T.splash && T.splash < T.closing);
+  assert.ok(T.end <= 9);
+});
+
+test("the capsule circles the Earth and leaves the orbit exactly where the checked path begins", () => {
+  const before = capsuleAt(T.depart - 1e-6).point;
+  const after = capsuleAt(T.depart).point;
+  assert.ok(Math.hypot(before.x - after.x, before.y - after.y) < 0.5);
+  assert.deepEqual(DESCENT[0], orbitPoint(RETRO_THETA));
+  assert.equal(capsuleAt(0.1).lap, 1);
+  assert.equal(capsuleAt(T.depart - 0.1).lap, 3);
+  const sides = new Set<boolean>();
+  for (let t = 0; t < T.depart; t += 0.05) sides.add(capsuleAt(t).front);
+  assert.equal(sides.size, 2, "the capsule goes behind the Earth and comes back in front");
+});
+
+test("the checked path ends at sea inside the planned area, and the guesses land elsewhere", () => {
+  assert.deepEqual(capsuleAt(T.splash + 0.2).point, LANDING);
+  assert.equal(capsuleAt(T.splash + 0.2).stage, "landed");
+  assert.ok(inGlobe(LANDING));
+  for (const guess of GUESSES) {
+    assert.ok(inGlobe(guess[3]));
+    assert.ok(Math.hypot(guess[3].x - LANDING.x, guess[3].y - LANDING.y) > 14);
   }
 });
 
-test("the route starts at the launch site and ends at the rescue point on the sea", () => {
-  assert.deepEqual(ROUTE[0], LAUNCH);
-  assert.deepEqual(ROUTE[ROUTE.length - 1], SPLASH);
-  for (const p of [LAUNCH, SPLASH]) assert.ok(Math.abs(Math.hypot(p.x - EARTH.cx, p.y - EARTH.cy) - EARTH.r) < 1e-6);
-  assert.ok(SPLASH.x > LAUNCH.x, "the capsule comes down further along than where it left");
-});
-
-test("the descent only gets closer to the ground", () => {
-  let previous = Infinity;
-  for (const p of DESCENT) {
-    const r = Math.hypot(p.x - EARTH.cx, p.y - EARTH.cy);
-    assert.ok(r <= previous + 1e-6);
-    previous = r;
-  }
-});
-
-test("checkpoints come in flight order along the route", () => {
-  for (let i = 1; i < CHECKPOINTS.length; i++) assert.ok(CHECKPOINTS[i].fraction > CHECKPOINTS[i - 1].fraction, CHECKPOINTS[i].id);
-  for (const c of CHECKPOINTS) {
-    const { point } = routeAt(c.fraction);
-    assert.ok(Math.hypot(point.x - c.at.x, point.y - c.at.y) < 6, c.id);
-  }
-});
-
-test("the demonstration checks first, then flies, and lasts only a few seconds", () => {
-  assert.equal(phaseAt(-1).phase, "idle");
-  assert.equal(phaseAt(1).phase, "checking");
-  assert.equal(phaseAt(3).phase, "flying");
-  assert.equal(phaseAt(TOTAL_SECONDS + 0.1).phase, "done");
-  assert.ok(TOTAL_SECONDS >= 4 && TOTAL_SECONDS <= 7);
-  assert.equal(phaseAt(2.3).check, 1);
-  assert.equal(phaseAt(2.3).fly, 0);
-});
-
-test("the capsule flies the whole checked path, from launch through the orbit to the rescue area", () => {
-  assert.equal(flightFraction(0), 0);
-  assert.equal(flightFraction(1), 1);
-  let previous = -1;
-  for (let u = 0; u <= 1.0001; u += 0.01) {
-    const f = flightFraction(u);
-    assert.ok(f >= previous - 1e-9);
-    previous = f;
-  }
-  assert.ok(ORBIT_FROM > 0 && ORBIT_FROM < ORBIT_TO && ORBIT_TO < 1);
+test("the closing shot frames the descent and leaves the calculation card out of view", () => {
+  assert.equal(zoomAt(T.landing - 0.1), 0);
+  assert.equal(zoomAt(T.end), 1);
+  const box = viewBoxAt(1);
+  for (const p of [DESCENT[0], LANDING]) assert.ok(p.x > box.x && p.x < box.x + box.w && p.y > box.y && p.y < box.y + box.h);
+  assert.equal(cardOpacity(T.landing + 0.7), 0, "the card is gone before the close-up");
+  assert.ok(cardOpacity(T.verify) > 0.99);
+  assert.ok(FOCUS.x + FOCUS.w < CARD.x + CARD.w);
+  const full = viewBoxAt(0);
+  assert.deepEqual(full, { x: 0, y: 0, w: VIEW.w, h: VIEW.h });
 });

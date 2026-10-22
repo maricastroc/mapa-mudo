@@ -12,10 +12,14 @@ export type BenchPhoto = {
 
 export type RevealDemoCopy = {
   label: string;
-  cta: string;
   replay: string;
-  idle: string;
-  closing: string;
+  challenge: string;
+  computing: string;
+  landing: string;
+  closing: string[];
+  summary: string;
+  marks: { glenn: string; laps: string; computer: string; katherine: string; checked: string };
+  rows: string[];
 };
 
 export type Bench = {
@@ -58,11 +62,16 @@ export const BENCHES: Bench[] = [
       name: "Katherine Johnson",
       meta: "MATEMÁTICA DA NASA · ESTADOS UNIDOS",
       demo: {
-        label: "ESQUEMA DO VOO DE JOHN GLENN, 1962 · FORA DE ESCALA",
-        cta: "Conferir a trajetória",
+        label: "VOO DE JOHN GLENN, 1962 · ESQUEMA ILUSTRATIVO",
         replay: "Ver de novo",
-        idle: "Antes do voo, alguém precisava conferir o caminho da cápsula.",
-        closing: "John Glenn pediu que Katherine conferisse à mão as contas do computador.",
+        challenge: "Para voltar em segurança, era preciso prever o caminho.",
+        computing: "O computador calculou. Glenn quis que Katherine conferisse.",
+        landing: "As contas dela batiam. Glenn voou.",
+        closing: ["O computador calculou.", "Katherine conferiu.", "John Glenn confiou."],
+        summary:
+          "Katherine Johnson foi uma matemática da NASA que calculou trajetórias de missões espaciais. Em 1962, John Glenn pediu que ela conferisse os cálculos do computador antes de seu voo ao redor da Terra. Seu trabalho também contribuiu para as missões Apollo, que levaram o ser humano à Lua.",
+        marks: { glenn: "John Glenn", laps: "3 voltas", computer: "COMPUTADOR", katherine: "KATHERINE", checked: "CONFERIDO" },
+        rows: ["4 527,1", "86,32", "21,40", "7,84"],
       },
       quote: { text: "Se ela disser que estão certos, estou pronto.", by: "John Glenn, segundo Katherine" },
       photo: {

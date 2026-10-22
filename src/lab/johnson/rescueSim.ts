@@ -7,7 +7,7 @@ export type PlayerProfile = { reaction: number; speed: number };
 
 export const ATTENTIVE: PlayerProfile = { reaction: 0.4, speed: 0.8 };
 export const REFERENCE: PlayerProfile = { reaction: 0.95, speed: 0.3 };
-export const REFERENCE_BAND = [7, 9] as const;
+export const REFERENCE_BAND = [6, 8] as const;
 
 const MAX_ROUNDS = 16;
 

@@ -53,8 +53,8 @@ export const STAGES: readonly Stage[] = [
   {
     name: "warmup",
     capsules: 3,
-    lull: [0.35, 0.75],
-    terminal: [0.18, 0.2],
+    lull: [0.3, 0.6],
+    terminal: [0.205, 0.225],
     pressure: [0.14, 0.3],
     distance: [0.12, 0.5],
     debris: 0,
@@ -64,23 +64,23 @@ export const STAGES: readonly Stage[] = [
   {
     name: "build",
     capsules: 3,
-    gap: [3.0, 3.5],
-    terminal: [0.215, 0.245],
-    pressure: [0.4, 0.56],
+    gap: [2.7, 3.2],
+    terminal: [0.25, 0.285],
+    pressure: [0.42, 0.58],
     distance: [0.22, 0.8],
-    debris: 3,
-    debrisTerminal: [0.38, 0.44],
+    debris: 4,
+    debrisTerminal: [0.44, 0.5],
     drift: 0.18,
   },
   {
     name: "finale",
     capsules: 4,
-    gap: [1.55, 1.8],
-    terminal: [0.26, 0.3],
-    pressure: [0.56, 0.74],
+    gap: [1.45, 1.7],
+    terminal: [0.3, 0.345],
+    pressure: [0.58, 0.76],
     distance: [0.25, 0.9],
-    debris: 3,
-    debrisTerminal: [0.44, 0.5],
+    debris: 5,
+    debrisTerminal: [0.5, 0.58],
     drift: 0.22,
   },
 ];
@@ -90,9 +90,9 @@ export const DEBRIS_COUNT = STAGES.reduce((n, s) => n + s.debris, 0);
 export const REGION_COUNT = 5;
 
 export const ACCEPT = {
-  meanPressure: [0.4, 0.5] as const,
-  peakPressure: 0.8,
-  duration: [26, 35] as const,
+  meanPressure: [0.41, 0.52] as const,
+  peakPressure: 0.82,
+  duration: [24, 33] as const,
   regionsUsed: 4,
   maxPerRegion: 4,
   maxRun: 2,
@@ -101,7 +101,8 @@ export const ACCEPT = {
 const FIRST_SPAWN = 0.5;
 const MAX_ATTEMPTS = 40;
 const CLEAR_OF_CATCH = 1.1;
-const DEBRIS_SPACING = 0.8;
+const DEBRIS_SPACING = 0.55;
+export const MAX_AIRBORNE = 4;
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
@@ -262,7 +263,7 @@ function placeDebris(rng: Random, capsules: DropPlan[], legs: Leg[], scale: Plan
       if (spawn < earliest) continue;
       const others = [...capsules, ...debris];
       const instants = [spawn, ...others.map((d) => d.spawn).filter((t) => t > spawn && t < landAt)];
-      if (instants.some((t) => 1 + others.filter((d) => d.spawn <= t && d.landAt > t).length > 3)) continue;
+      if (instants.some((t) => 1 + others.filter((d) => d.spawn <= t && d.landAt > t).length > MAX_AIRBORNE)) continue;
       debris.push({ id: 0, kind: "debris", stage: stage.name, spawn, landAt, lane, spec, path, pressure: 0 });
       return true;
     }

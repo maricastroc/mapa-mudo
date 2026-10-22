@@ -7,6 +7,7 @@ import {
   CAPSULE_COUNT,
   DEBRIS_COUNT,
   generatePlan,
+  MAX_AIRBORNE,
   planScale,
   reachableLane,
   regionOf,
@@ -64,7 +65,7 @@ test("rounds keep the same shape: calm start, gradual climb, busier finish", () 
     assert.ok(Math.min(...debris.map((d) => d.spawn)) > caps[1].landAt, "debris only after two rescues");
     for (let t = 0; t < 40; t += 0.05) {
       assert.ok(airborne(caps, t) <= 2);
-      assert.ok(airborne(plan.drops, t) <= 3);
+      assert.ok(airborne(plan.drops, t) <= MAX_AIRBORNE);
     }
     const a = assessPlan(plan.drops);
     assert.ok(a.stagePressure.warmup < a.stagePressure.build && a.stagePressure.build < a.stagePressure.finale);

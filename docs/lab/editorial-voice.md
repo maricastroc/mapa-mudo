@@ -43,7 +43,9 @@ A tela final mostra a contribuição em vez de explicar em parágrafos. Muita ge
 - Começa parada, com um convite de um toque ("Conferir a trajetória"). Se ninguém tocar, roda sozinha depois de alguns segundos. Dá para ver de novo.
 - Não é um segundo jogo: nada para errar, nada para acertar.
 - Representa o valor do trabalho, não simula o trabalho. Nada de "apertou o botão, a ciência aconteceu".
-- Uma legenda curta por fase, no máximo uma frase. A última frase conta o fato histórico. A citação, se houver, vem junto.
+- Uma legenda curta por fase, no máximo uma frase.
+- No final: uma frase de destaque em três batidas (como "O computador calculou. Katherine conferiu. John Glenn confiou.") e logo abaixo um parágrafo curto, de até três frases, que diz quem ela foi, o episódio mostrado e o que mais ela fez.
+- Ordem na tela: nome da cientista, animação, frase de destaque, parágrafo, resultado do jogador, botões.
 - Diz o que é ilustrativo ("Esquema · fora de escala").
 - Cada cientista tem a sua: muda a forma, o gesto e o desenho, não só o texto. Exemplos: Katherine confere um caminho e a cápsula volta por ele. Marie Curie e Jaqueline precisam de demonstrações com outra lógica visual.
 

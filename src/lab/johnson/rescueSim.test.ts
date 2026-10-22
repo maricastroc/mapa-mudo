@@ -32,7 +32,7 @@ test("a slower reference player scores about the same in every round", () => {
     const scores = seeds.map((seed) => playRound(serveRound(seed, g), g, REFERENCE).score);
     for (const s of scores) assert.ok(s >= REFERENCE_BAND[0] && s <= REFERENCE_BAND[1], `${W}x${H} score ${s}`);
     const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-    assert.ok(avg >= 7.5 && avg <= 8.9, `${W}x${H} average ${avg}`);
+    assert.ok(avg >= 6.6 && avg <= 8, `${W}x${H} average ${avg}`);
   }
 });
 

@@ -23,7 +23,7 @@ Reiniciar (rodapé) e o reinício automático depois de 90 segundos sem toque co
 
 - `http://localhost:3000/lab` abre o laboratório; `http://localhost:3000/lab?bench=johnson` vai direto para a bancada de Katherine Johnson.
 - 90 segundos sem toque voltam para a tela inicial e zeram as bancadas da visita.
-- Bancada de Katherine Johnson: "Resgate no mar", jogo de pegar com 10 cápsulas e 6 destroços em cerca de 30 segundos; o som pode ser desligado no canto da tela.
+- Bancada de Katherine Johnson: "Resgate no mar", jogo de pegar com 10 cápsulas e 9 destroços em cerca de 27 segundos; o som pode ser desligado no canto da tela.
 - Cada partida é sorteada dentro de limites de dificuldade e conferida por jogadores simulados antes de começar (`src/lab/johnson/rescuePlan.ts` e `rescueSim.ts`). Para repetir uma partida em desenvolvimento, use `?seed=` com um número, por exemplo `/lab?bench=johnson&seed=12345`. Foto: NASA, 1966 (domínio público).
 
 ## Desenvolvimento

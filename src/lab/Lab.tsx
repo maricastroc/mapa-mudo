@@ -75,7 +75,7 @@ export function Lab() {
 
   if (view.stage === "reveal") {
     const demo =
-      bench.id === "johnson" && bench.reveal.demo ? <TrajectoryCheck copy={bench.reveal.demo} quote={bench.reveal.quote} reducedMotion={reducedMotion} /> : null;
+      bench.id === "johnson" && bench.reveal.demo ? <TrajectoryCheck copy={bench.reveal.demo} reducedMotion={reducedMotion} /> : null;
     return <Reveal bench={bench} record={view.record} done={done} demo={demo} onNext={toTitle} onPass={pass} />;
   }
 
