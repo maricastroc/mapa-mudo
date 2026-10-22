@@ -9,15 +9,17 @@ import { CAPSULE_BODY, CAPSULE_SHIELD, CAPSULE_WINDOW, SHIP_DECK, SHIP_HULL, SHI
 import {
   ATMOSPHERE_R,
   CHECKPOINTS,
-  descentAt,
   EARTH,
+  flightFraction,
   LAUNCH,
   ORBIT_R,
+  ORBIT_TO,
   phaseAt,
   ROUTE,
   routeAt,
   routeUpTo,
   SPLASH,
+  TIMING,
   toPath,
   TOTAL_SECONDS,
   VIEW,
@@ -25,6 +27,17 @@ import {
 } from "./trajectoryCheck.ts";
 
 const AUTOPLAY_MS = 6500;
+const TRAIL = Array.from({ length: 70 }, (_, i) => (i + 1) / 71);
+const SCRIBBLES = [
+  { at: 0.05, text: "3,2", tilt: -6, side: 1 },
+  { at: 0.14, text: "×", tilt: 4, side: -1 },
+  { at: 0.22, text: "160", tilt: -3, side: -1 },
+  { at: 0.58, text: "÷ 2", tilt: 5, side: 1 },
+  { at: 0.66, text: "7,8", tilt: -4, side: -1 },
+  { at: 0.76, text: "=", tilt: 3, side: 1 },
+  { at: 0.85, text: "√", tilt: -5, side: -1 },
+  { at: 0.94, text: "✓", tilt: 0, side: 1 },
+];
 const HAND = "var(--font-caveat), cursive";
 const MONO = "var(--font-dm-mono), ui-monospace, monospace";
 
@@ -122,6 +135,8 @@ function Capsule({ x, y, angle, glow, flame, chute }: { x: number; y: number; an
   );
 }
 
+const LAND = `M${LAUNCH.x - 34} ${LAUNCH.y + 12} Q${LAUNCH.x - 22} ${LAUNCH.y - 9} ${LAUNCH.x + 2} ${LAUNCH.y - 1} Q${LAUNCH.x + 14} ${LAUNCH.y + 5} ${LAUNCH.x + 8} ${LAUNCH.y + 30} L${LAUNCH.x - 30} ${LAUNCH.y + 40} Z`;
+
 function Ship({ approach }: { approach: number }) {
   const along = 58 - approach * 24;
   const rad = Math.asin((SPLASH.x - EARTH.cx) / EARTH.r);
@@ -194,27 +209,37 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
 
   const head = routeAt(check);
   const inked = toPath(routeUpTo(check));
-  const flyEase = ease(clamp01(fly));
-  const capsuleOn = phase === "flying" || phase === "done";
-  const capsule = descentAt(phase === "done" ? 1 : flyEase);
-  const capsuleAngle = (Math.atan2(capsule.direction.y, capsule.direction.x) * 180) / Math.PI;
-  const r = Math.hypot(capsule.point.x - EARTH.cx, capsule.point.y - EARTH.cy);
-  const glow = phase === "flying" ? clamp01((ATMOSPHERE_R + 4 - r) / 10) * clamp01((r - EARTH.r - 18) / 14) : 0;
-  const chute = phase === "done" ? 1 : clamp01((fly - 0.72) / 0.2);
+  const flying = phase === "flying";
   const landed = phase === "done";
-  const afterLanding = landed ? Math.max(0, elapsed - TOTAL_SECONDS + 0.6) : 0;
+  const capsuleOn = flying || landed;
+  const travelled = landed ? 1 : flightFraction(fly);
+  const capsule = routeAt(travelled);
+  const capsuleAngle = (Math.atan2(capsule.direction.y, capsule.direction.x) * 180) / Math.PI;
+  const height = Math.hypot(capsule.point.x - EARTH.cx, capsule.point.y - EARTH.cy);
+  const glow = flying && travelled > ORBIT_TO ? clamp01((ATMOSPHERE_R + 4 - height) / 10) * clamp01((height - EARTH.r - 18) / 14) : 0;
+  const flame = flying && travelled >= ORBIT_TO && travelled < ORBIT_TO + 0.035;
+  const chute = landed ? 0 : clamp01((travelled - 0.93) / 0.04);
+  const afterLanding = landed ? Math.max(0, elapsed - (TOTAL_SECONDS - TIMING.settle)) : 0;
   const bob = landed && !reducedMotion ? Math.sin(now / 420) * 0.8 : 0;
   const splashAngle = surfaceAngle(SPLASH.x);
-
-  const caption = phase === "idle" ? copy.idle : phase === "checking" ? copy.working : phase === "flying" ? copy.flying : copy.closing;
+  const zoom = reducedMotion ? 0 : ease(clamp01(afterLanding / 0.7));
+  const fullH = VIEW.h - VIEW.top;
+  const focusW = VIEW.w / 1.28;
+  const focusH = fullH / 1.28;
+  const focusX = Math.max(0, Math.min(VIEW.w - focusW, SPLASH.x - focusW * 0.62));
+  const focusY = Math.max(VIEW.top, Math.min(VIEW.h - focusH, SPLASH.y - focusH * 0.68));
+  const viewBox = [zoom * focusX, VIEW.top + zoom * (focusY - VIEW.top), VIEW.w + zoom * (focusW - VIEW.w), fullH + zoom * (focusH - fullH)].map((v) => v.toFixed(2)).join(" ");
+  const trail = capsuleOn ? TRAIL.filter((f) => f < travelled - 0.004) : [];
+  const circled = clamp01((afterLanding - 0.15) / 0.45);
+  const caption = landed ? copy.closing : copy.idle;
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div
-        className="relative min-h-0 flex-1 border-[1.5px] border-ink bg-paper shadow-[8px_8px_0_0_rgba(16,1,227,0.9)] max-[860px]:aspect-[5/3] max-[860px]:flex-none"
+        className="relative min-h-0 flex-1 overflow-hidden border-[1.5px] border-ink bg-paper shadow-[8px_8px_0_0_rgba(16,1,227,0.9)] max-[860px]:aspect-[5/3] max-[860px]:flex-none"
         onClick={phase === "idle" ? start : undefined}
       >
-        <svg viewBox={`0 ${VIEW.top} ${VIEW.w} ${VIEW.h - VIEW.top}`} preserveAspectRatio="xMidYMid meet" className="absolute inset-0 h-full w-full" role="img" aria-label="Esquema do voo de John Glenn: do lançamento à volta ao mar, perto do navio de resgate.">
+        <svg viewBox={viewBox} preserveAspectRatio="xMidYMid meet" className="absolute inset-0 h-full w-full" role="img" aria-label="Esquema do voo de John Glenn: do lançamento à volta ao mar, perto do navio de resgate.">
           <defs>
             <pattern id="tc-ocean" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
               <circle cx="2.5" cy="2.5" r="1.45" fill={INK.blue} />
@@ -233,23 +258,17 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
             <circle cx={EARTH.cx} cy={EARTH.cy} r={ATMOSPHERE_R} fill="url(#tc-air)" opacity={0.55} />
             <circle cx={EARTH.cx} cy={EARTH.cy} r={EARTH.r} fill={INK.paper} />
             <circle cx={EARTH.cx} cy={EARTH.cy} r={EARTH.r} fill="url(#tc-ocean)" opacity={0.85} stroke={INK.blue} strokeWidth={2} />
-            <path
-              d={`M${LAUNCH.x - 34} ${LAUNCH.y + 12} Q${LAUNCH.x - 22} ${LAUNCH.y - 9} ${LAUNCH.x + 2} ${LAUNCH.y - 1} Q${LAUNCH.x + 14} ${LAUNCH.y + 5} ${LAUNCH.x + 8} ${LAUNCH.y + 30} L${LAUNCH.x - 30} ${LAUNCH.y + 40} Z`}
-              fill="#f3ede1"
-              stroke={INK.orange}
-              strokeWidth={1.4}
-            />
-            <path
-              d={`M${LAUNCH.x - 34} ${LAUNCH.y + 12} Q${LAUNCH.x - 22} ${LAUNCH.y - 9} ${LAUNCH.x + 2} ${LAUNCH.y - 1} Q${LAUNCH.x + 14} ${LAUNCH.y + 5} ${LAUNCH.x + 8} ${LAUNCH.y + 30} L${LAUNCH.x - 30} ${LAUNCH.y + 40} Z`}
-              fill="url(#tc-land)"
-            />
+            <path d={LAND} fill="#f3ede1" stroke={INK.orange} strokeWidth={1.4} />
+            <path d={LAND} fill="url(#tc-land)" />
             <circle cx={EARTH.cx} cy={EARTH.cy} r={ORBIT_R} fill="none" stroke={INK.black} strokeOpacity={0.35} strokeWidth={1} strokeDasharray="3 6" />
 
             <path d={toPath(ROUTE)} fill="none" stroke={INK.pencil} strokeWidth={2} strokeDasharray="7 6" strokeLinecap="round" opacity={0.8} />
-            <text x={176} y={124} fontFamily={MONO} fontSize={10.5} letterSpacing={1.6} fill={INK.pencil}>
-              CONTAS DO COMPUTADOR
-            </text>
-            <path d="M214 128 Q222 136 224 146" fill="none" stroke={INK.pencil} strokeWidth={1} />
+            <g opacity={1 - zoom}>
+              <text x={176} y={124} fontFamily={MONO} fontSize={10.5} letterSpacing={1.6} fill={INK.pencil}>
+                CONTAS DO COMPUTADOR
+              </text>
+              <path d="M214 128 Q222 136 224 146" fill="none" stroke={INK.pencil} strokeWidth={1} />
+            </g>
 
             {check > 0 && (
               <>
@@ -258,6 +277,34 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
               </>
             )}
 
+            {startedAt !== null &&
+              SCRIBBLES.map((note) => {
+                const age = (check - note.at) * TIMING.check + (phase === "checking" ? 0 : 9);
+                if (check < note.at || age > 1.1) return null;
+                const { point } = routeAt(note.at);
+                const nx = point.x - EARTH.cx;
+                const ny = point.y - EARTH.cy;
+                const len = Math.hypot(nx, ny) || 1;
+                const x = point.x + (nx / len) * 20 * note.side;
+                const y = point.y + (ny / len) * 20 * note.side - age * 10;
+                return (
+                  <text
+                    key={note.at}
+                    x={x}
+                    y={y}
+                    textAnchor="middle"
+                    fontFamily={HAND}
+                    fontSize={17}
+                    fontWeight={600}
+                    fill={INK.pencil}
+                    opacity={clamp01(age / 0.12) * (1 - clamp01((age - 0.7) / 0.4))}
+                    transform={`rotate(${note.tilt} ${x} ${y})`}
+                  >
+                    {note.text}
+                  </text>
+                );
+              })}
+
             <g transform={`translate(${SPLASH.x} ${SPLASH.y}) rotate(${splashAngle})`}>
               <ellipse rx={20} ry={6} fill={landed ? INK.orange : "rgba(247,248,246,0.7)"} fillOpacity={landed ? 0.85 : 1} stroke={landed ? INK.black : INK.pencil} strokeWidth={1.4} strokeDasharray={landed ? undefined : "3 3"} />
               {landed &&
@@ -265,12 +312,34 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
                   const age = ((afterLanding + k * 0.5) % 1.5) / 1.5;
                   return <ellipse key={k} rx={20 + age * 26} ry={6 + age * 8} fill="none" stroke={INK.orange} strokeWidth={1.6} opacity={1 - age} />;
                 })}
+              {landed && (
+                <ellipse
+                  rx={40}
+                  ry={17}
+                  fill="none"
+                  stroke={INK.orange}
+                  strokeWidth={2.6}
+                  strokeLinecap="round"
+                  pathLength={1}
+                  strokeDasharray="1.08 1"
+                  strokeDashoffset={1.08 - circled * 1.08}
+                  transform="rotate(-6)"
+                />
+              )}
             </g>
             <Ship approach={landed ? clamp01(afterLanding / 2.5) : 0} />
 
-            {CHECKPOINTS.filter((c) => !(landed && c.id === "splash")).map((c, i) => (
-              <CheckpointMark key={c.id} c={c} index={i} checkedFor={check >= c.fraction && startedAt !== null ? (check - c.fraction) * 2.8 + (check >= 1 ? 1 : 0) : -1} />
-            ))}
+            <g opacity={1 - zoom * 0.7}>
+              {CHECKPOINTS.filter((c) => !(landed && c.id === "splash")).map((c, i) => (
+                <CheckpointMark key={c.id} c={c} index={i} checkedFor={check >= c.fraction && startedAt !== null ? (check - c.fraction) * 2.8 + (check >= 1 ? 1 : 0) : -1} />
+              ))}
+            </g>
+
+            {trail.map((f) => {
+              const { point } = routeAt(f);
+              const fade = clamp01(1 - (travelled - f) / 0.3);
+              return <circle key={f} cx={point.x} cy={point.y} r={2.3} fill={INK.black} opacity={0.15 + fade * 0.6} />;
+            })}
 
             {phase === "checking" && check < 1 && <Pencil x={head.point.x} y={head.point.y} />}
 
@@ -280,15 +349,15 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
                 y={capsule.point.y + bob}
                 angle={landed ? splashAngle - 90 : capsuleAngle}
                 glow={glow}
-                flame={phase === "flying" && fly < 0.12}
+                flame={flame}
                 chute={landed ? 0 : chute}
               />
             )}
 
             {landed && (
               <text
-                x={SPLASH.x - 24}
-                y={SPLASH.y + 4}
+                x={SPLASH.x - 46}
+                y={SPLASH.y - 22}
                 textAnchor="end"
                 fontFamily={HAND}
                 fontSize={19}
@@ -298,7 +367,7 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
                 strokeWidth={7}
                 strokeLinejoin="round"
                 paintOrder="stroke"
-                opacity={clamp01(afterLanding / 0.4)}
+                opacity={clamp01((afterLanding - 0.5) / 0.3)}
               >
                 área de resgate
               </text>
@@ -306,7 +375,7 @@ export function TrajectoryCheck({ copy, quote, reducedMotion }: { copy: RevealDe
           </g>
         </svg>
 
-        <p className="pointer-events-none absolute top-2 left-3 font-notation text-[clamp(9px,1.1vmin,12px)] tracking-[0.12em] text-ink-soft">{copy.label}</p>
+        <p className="pointer-events-none absolute top-2 left-3 bg-paper/80 font-notation text-[clamp(9px,1.1vmin,12px)] tracking-[0.12em] text-ink-soft">{copy.label}</p>
 
         {phase === "idle" && (
           <div className="absolute inset-x-0 top-[40%] flex justify-center">

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CHECKPOINTS, DESCENT, EARTH, LAUNCH, phaseAt, ROUTE, routeAt, SPLASH, TOTAL_SECONDS, VIEW } from "./trajectoryCheck.ts";
+import { CHECKPOINTS, DESCENT, EARTH, flightFraction, LAUNCH, ORBIT_FROM, ORBIT_TO, phaseAt, ROUTE, routeAt, SPLASH, TOTAL_SECONDS, VIEW } from "./trajectoryCheck.ts";
 
 test("the whole route stays inside the drawing", () => {
   for (const p of ROUTE) {
@@ -35,9 +35,21 @@ test("checkpoints come in flight order along the route", () => {
 test("the demonstration checks first, then flies, and lasts only a few seconds", () => {
   assert.equal(phaseAt(-1).phase, "idle");
   assert.equal(phaseAt(1).phase, "checking");
-  assert.equal(phaseAt(4).phase, "flying");
+  assert.equal(phaseAt(3).phase, "flying");
   assert.equal(phaseAt(TOTAL_SECONDS + 0.1).phase, "done");
   assert.ok(TOTAL_SECONDS >= 4 && TOTAL_SECONDS <= 7);
-  assert.equal(phaseAt(3).check, 1);
-  assert.equal(phaseAt(3).fly, 0);
+  assert.equal(phaseAt(2.3).check, 1);
+  assert.equal(phaseAt(2.3).fly, 0);
+});
+
+test("the capsule flies the whole checked path, from launch through the orbit to the rescue area", () => {
+  assert.equal(flightFraction(0), 0);
+  assert.equal(flightFraction(1), 1);
+  let previous = -1;
+  for (let u = 0; u <= 1.0001; u += 0.01) {
+    const f = flightFraction(u);
+    assert.ok(f >= previous - 1e-9);
+    previous = f;
+  }
+  assert.ok(ORBIT_FROM > 0 && ORBIT_FROM < ORBIT_TO && ORBIT_TO < 1);
 });

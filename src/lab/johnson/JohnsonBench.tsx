@@ -6,6 +6,7 @@ import type { BenchRecord } from "../benches.ts";
 import { Eyebrow, Stamp } from "../LabUi.tsx";
 import { readFonts } from "../riso/inks.ts";
 import { Grain } from "../riso/Grain.tsx";
+import { freshSeed } from "../random.ts";
 import { readMuted, setMuted, Sfx, subscribeMuted } from "../sound.ts";
 import { CAPSULE_COUNT } from "./rescuePlan.ts";
 import { RescueScene, type Outcome, type RescueSnapshot } from "./rescueScene.ts";
@@ -49,12 +50,25 @@ function DamageMark({ on }: { on: boolean }) {
 function CapsulePip({ outcome }: { outcome: Outcome }) {
   const fill = outcome === "rescued" ? "#ee704c" : "transparent";
   const stroke = outcome === "pending" ? "rgba(41,41,41,0.35)" : "#292929";
+  const motion = outcome === "rescued" ? "lab-stamp" : outcome === "missed" ? "lab-shake" : "";
   return (
-    <svg viewBox="0 0 20 24" aria-hidden="true" className={`h-[clamp(18px,2.6vmin,30px)] w-auto ${outcome === "rescued" ? "lab-stamp" : ""}`} style={{ ["--stamp-tilt" as string]: "0deg" }}>
-      <path d="M3 22 L6.5 8 L13.5 8 L17 22 Z M7.5 8 L7.5 4 L12.5 4 L12.5 8 M9 4 L9 1.5 L11 1.5 L11 4" fill={fill} stroke={stroke} strokeWidth="1.4" strokeLinejoin="round" />
-      {outcome === "missed" && <path d="M4 4 L16 20 M16 4 L4 20" stroke="#1001e3" strokeWidth="1.8" />}
-    </svg>
+    <span className="relative inline-flex">
+      {outcome === "rescued" && <span className="lab-ping absolute inset-[-30%] rounded-full border-2 border-accent" aria-hidden="true" />}
+      <svg viewBox="0 0 20 24" aria-hidden="true" className={`h-[clamp(18px,2.6vmin,30px)] w-auto ${motion}`} style={{ ["--stamp-tilt" as string]: "0deg" }}>
+        <path d="M3 22 L6.5 8 L13.5 8 L17 22 Z M7.5 8 L7.5 4 L12.5 4 L12.5 8 M9 4 L9 1.5 L11 1.5 L11 4" fill={fill} stroke={stroke} strokeWidth="1.4" strokeLinejoin="round" />
+        {outcome === "missed" && <path d="M4 4 L16 20 M16 4 L4 20" stroke="#1001e3" strokeWidth="1.8" />}
+      </svg>
+    </span>
   );
+}
+
+function stayStill() {
+  return () => {};
+}
+
+function requestedSeed() {
+  const value = Number(new URLSearchParams(window.location.search).get("seed"));
+  return Number.isInteger(value) && value > 0 ? value : null;
 }
 
 function SoundIcon({ muted }: { muted: boolean }) {
@@ -73,6 +87,7 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
   const [sfx] = useState(() => new Sfx());
   const muted = useSyncExternalStore(subscribeMuted, readMuted, () => false);
   const [snap, setSnap] = useState<RescueSnapshot | null>(null);
+  const fixedSeed = useSyncExternalStore(stayStill, requestedSeed, () => null);
   const completeRef = useRef(onComplete);
   const finishedRef = useRef(false);
 
@@ -112,8 +127,8 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
   useEffect(() => {
     if (!active) return;
     sfx.unlock();
-    sceneRef.current?.start();
-  }, [active, sfx]);
+    sceneRef.current?.start(fixedSeed ?? freshSeed());
+  }, [active, sfx, fixedSeed]);
 
   const done = snap?.phase === "done";
 
@@ -164,7 +179,7 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
   const resolved = outcomes.filter((o) => o !== "pending").length;
 
   return (
-    <div ref={rootRef} className="graph-paper absolute inset-0 overflow-hidden select-none">
+    <div ref={rootRef} data-seed={snap?.seed ?? undefined} className="graph-paper absolute inset-0 overflow-hidden select-none">
       <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 block h-full w-full" />
       <div
         role="application"
@@ -185,7 +200,7 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
       </header>
 
       <div
-        className="pointer-events-none absolute top-[clamp(14px,3.2vmin,40px)] right-[clamp(16px,3.6vmin,48px)] flex flex-col items-end gap-1.5 max-[640px]:top-[clamp(76px,12vmin,110px)]"
+        className="pointer-events-none absolute top-[clamp(14px,3.2vmin,40px)] right-[clamp(16px,3.6vmin,48px)] flex flex-col items-end gap-1.5 max-[640px]:top-[clamp(88px,12vmin,110px)]"
         aria-live="polite"
         aria-label={`${rescued} de ${CAPSULE_COUNT} cápsulas resgatadas`}
       >
@@ -195,7 +210,10 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
           ))}
         </div>
         <p className="bg-paper/85 px-1.5 font-notation text-[clamp(11px,1.5vmin,16px)] tracking-[0.14em]">
-          RESGATES <span className="text-[1.3em] font-medium text-accent tabular-nums">{rescued}</span>
+          RESGATES{" "}
+          <span key={rescued} className={`text-[1.3em] font-medium text-accent tabular-nums ${rescued > 0 ? "lab-bump" : ""}`}>
+            {rescued}
+          </span>
         </p>
         <div className={`flex items-center gap-2 bg-paper/85 px-1.5 py-0.5 ${damage > 0 ? "lab-rise" : ""}`} key={damage} aria-label={hitsText(damage)}>
           <span className="font-notation text-[clamp(11px,1.5vmin,16px)] tracking-[0.14em]">PANCADAS</span>

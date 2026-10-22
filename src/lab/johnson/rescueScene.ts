@@ -2,8 +2,11 @@ import { createNoise, fbm } from "../../map/noise.ts";
 import { dotPattern, halftone } from "../riso/halftone.ts";
 import { INK, type Fonts } from "../riso/inks.ts";
 import type { Sfx } from "../sound.ts";
-import { chuteOpening, sampleFall, type FallSample } from "./fall.ts";
-import { buildPlan, CAPSULE_COUNT, SPAWN_Y, WATER_Y, type DropPlan } from "./rescuePlan.ts";
+import { chuteOpening, sampleFall } from "./fall.ts";
+import { HORIZON_Y, rescueGeometry, SPAWN_Y, type RescueGeometry } from "./rescueGeometry.ts";
+import { CAPSULE_COUNT } from "./rescuePlan.ts";
+import { RescueRound, type RoundDrop, type RoundEvent } from "./rescueRound.ts";
+import { serveRound } from "./rescueSim.ts";
 import {
   CAPSULE_BODY,
   CAPSULE_RIBS,
@@ -18,7 +21,6 @@ import {
   SHIP_DECK_Y,
   SHIP_FLAG,
   SHIP_HULL,
-  SHIP_LENGTH,
   SHIP_LINES,
   SHIP_STRIPE,
 } from "./sprites.ts";
@@ -30,10 +32,12 @@ export type RescueSnapshot = {
   phase: RescuePhase;
   outcomes: Outcome[];
   rescued: number;
+  missed: number;
   damage: number;
   debrisSeen: number;
   streak: number;
   bestStreak: number;
+  seed: number | null;
 };
 
 export type RescueOptions = {
@@ -44,21 +48,12 @@ export type RescueOptions = {
 };
 
 type Point = { x: number; y: number };
-
-type Drop = {
-  plan: DropPlan;
-  state: "waiting" | "falling" | "rescued" | "missed" | "hit" | "dodged";
-  resolvedAt: number;
-  from: Point;
-  slot: number;
-  cue: boolean;
-};
-
 type Scorch = { ux: number; at: number };
-
-type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; r: number; color: string; gravity: number };
-type Ripple = { x: number; born: number; max: number; color: string; size: number };
-type Popup = { text: string; x: number; y: number; born: number; color: string; size: number; hand: boolean };
+type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; r: number; color: string; gravity: number; ring?: boolean };
+type Ripple = { x: number; born: number; max: number; color: string; size: number; width: number };
+type Foam = { x: number; born: number; dir: 1 | -1 };
+type Chip = { x: number; y: number; born: number; streak: number };
+type Burst = { x: number; y: number; born: number };
 type Cloud = { x: number; y: number; scale: number; speed: number; puffs: [number, number, number][] };
 
 const PATH_BODY = typeof Path2D === "undefined" ? null : new Path2D(CAPSULE_BODY);
@@ -78,13 +73,12 @@ function inflate(c: number) {
   return 1 - Math.pow(1 - c, 3) + Math.sin(c * Math.PI) * 0.16;
 }
 
-function letterSpacing(ctx: CanvasRenderingContext2D, value: string) {
-  if ("letterSpacing" in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = value;
-}
-
 export class RescueScene {
   private ctx: CanvasRenderingContext2D;
   private background: HTMLCanvasElement;
+  private canvas: HTMLCanvasElement;
+  private options: RescueOptions;
+  private geometry: RescueGeometry = rescueGeometry(1, 1);
   private W = 1;
   private H = 1;
   private dpr = 1;
@@ -92,36 +86,31 @@ export class RescueScene {
   private last = performance.now();
   private now = 0;
   private phase: RescuePhase = "idle";
-  private playStart = 0;
-  private plan = buildPlan();
-  private drops: Drop[] = this.plan.map((plan) => ({ plan, state: "waiting", resolvedAt: 0, from: { x: 0, y: 0 }, slot: -1, cue: false }));
-  private damage = 0;
+  private round: RescueRound | null = null;
+  private idleShip = { x: 0, v: 0 };
   private scorches: Scorch[] = [];
   private hitAt = -Infinity;
-  private shipX = 0;
-  private shipV = 0;
-  private targetX = 0;
-  private squash = 0;
+  private rescueAt = -Infinity;
+  private dip = 0;
+  private dipV = 0;
   private lastInput = -Infinity;
   private interacted = false;
-  private streak = 0;
-  private bestStreak = 0;
-  private rescued = 0;
   private particles: Particle[] = [];
   private ripples: Ripple[] = [];
-  private popups: Popup[] = [];
+  private foams: Foam[] = [];
+  private chips: Chip[] = [];
+  private bursts: Burst[] = [];
   private clouds: Cloud[] = [];
   private shake = 0;
   private hullPattern: CanvasPattern | string = INK.blue;
   private destroyed = false;
   private sized = false;
 
-  constructor(
-    private canvas: HTMLCanvasElement,
-    private options: RescueOptions,
-  ) {
+  constructor(canvas: HTMLCanvasElement, options: RescueOptions) {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("canvas 2d unavailable");
+    this.canvas = canvas;
+    this.options = options;
     this.ctx = ctx;
     this.background = document.createElement("canvas");
     this.frame = requestAnimationFrame(this.tick);
@@ -137,93 +126,96 @@ export class RescueScene {
   }
 
   private get waterY() {
-    return this.H * WATER_Y;
+    return this.geometry.waterY;
   }
 
   private get horizonY() {
-    return this.H * 0.6;
-  }
-
-  private get shipLength() {
-    return clamp(this.W * 0.2, 170, Math.min(this.H * 0.5, this.W * 0.46));
+    return this.H * HORIZON_Y;
   }
 
   private get shipScale() {
-    return this.shipLength / SHIP_LENGTH;
-  }
-
-  private get catchHalf() {
-    return this.shipLength * 0.37;
-  }
-
-  private get hitHalf() {
-    return this.shipLength * 0.44;
-  }
-
-  private get debrisScale() {
-    return clamp(this.H * 0.0019, 0.95, 2.3);
-  }
-
-  private get driftUnit() {
-    return Math.min(this.H, this.W * 0.7);
+    return this.geometry.shipScale;
   }
 
   private get capsuleScale() {
-    return clamp(this.H * 0.00135, 0.72, 1.7);
+    return clamp(this.H * 0.0017, 0.85, 2.1);
+  }
+
+  private get debrisScale() {
+    return clamp(this.H * 0.0022, 1.05, 2.6);
+  }
+
+  private get drops(): RoundDrop[] {
+    return this.round?.drops ?? [];
+  }
+
+  private get ship() {
+    return this.round?.ship ?? this.idleShip;
+  }
+
+  private get time() {
+    return this.round?.time ?? 0;
   }
 
   resize(W: number, H: number, dpr: number) {
-    const fraction = this.sized ? this.shipX / this.W : 0.5;
-    const targetFraction = this.sized ? this.targetX / this.W : 0.5;
+    const lane = this.sized ? (this.ship.x - this.geometry.minX) / this.geometry.span : 0.5;
     this.W = Math.max(1, W);
     this.H = Math.max(1, H);
     this.dpr = Math.min(2, Math.max(1, dpr));
     this.canvas.width = Math.round(this.W * this.dpr);
     this.canvas.height = Math.round(this.H * this.dpr);
-    this.shipX = fraction * this.W;
-    this.targetX = targetFraction * this.W;
+    this.geometry = rescueGeometry(this.W, this.H);
+    if (this.round) this.round.resize(this.geometry);
+    else this.idleShip = { x: this.geometry.minX + clamp(lane, 0, 1) * this.geometry.span, v: 0 };
     this.sized = true;
     this.hullPattern = dotPattern(this.ctx, INK.blue, 4.2, 1.5);
     this.buildClouds();
     this.renderBackground();
   }
 
-  start() {
+  start(seed: number) {
     if (this.phase !== "idle") return;
+    const plan = serveRound(seed, this.geometry);
+    this.round = new RescueRound(plan, this.geometry);
+    this.round.ship = { ...this.idleShip };
+    this.round.setTarget(this.idleShip.x);
     this.phase = "play";
-    this.playStart = this.now;
     this.lastInput = this.now;
     this.emit();
   }
 
   pointer(x: number) {
-    this.targetX = clamp(x, this.shipLength * 0.5, this.W - this.shipLength * 0.5);
     this.lastInput = this.now;
-    if (this.phase === "play") this.interacted = true;
+    if (this.round) {
+      this.round.setTarget(x);
+      if (this.phase === "play") this.interacted = true;
+    }
   }
 
   nudge(direction: number) {
-    this.pointer(this.targetX + direction * this.W * 0.07);
+    if (this.round) this.pointer(this.round.target + direction * this.W * 0.07);
   }
 
   private snapshot(): RescueSnapshot {
+    const round = this.round;
+    const capsules = this.drops.filter((d) => d.plan.kind === "capsule");
     return {
       phase: this.phase,
-      outcomes: this.drops.filter((d) => d.plan.kind === "capsule").map((c) => (c.state === "rescued" ? "rescued" : c.state === "missed" ? "missed" : "pending")),
-      rescued: this.rescued,
-      damage: this.damage,
+      outcomes: capsules.length
+        ? capsules.map((c) => (c.state === "rescued" ? "rescued" : c.state === "missed" ? "missed" : "pending"))
+        : Array.from({ length: CAPSULE_COUNT }, () => "pending" as const),
+      rescued: round?.rescued ?? 0,
+      missed: round?.missed ?? 0,
+      damage: round?.hits ?? 0,
       debrisSeen: this.drops.filter((d) => d.plan.kind === "debris" && d.state !== "waiting").length,
-      streak: this.streak,
-      bestStreak: this.bestStreak,
+      streak: round?.streak ?? 0,
+      bestStreak: round?.bestStreak ?? 0,
+      seed: round?.plan.seed ?? null,
     };
   }
 
   private emit() {
     this.options.onChange(this.snapshot());
-  }
-
-  private playTime() {
-    return (this.now - this.playStart) / 1000;
   }
 
   private buildClouds() {
@@ -232,7 +224,7 @@ export class RescueScene {
       [0.42, 0.09, 0.8, 6],
       [0.68, 0.22, 1.25, 11],
       [0.9, 0.12, 0.9, 7],
-      [0.3, 0.33, 0.7, 13],
+      [0.3, 0.34, 0.7, 13],
     ];
     this.clouds = seeds.map(([fx, fy, scale, speed], i) => {
       const puffs: [number, number, number][] = [];
@@ -336,17 +328,27 @@ export class RescueScene {
   };
 
   private update(dt: number) {
-    const k = 140;
-    const damping = 2 * Math.sqrt(k) * 0.92;
-    const accel = (this.targetX - this.shipX) * k - this.shipV * damping;
-    this.shipV += accel * dt;
-    this.shipX += this.shipV * dt;
-    this.squash = Math.max(0, this.squash - dt * 3.2);
+    const round = this.round;
+    if (round) {
+      const events = round.step(dt);
+      for (const event of events) this.react(event);
+      if (this.phase === "play" && round.finished && round.time - round.lastResolvedAt > 1.4) {
+        this.phase = "done";
+        round.setTarget(this.W / 2);
+        this.options.sfx.finish(round.rescued);
+        this.salute();
+        this.emit();
+      }
+    }
+
+    this.dipV += (-170 * this.dip - 13 * this.dipV) * dt;
+    this.dip += this.dipV * dt;
     this.shake = Math.max(0, this.shake - dt * 2.5);
 
-    if (Math.abs(this.shipV) > this.W * 0.08 && !this.options.reducedMotion) {
-      const dir = Math.sign(this.shipV);
-      const stern = this.shipX - dir * this.shipLength * 0.48;
+    const ship = this.ship;
+    if (Math.abs(ship.v) > this.W * 0.08 && !this.options.reducedMotion) {
+      const dir = Math.sign(ship.v);
+      const stern = ship.x - dir * this.geometry.shipLength * 0.48;
       for (let i = 0; i < 2; i++) {
         this.particles.push({
           x: stern + (Math.random() - 0.5) * 10,
@@ -362,44 +364,11 @@ export class RescueScene {
       }
     }
 
-    if (this.phase === "play") {
-      const t = this.playTime();
-      for (const c of this.drops) {
-        if (c.state === "waiting" && t >= c.plan.spawn) c.state = "falling";
-        if (c.state !== "falling") continue;
-        const local = t - c.plan.spawn;
-        const s = sampleFall(c.plan.path, local);
-        const p = this.capsulePoint(c, s);
-        const deckTop = this.deckY();
-        const onDeck = p.y >= deckTop - 2;
-        if (c.plan.kind === "debris") {
-          if (!c.cue) {
-            c.cue = true;
-            this.options.sfx.incoming(c.plan.path.duration);
-            this.emit();
-          }
-          if (!this.options.reducedMotion && Math.random() < 0.7) this.trail(p);
-          if (onDeck && Math.abs(p.x - this.shipX) <= this.hitHalf) this.hit(c, p);
-          else if (local >= c.plan.path.duration) this.dodge(c, p);
-          continue;
-        }
-        if (!c.cue && s.chute > 0.05) {
-          c.cue = true;
-          this.options.sfx.chute();
-        }
-        if (onDeck && Math.abs(p.x - this.shipX) <= this.catchHalf) this.rescue(c, p);
-        else if (local >= c.plan.path.duration) this.miss(c, p);
+    if (this.phase === "play" && !this.options.reducedMotion) {
+      for (const d of this.drops) {
+        if (d.state === "falling" && d.plan.kind === "debris" && Math.random() < 0.7) this.trail({ x: d.x, y: d.y });
       }
-      if (!this.options.reducedMotion && this.now - this.hitAt < 2600 && Math.random() < 0.5) this.smoke();
-      const resolved = this.drops.every((c) => c.state !== "waiting" && c.state !== "falling");
-      const lastResolved = Math.max(...this.drops.map((c) => c.resolvedAt));
-      if (resolved && this.now - lastResolved > 1400) {
-        this.phase = "done";
-        this.targetX = this.W * 0.5;
-        this.options.sfx.finish(this.rescued);
-        this.celebrate();
-        this.emit();
-      }
+      if (this.now - this.hitAt < 2600 && Math.random() < 0.5) this.smoke();
     }
 
     for (const p of this.particles) {
@@ -410,83 +379,157 @@ export class RescueScene {
     }
     this.particles = this.particles.filter((p) => p.life < p.max);
     this.ripples = this.ripples.filter((r) => (this.now - r.born) / 1000 < r.max);
-    this.popups = this.popups.filter((p) => (this.now - p.born) / 1000 < 1.3);
+    this.foams = this.foams.filter((f) => this.now - f.born < 900);
+    this.chips = this.chips.filter((c) => this.now - c.born < 800);
+    this.bursts = this.bursts.filter((b) => this.now - b.born < 420);
+  }
+
+  private react(event: RoundEvent) {
+    const { sfx } = this.options;
+    if (event.type === "spawn") {
+      if (event.drop.plan.kind === "debris") {
+        sfx.incoming(event.drop.plan.path.duration);
+        this.emit();
+      }
+      return;
+    }
+    if (event.type === "chute") {
+      sfx.chute();
+      return;
+    }
+    const at = { x: event.x, y: event.y };
+    if (event.type === "rescue") this.rescueFx(at);
+    else if (event.type === "miss") this.missFx(at);
+    else if (event.type === "hit") this.hitFx(at);
+    else if (event.type === "dodge") this.dodgeFx(at);
+    this.emit();
   }
 
   private deckY() {
-    return this.waterY + this.bob() + SHIP_DECK_Y * this.shipScale;
+    return this.geometry.deckY + this.bob() + this.dip;
   }
 
   private bob() {
     return this.options.reducedMotion ? 0 : Math.sin(this.now / 620) * this.H * 0.0028;
   }
 
-  private capsulePoint(c: Drop, s: FallSample): Point {
-    const landX = c.plan.landFraction * this.W;
-    return { x: landX + (s.x - c.plan.path.landingX) * this.driftUnit, y: (SPAWN_Y + s.y) * this.H };
+  private pointAt(drop: RoundDrop, local: number): Point {
+    const s = sampleFall(drop.plan.path, local);
+    const landX = this.round ? this.round.landingX(drop) : 0;
+    return { x: landX + (s.x - drop.plan.path.landingX) * this.geometry.driftUnit, y: (SPAWN_Y + s.y) * this.H };
   }
 
-  private landingPoint(c: Drop): Point {
-    return { x: c.plan.landFraction * this.W, y: this.waterY };
+  private landingPoint(drop: RoundDrop): Point {
+    return { x: this.round ? this.round.landingX(drop) : 0, y: this.waterY };
   }
 
   private slotPoint(slot: number) {
     const span = SHIP_CARGO_TO - SHIP_CARGO_FROM;
     const ux = SHIP_CARGO_FROM + ((slot + 0.5) / CAPSULE_COUNT) * span;
-    return { x: this.shipX + ux * this.shipScale, y: this.deckY() };
+    return { x: this.ship.x + ux * this.shipScale, y: this.deckY() };
   }
 
-  private rescue(c: Drop, p: Point) {
-    c.state = "rescued";
-    c.resolvedAt = this.now;
-    c.from = p;
-    c.slot = this.rescued;
-    this.rescued += 1;
-    this.streak += 1;
-    this.bestStreak = Math.max(this.bestStreak, this.streak);
-    this.squash = 1;
-    if (!this.options.reducedMotion) this.shake = 0.6;
-    this.options.sfx.rescue(this.streak);
-    const burst = this.options.reducedMotion ? 8 : 22;
+  private rescueFx(p: Point) {
+    const round = this.round;
+    this.rescueAt = this.now;
+    this.dipV += this.H * (this.options.reducedMotion ? 0.12 : 0.32);
+    this.options.sfx.rescue(round?.streak ?? 1);
+    const size = this.geometry.shipLength * 0.3;
+    this.ripples.push({ x: this.ship.x, born: this.now, max: 0.85, color: INK.paper, size, width: 6 });
+    this.ripples.push({ x: this.ship.x, born: this.now + 120, max: 0.85, color: INK.orange, size: size * 0.9, width: 3 });
+    this.foams.push({ x: this.ship.x, born: this.now, dir: -1 }, { x: this.ship.x, born: this.now, dir: 1 });
+    if (!this.options.reducedMotion) {
+      const scale = clamp(this.H / 1080, 0.6, 1.4);
+      for (let i = 0; i < 16; i++) {
+        const side = i % 2 ? 1 : -1;
+        const a = -Math.PI / 2 + side * (0.35 + Math.random() * 0.5);
+        const v = (200 + Math.random() * 180) * scale;
+        this.particles.push({
+          x: this.ship.x + side * this.geometry.shipLength * (0.44 + Math.random() * 0.1),
+          y: this.waterY + 2,
+          vx: Math.cos(a) * v,
+          vy: Math.sin(a) * v,
+          life: 0,
+          max: 0.5 + Math.random() * 0.25,
+          r: (3.5 + Math.random() * 3) * scale,
+          color: INK.paper,
+          gravity: 900 * scale,
+          ring: true,
+        });
+      }
+    }
+    this.chips.push({ x: p.x, y: this.deckY() - this.H * 0.05, born: this.now, streak: round?.streak ?? 1 });
+  }
+
+  private missFx(p: Point) {
+    this.options.sfx.splash();
+    const size = this.H * 0.035;
+    this.ripples.push({ x: p.x, born: this.now, max: 1.6, color: INK.paper, size, width: 3 });
+    this.ripples.push({ x: p.x, born: this.now + 220, max: 1.6, color: INK.blue, size, width: 2 });
+    const drops = this.options.reducedMotion ? 6 : 16;
+    for (let i = 0; i < drops; i++) {
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
+      const v = 140 + Math.random() * 220;
+      this.particles.push({ x: p.x, y: this.waterY, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0, max: 0.7 + Math.random() * 0.4, r: 1.8 + Math.random() * 2.5, color: i % 2 ? INK.paper : INK.blue, gravity: 700 });
+    }
+  }
+
+  private hitFx(p: Point) {
+    this.hitAt = this.now;
+    const ux = clamp((p.x - this.ship.x) / this.shipScale, -50, 50);
+    this.scorches.push({ ux, at: this.now });
+    this.shake = this.options.reducedMotion ? 0 : 1.4;
+    this.dipV += this.H * 0.4;
+    this.options.sfx.hit();
+    this.bursts.push({ x: p.x, y: this.deckY() - 6, born: this.now });
+    const burst = this.options.reducedMotion ? 8 : 24;
     for (let i = 0; i < burst; i++) {
-      const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.3;
-      const v = 160 + Math.random() * 260;
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.6;
+      const v = 140 + Math.random() * 300;
+      const k = i % 3;
       this.particles.push({
         x: p.x,
         y: p.y,
         vx: Math.cos(a) * v,
         vy: Math.sin(a) * v,
         life: 0,
-        max: 0.6 + Math.random() * 0.5,
-        r: 2 + Math.random() * 3.5,
-        color: i % 3 === 0 ? INK.blue : INK.orange,
-        gravity: 520,
+        max: 0.5 + Math.random() * 0.5,
+        r: (k === 0 ? 5 : 2.5) + Math.random() * 3,
+        color: k === 0 ? "rgba(41, 41, 41, 0.75)" : INK.orange,
+        gravity: 600,
       });
     }
-    const size = clamp(this.H * 0.05, 28, 64);
-    this.popups.push({ text: "+1", x: p.x, y: p.y - this.H * 0.05, born: this.now, color: INK.orange, size, hand: false });
-    if (this.streak >= 3) {
-      this.popups.push({ text: `${this.streak} seguidas!`, x: p.x, y: p.y - this.H * 0.11, born: this.now + 120, color: INK.blue, size: size * 0.62, hand: true });
-    }
-    this.emit();
   }
 
-  private celebrate() {
-    const count = this.options.reducedMotion ? 16 : 70;
-    for (let i = 0; i < count; i++) {
-      const fromLeft = i % 2 === 0;
-      const a = fromLeft ? -Math.PI / 2 + 0.25 + Math.random() * 0.5 : -Math.PI / 2 - 0.25 - Math.random() * 0.5;
-      const v = this.H * (0.9 + Math.random() * 0.6);
+  private dodgeFx(p: Point) {
+    this.options.sfx.fizz();
+    const size = this.H * 0.03;
+    this.ripples.push({ x: p.x, born: this.now, max: 1.3, color: INK.black, size, width: 2 });
+    const drops = this.options.reducedMotion ? 4 : 12;
+    for (let i = 0; i < drops; i++) {
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+      const v = 120 + Math.random() * 200;
+      this.particles.push({ x: p.x, y: this.waterY, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0, max: 0.6 + Math.random() * 0.4, r: 2 + Math.random() * 3, color: i % 3 ? INK.paper : "rgba(41, 41, 41, 0.5)", gravity: 700 });
+    }
+  }
+
+  private salute() {
+    if (this.options.reducedMotion) return;
+    for (let i = 0; i < 36; i++) {
+      const side = i % 2 ? 1 : -1;
+      const a = -Math.PI / 2 + side * (0.35 + Math.random() * 0.25);
+      const v = this.H * (0.55 + Math.random() * 0.2);
       this.particles.push({
-        x: fromLeft ? this.W * 0.06 : this.W * 0.94,
-        y: this.H,
+        x: this.ship.x + side * this.geometry.shipLength * 0.38,
+        y: this.waterY - this.geometry.shipLength * 0.08,
         vx: Math.cos(a) * v,
         vy: Math.sin(a) * v,
-        life: 0,
-        max: 1.6 + Math.random() * 0.8,
-        r: 3 + Math.random() * 4,
-        color: i % 3 === 0 ? INK.blue : i % 3 === 1 ? INK.orange : INK.paper,
-        gravity: this.H * 0.9,
+        life: -Math.floor(i / 2) * 0.03,
+        max: 1.2,
+        r: 2.5 + Math.random() * 2,
+        color: INK.paper,
+        gravity: this.H * 1.1,
+        ring: true,
       });
     }
   }
@@ -510,7 +553,7 @@ export class RescueScene {
   private smoke() {
     const ux = this.scorches.length ? this.scorches[this.scorches.length - 1].ux : 0;
     this.particles.push({
-      x: this.shipX + ux * this.shipScale + (Math.random() - 0.5) * 12,
+      x: this.ship.x + ux * this.shipScale + (Math.random() - 0.5) * 12,
       y: this.deckY() - 4,
       vx: -20 + (Math.random() - 0.5) * 20,
       vy: -50 - Math.random() * 40,
@@ -522,76 +565,8 @@ export class RescueScene {
     });
   }
 
-  private hit(c: Drop, p: Point) {
-    c.state = "hit";
-    c.resolvedAt = this.now;
-    c.from = p;
-    this.damage += 1;
-    this.streak = 0;
-    this.hitAt = this.now;
-    const ux = clamp((p.x - this.shipX) / this.shipScale, -50, 50);
-    this.scorches.push({ ux, at: this.now });
-    this.shipV += Math.sign(this.shipX - p.x || 1) * this.W * 0.9;
-    this.shake = this.options.reducedMotion ? 0 : 1.4;
-    this.options.sfx.hit();
-    const burst = this.options.reducedMotion ? 10 : 34;
-    for (let i = 0; i < burst; i++) {
-      const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.6;
-      const v = 140 + Math.random() * 340;
-      const k = i % 4;
-      this.particles.push({
-        x: p.x,
-        y: p.y,
-        vx: Math.cos(a) * v,
-        vy: Math.sin(a) * v,
-        life: 0,
-        max: 0.5 + Math.random() * 0.6,
-        r: (k === 0 ? 5 : 2.5) + Math.random() * 4,
-        color: k === 0 ? "rgba(41, 41, 41, 0.75)" : k === 1 ? INK.paper : INK.orange,
-        gravity: 600,
-      });
-    }
-    this.popups.push({ text: "ai!", x: p.x, y: p.y - this.H * 0.08, born: this.now, color: INK.orange, size: clamp(this.H * 0.07, 36, 84), hand: true });
-    this.emit();
-  }
-
-  private dodge(c: Drop, p: Point) {
-    c.state = "dodged";
-    c.resolvedAt = this.now;
-    c.from = p;
-    this.options.sfx.fizz();
-    const size = this.H * 0.03;
-    this.ripples.push({ x: p.x, born: this.now, max: 1.4, color: INK.black, size });
-    const drops = this.options.reducedMotion ? 4 : 14;
-    for (let i = 0; i < drops; i++) {
-      const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
-      const v = 120 + Math.random() * 200;
-      this.particles.push({ x: p.x, y: this.waterY, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0, max: 0.6 + Math.random() * 0.4, r: 2 + Math.random() * 3, color: i % 3 ? INK.paper : "rgba(41, 41, 41, 0.5)", gravity: 700 });
-    }
-    this.emit();
-  }
-
-  private miss(c: Drop, p: Point) {
-    c.state = "missed";
-    c.resolvedAt = this.now;
-    c.from = p;
-    this.streak = 0;
-    this.options.sfx.splash();
-    const size = this.H * 0.035;
-    this.ripples.push({ x: p.x, born: this.now, max: 1.8, color: INK.paper, size });
-    this.ripples.push({ x: p.x, born: this.now + 220, max: 1.8, color: INK.orange, size });
-    const drops = this.options.reducedMotion ? 6 : 18;
-    for (let i = 0; i < drops; i++) {
-      const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
-      const v = 140 + Math.random() * 220;
-      this.particles.push({ x: p.x, y: this.waterY, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0, max: 0.7 + Math.random() * 0.4, r: 1.8 + Math.random() * 2.5, color: i % 2 ? INK.paper : INK.blue, gravity: 700 });
-    }
-    this.popups.push({ text: "quase!", x: p.x, y: this.waterY - this.H * 0.07, born: this.now, color: INK.pencil, size: clamp(this.H * 0.04, 22, 44), hand: true });
-    this.emit();
-  }
-
   private nextFalling() {
-    let best: Drop | null = null;
+    let best: RoundDrop | null = null;
     for (const c of this.drops) {
       if (c.state !== "falling" || c.plan.kind !== "capsule") continue;
       if (!best || c.plan.landAt < best.plan.landAt) best = c;
@@ -612,11 +587,13 @@ export class RescueScene {
     this.drawWarnings();
     this.drawForecasts();
     this.drawRipples();
+    this.drawFoam();
     this.drawShip();
     this.drawCapsules();
     this.drawDebris();
     this.drawParticles();
-    this.drawPopups();
+    this.drawBursts();
+    this.drawChips();
     this.drawGhostHand();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
@@ -690,20 +667,19 @@ export class RescueScene {
   private drawForecasts() {
     if (this.phase !== "play") return;
     const { ctx } = this;
-    const t = this.playTime();
     const next = this.nextFalling();
     const gap = clamp(this.H * 0.03, 16, 34);
     const dotR = clamp(this.H * 0.0048, 3, 6.5);
     const flow = this.options.reducedMotion ? 0 : ((this.now / 1000) * gap * 1.6) % gap;
     for (const c of this.drops) {
       if (c.state !== "falling" || c.plan.kind !== "capsule") continue;
-      const local = t - c.plan.spawn;
+      const local = c.local;
       const primary = c === next;
       const alpha = (primary ? 1 : 0.4) * smooth(local / 0.35);
       const end = c.plan.path.duration;
       const points: Point[] = [];
-      for (let s = local; s <= end; s += 0.01) points.push(this.capsulePoint(c, sampleFall(c.plan.path, s)));
-      points.push(this.capsulePoint(c, sampleFall(c.plan.path, end)));
+      for (let s = local; s <= end; s += 0.01) points.push(this.pointAt(c, s));
+      points.push(this.pointAt(c, end));
       let travelled = 0;
       let mark = gap * 1.2 + flow;
       const dots: Point[] = [];
@@ -734,8 +710,8 @@ export class RescueScene {
       ctx.restore();
 
       const land = this.landingPoint(c);
-      const aligned = Math.abs(this.shipX - land.x) <= this.catchHalf;
-      const rx = clamp(this.H * 0.05, 26, 60);
+      const aligned = Math.abs(this.ship.x - land.x) <= this.geometry.catchHalf;
+      const rx = clamp(this.H * 0.055, 28, 66);
       const pulse = this.options.reducedMotion ? 0 : (this.now / 900) % 1;
       ctx.save();
       ctx.globalAlpha = alpha;
@@ -747,7 +723,7 @@ export class RescueScene {
       ctx.beginPath();
       ctx.arc(0, 0, rx, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.fillStyle = aligned ? INK.orange : "rgba(247, 248, 246, 0.55)";
+      ctx.fillStyle = aligned ? INK.orange : "rgba(247,248,246,0.55)";
       ctx.fill();
       ctx.strokeStyle = INK.orange;
       ctx.lineWidth = 5;
@@ -778,13 +754,14 @@ export class RescueScene {
 
       if (c.plan.id < 2 && primary && !aligned) {
         const size = clamp(this.H * 0.036, 20, 40);
-        const tx = land.x + rx + 18;
+        const leftSide = land.x > this.W * 0.7;
+        const tx = leftSide ? land.x - rx - 18 : land.x + rx + 18;
         const ty = land.y - this.H * 0.085;
         ctx.save();
         ctx.globalAlpha = alpha;
         ctx.font = `600 ${size}px ${this.options.fonts.hand}`;
         const w = ctx.measureText("cai aqui").width;
-        ctx.translate(tx, ty);
+        ctx.translate(leftSide ? tx - w : tx, ty);
         ctx.rotate(-0.06);
         ctx.fillStyle = "rgba(247, 248, 246, 0.92)";
         ctx.fillRect(-8, -size * 0.62, w + 16, size * 1.2);
@@ -792,19 +769,6 @@ export class RescueScene {
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         ctx.fillText("cai aqui", 0, 0);
-        ctx.restore();
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.strokeStyle = INK.paper;
-        ctx.lineWidth = 5;
-        ctx.lineCap = "round";
-        const arrow = new Path2D();
-        arrow.moveTo(tx - 2, ty + size * 0.55);
-        arrow.quadraticCurveTo(tx - 10, ty + size * 1.4, land.x + rx * 0.55, land.y - 10);
-        ctx.stroke(arrow);
-        ctx.strokeStyle = INK.black;
-        ctx.lineWidth = 2;
-        ctx.stroke(arrow);
         ctx.restore();
       }
     }
@@ -820,7 +784,7 @@ export class RescueScene {
       ctx.scale(1, 0.3);
       ctx.strokeStyle = r.color;
       ctx.globalAlpha = 1 - age;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = r.width;
       ctx.beginPath();
       ctx.arc(0, 0, r.size * (0.4 + age * 3), 0, Math.PI * 2);
       ctx.stroke();
@@ -828,14 +792,45 @@ export class RescueScene {
     }
     for (const c of this.drops) {
       if (c.state !== "missed") continue;
-      const age = (this.now - c.resolvedAt) / 1000;
+      const age = this.time - c.resolvedAt;
       if (age > 2.4) continue;
       const fade = 1 - smooth((age - 1.6) / 0.8);
       const sink = smooth((age - 1.2) / 1.2) * this.H * 0.03;
       const bob = Math.sin(this.now / 300 + c.plan.id) * 2;
       ctx.save();
       ctx.globalAlpha = fade;
-      this.drawCapsule({ x: c.from.x, y: this.waterY + 6 + bob + sink }, Math.PI / 2 + 0.5, this.capsuleScale * 0.85, true);
+      this.drawCapsule({ x: c.x, y: this.waterY + 6 + bob + sink }, Math.PI / 2 + 0.5, this.capsuleScale * 0.85, true);
+      ctx.restore();
+    }
+  }
+
+  private drawFoam() {
+    const { ctx } = this;
+    const half = this.geometry.shipLength * 0.5;
+    for (const f of this.foams) {
+      const k = (this.now - f.born) / 900;
+      const e = 1 - Math.pow(1 - k, 2);
+      const x = f.x + f.dir * (half * 0.95 + e * half * 0.75);
+      const y = this.waterY + 4;
+      const len = half * (0.45 + 0.2 * (1 - k));
+      const lift = this.H * 0.012 * (1 - k);
+      ctx.save();
+      ctx.globalAlpha = 1 - k * k;
+      ctx.lineCap = "round";
+      for (const [dy, scaleLen] of [
+        [0, 1],
+        [this.H * 0.009, 0.7],
+      ]) {
+        ctx.strokeStyle = INK.blue;
+        ctx.lineWidth = 9;
+        ctx.beginPath();
+        ctx.moveTo(x - f.dir * len * scaleLen, y + dy);
+        ctx.quadraticCurveTo(x - f.dir * len * scaleLen * 0.35, y + dy - lift, x, y + dy);
+        ctx.stroke();
+        ctx.strokeStyle = INK.paper;
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      }
       ctx.restore();
     }
   }
@@ -843,17 +838,19 @@ export class RescueScene {
   private drawShip() {
     const { ctx } = this;
     const s = this.shipScale;
-    const tilt = clamp(-this.shipV / (this.W * 2.2), -0.09, 0.09) + (this.options.reducedMotion ? 0 : Math.sin(this.now / 900) * 0.012);
-    const squash = Math.sin(this.squash * Math.PI) * 0.09 * this.squash;
-    const x = this.shipX;
-    const y = this.waterY + this.bob() + 2 * s;
+    const ship = this.ship;
+    const tilt = clamp(-ship.v / (this.W * 2.2), -0.09, 0.09) + (this.options.reducedMotion ? 0 : Math.sin(this.now / 900) * 0.012);
+    const x = ship.x;
+    const y = this.waterY + this.bob() + this.dip + 2 * s;
     const next = this.nextFalling();
-    const aligned = this.phase === "play" && next !== null && Math.abs(this.shipX - this.landingPoint(next).x) <= this.catchHalf;
+    const aligned = this.phase === "play" && next !== null && Math.abs(ship.x - this.landingPoint(next).x) <= this.geometry.catchHalf;
+    const sinceRescue = (this.now - this.rescueAt) / 1000;
+    const misregister = sinceRescue < 0.22 && !this.options.reducedMotion ? 1 - sinceRescue / 0.22 : 0;
 
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(tilt);
-    ctx.scale(s * (1 + squash * 0.5), s * (1 - squash));
+    ctx.scale(s, s);
 
     ctx.fillStyle = "rgba(16, 1, 227, 0.22)";
     ctx.beginPath();
@@ -861,6 +858,17 @@ export class RescueScene {
     ctx.fill();
 
     const hull = new Path2D(SHIP_HULL);
+    const deck = new Path2D(SHIP_DECK);
+    if (misregister > 0) {
+      ctx.save();
+      ctx.translate(3.2 * misregister, -2.4 * misregister);
+      ctx.globalAlpha = 0.85 * misregister;
+      ctx.fillStyle = INK.orange;
+      ctx.fill(hull);
+      ctx.fill(deck);
+      ctx.restore();
+    }
+
     ctx.fillStyle = INK.paper;
     ctx.fill(hull);
     ctx.save();
@@ -874,7 +882,6 @@ export class RescueScene {
     ctx.lineWidth = 2.6;
     ctx.stroke(new Path2D(SHIP_STRIPE));
 
-    const deck = new Path2D(SHIP_DECK);
     ctx.fillStyle = INK.paper;
     ctx.fill(deck);
     ctx.globalCompositeOperation = "multiply";
@@ -884,8 +891,14 @@ export class RescueScene {
     ctx.fillStyle = INK.blue;
     for (let i = 0; i < 5; i++) ctx.fillRect(18.5 + i * 4.3, -16.5, 2.4, 2.4);
     ctx.fillRect(24.5, -25.2, 11, 2.6);
+    ctx.save();
+    const wave = this.options.reducedMotion ? 0 : Math.sin(this.now / 70) * Math.max(0, 1 - sinceRescue / 0.6) * 0.5;
+    ctx.translate(30, -45);
+    ctx.rotate(wave);
+    ctx.translate(-30, 45);
     ctx.fillStyle = INK.orange;
     ctx.fill(new Path2D(SHIP_FLAG));
+    ctx.restore();
 
     for (const scorch of this.scorches) {
       const age = (this.now - scorch.at) / 1000;
@@ -936,25 +949,25 @@ export class RescueScene {
 
     for (const c of this.drops) {
       if (c.state !== "rescued") continue;
-      const age = (this.now - c.resolvedAt) / 1000;
+      const age = this.time - c.resolvedAt;
       const slot = this.slotPoint(c.slot);
-      const k = smooth(age / 0.45);
-      const hop = Math.sin(k * Math.PI) * this.H * 0.06;
-      const px = c.from.x + (slot.x - c.from.x) * k;
-      const py = c.from.y + (slot.y - c.from.y) * k - hop;
+      const k = smooth(age / 0.38);
+      const hop = Math.sin(k * Math.PI) * this.H * 0.05;
+      const px = c.x + (slot.x - c.x) * k;
+      const py = c.y + (slot.y - c.y) * k - hop;
       const scale = this.capsuleScale + (s * 0.17 - this.capsuleScale) * k;
       this.drawCapsule({ x: px, y: py }, Math.PI / 2 + tilt, scale, false);
       if (age < 0.9) this.drawLooseChute(c, age);
     }
   }
 
-  private drawLooseChute(c: Drop, age: number) {
+  private drawLooseChute(c: RoundDrop, age: number) {
     const { ctx } = this;
     const k = age / 0.9;
     const scale = this.capsuleScale * (1 - k * 0.5);
     ctx.save();
     ctx.globalAlpha = 1 - k;
-    ctx.translate(c.from.x + k * this.H * 0.08, c.from.y - this.H * 0.09 - k * this.H * 0.05);
+    ctx.translate(c.x + k * this.H * 0.08, c.y - this.H * 0.09 - k * this.H * 0.05);
     ctx.rotate(0.4 * k);
     ctx.scale(scale, scale * (1 - k * 0.6));
     this.chuteShape(1);
@@ -1003,17 +1016,15 @@ export class RescueScene {
 
   private drawCapsules() {
     if (this.phase !== "play") return;
-    const t = this.playTime();
+    const { ctx } = this;
     for (const c of this.drops) {
       if (c.state !== "falling" || c.plan.kind !== "capsule") continue;
-      const local = t - c.plan.spawn;
-      const s = sampleFall(c.plan.path, local);
-      const p = this.capsulePoint(c, s);
+      const local = c.local;
+      const p = { x: c.x, y: c.y };
       const open = chuteOpening(local, c.plan.spec.openAt);
       const tumble = (1 - open) * Math.sin(local * 11 + c.plan.id) * 0.32;
       const swing = this.options.reducedMotion ? 0 : open * Math.sin(this.now / 520 + c.plan.id * 1.7) * 0.07;
       const scale = this.capsuleScale;
-      const { ctx } = this;
       if (open > 0) {
         ctx.save();
         ctx.translate(p.x, p.y);
@@ -1034,26 +1045,9 @@ export class RescueScene {
         ctx.fill();
         ctx.stroke();
         ctx.restore();
-        if (!this.options.reducedMotion) {
-          ctx.save();
-          ctx.strokeStyle = "rgba(41, 41, 41, 0.35)";
-          ctx.lineWidth = 1.2;
-          for (const dx of [-8, 0, 8]) {
-            ctx.beginPath();
-            ctx.moveTo(p.x + dx * scale, p.y - 60 * scale);
-            ctx.lineTo(p.x + dx * scale, p.y - (90 + Math.abs(dx) * 1.5) * scale);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
       }
       this.drawCapsule(p, Math.PI / 2 + tumble + swing, scale, false);
     }
-  }
-
-  private debrisPoint(c: Drop) {
-    const local = this.playTime() - c.plan.spawn;
-    return { local, p: this.capsulePoint(c, sampleFall(c.plan.path, local)) };
   }
 
   private drawWarnings() {
@@ -1061,12 +1055,11 @@ export class RescueScene {
     const { ctx } = this;
     for (const c of this.drops) {
       if (c.state !== "falling" || c.plan.kind !== "debris") continue;
-      const { local } = this.debrisPoint(c);
-      const k = clamp(local / c.plan.path.duration, 0, 1);
+      const k = clamp(c.local / c.plan.path.duration, 0, 1);
       const land = this.landingPoint(c);
-      const rx = clamp(this.H * 0.05, 26, 60) * (0.55 + 0.6 * k);
+      const rx = clamp(this.H * 0.055, 28, 66) * (0.55 + 0.6 * k);
       const blink = this.options.reducedMotion ? 1 : 0.55 + 0.45 * Math.sin(this.now / (110 - k * 60));
-      const danger = Math.abs(this.shipX - land.x) <= this.hitHalf;
+      const danger = Math.abs(this.ship.x - land.x) <= this.geometry.hitHalf;
       ctx.save();
       ctx.translate(land.x, land.y + 4);
       ctx.scale(1, 0.32);
@@ -1082,7 +1075,7 @@ export class RescueScene {
       ctx.stroke();
       ctx.restore();
       if (danger) {
-        const size = clamp(this.H * 0.04, 22, 46);
+        const size = clamp(this.H * 0.045, 24, 52);
         ctx.save();
         ctx.globalAlpha = blink;
         ctx.font = `700 ${size}px ${this.options.fonts.display}`;
@@ -1091,9 +1084,9 @@ export class RescueScene {
         ctx.lineWidth = 6;
         ctx.strokeStyle = INK.paper;
         ctx.lineJoin = "round";
-        ctx.strokeText("!", land.x, land.y - this.H * 0.05);
+        ctx.strokeText("!", land.x, land.y - this.H * 0.055);
         ctx.fillStyle = INK.orange;
-        ctx.fillText("!", land.x, land.y - this.H * 0.05);
+        ctx.fillText("!", land.x, land.y - this.H * 0.055);
         ctx.restore();
       }
     }
@@ -1126,12 +1119,11 @@ export class RescueScene {
     const shape = this.debrisShape();
     for (const c of this.drops) {
       if (c.state !== "falling" || c.plan.kind !== "debris") continue;
-      const { local, p } = this.debrisPoint(c);
+      const local = c.local;
       const spin = local * (4 + (c.plan.id % 3)) * (c.plan.id % 2 ? 1 : -1);
       const flicker = this.options.reducedMotion ? 1 : 0.8 + 0.2 * Math.sin(this.now / 40 + c.plan.id);
-      const cy = p.y - 16 * scale;
       ctx.save();
-      ctx.translate(p.x, cy);
+      ctx.translate(c.x, c.y - 16 * scale);
       ctx.scale(scale, scale);
       ctx.fillStyle = INK.orange;
       ctx.beginPath();
@@ -1201,50 +1193,88 @@ export class RescueScene {
   private drawParticles() {
     const { ctx } = this;
     for (const p of this.particles) {
+      if (p.life < 0) continue;
       const k = 1 - p.life / p.max;
       ctx.globalAlpha = Math.max(0, k);
       ctx.fillStyle = p.color;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r * (0.5 + k * 0.5), 0, Math.PI * 2);
       ctx.fill();
-      if (p.color === INK.paper) {
-        ctx.strokeStyle = "rgba(16, 1, 227, 0.5)";
-        ctx.lineWidth = 0.8;
+      if (p.ring || p.color === INK.paper) {
+        ctx.strokeStyle = "rgba(16, 1, 227, 0.6)";
+        ctx.lineWidth = 0.9;
         ctx.stroke();
       }
     }
     ctx.globalAlpha = 1;
   }
 
-  private drawPopups() {
+  private drawBursts() {
     const { ctx } = this;
-    for (const p of this.popups) {
-      const age = (this.now - p.born) / 1000;
-      if (age < 0) continue;
-      const k = age / 1.3;
-      const pop = age < 0.18 ? 0.6 + (age / 0.18) * 0.55 : 1.15 - Math.min(0.15, (age - 0.18) * 0.6);
+    for (const b of this.bursts) {
+      const k = (this.now - b.born) / 420;
+      const grow = 0.6 + 0.6 * Math.min(1, k * 3);
+      const r = this.geometry.shipLength * 0.13 * grow;
       ctx.save();
-      ctx.globalAlpha = 1 - smooth((k - 0.6) / 0.4);
-      ctx.translate(p.x, p.y - k * this.H * 0.06);
-      ctx.scale(pop, pop);
-      ctx.font = p.hand ? `600 ${p.size}px ${this.options.fonts.hand}` : `700 ${p.size}px ${this.options.fonts.display}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      letterSpacing(ctx, "0px");
-      ctx.lineJoin = "round";
-      if (!p.hand) {
-        ctx.lineWidth = Math.max(3, p.size * 0.12);
-        ctx.strokeStyle = INK.black;
-        ctx.strokeText(p.text, 2, 2);
-        ctx.fillStyle = INK.black;
-        ctx.fillText(p.text, 2, 2);
-      } else {
-        ctx.lineWidth = Math.max(5, p.size * 0.22);
-        ctx.strokeStyle = INK.paper;
-        ctx.strokeText(p.text, 0, 0);
+      ctx.globalAlpha = 1 - smooth((k - 0.5) / 0.5);
+      ctx.translate(b.x, b.y);
+      ctx.rotate(k * 0.4);
+      ctx.beginPath();
+      for (let i = 0; i < 18; i++) {
+        const a = (i / 18) * Math.PI * 2;
+        const rr = i % 2 ? r * 0.5 : r;
+        ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr * 0.8);
       }
-      ctx.fillStyle = p.color;
-      ctx.fillText(p.text, 0, 0);
+      ctx.closePath();
+      ctx.fillStyle = INK.orange;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = INK.black;
+      ctx.stroke();
+      ctx.fillStyle = INK.paper;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.28, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  private drawChips() {
+    const { ctx } = this;
+    for (const c of this.chips) {
+      const age = (this.now - c.born) / 1000;
+      const k = age / 0.8;
+      const pop = age < 0.12 ? 0.7 + (age / 0.12) * 0.42 : 1.12 - Math.min(0.12, (age - 0.12) * 0.8);
+      const size = clamp(this.H * 0.042, 22, 50);
+      const text = "+1";
+      const extra = c.streak >= 3 ? `×${c.streak}` : "";
+      ctx.save();
+      ctx.globalAlpha = 1 - smooth((k - 0.65) / 0.35);
+      ctx.translate(c.x, c.y - smooth(k) * this.H * 0.035);
+      ctx.scale(pop, pop);
+      ctx.font = `700 ${size}px ${this.options.fonts.display}`;
+      const w1 = ctx.measureText(text).width;
+      ctx.font = `600 ${size * 0.62}px ${this.options.fonts.mono}`;
+      const w2 = extra ? ctx.measureText(extra).width + size * 0.3 : 0;
+      const w = w1 + w2 + size * 0.7;
+      const h = size * 1.18;
+      ctx.fillStyle = INK.black;
+      ctx.fillRect(-w / 2 + 3, -h / 2 + 3, w, h);
+      ctx.fillStyle = INK.paper;
+      ctx.fillRect(-w / 2, -h / 2, w, h);
+      ctx.strokeStyle = INK.black;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-w / 2 + 0.75, -h / 2 + 0.75, w - 1.5, h - 1.5);
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "left";
+      ctx.font = `700 ${size}px ${this.options.fonts.display}`;
+      ctx.fillStyle = INK.orange;
+      ctx.fillText(text, -w / 2 + size * 0.35, size * 0.04);
+      if (extra) {
+        ctx.font = `600 ${size * 0.62}px ${this.options.fonts.mono}`;
+        ctx.fillStyle = INK.blue;
+        ctx.fillText(extra, -w / 2 + size * 0.35 + w1 + size * 0.3, size * 0.06);
+      }
       ctx.restore();
     }
   }
@@ -1254,7 +1284,7 @@ export class RescueScene {
     const next = this.nextFalling();
     if (!next) return;
     const land = this.landingPoint(next);
-    if (Math.abs(this.shipX - land.x) <= this.catchHalf * 0.6) return;
+    if (Math.abs(this.ship.x - land.x) <= this.geometry.catchHalf * 0.6) return;
     const idle = (this.now - this.lastInput) / 1000;
     const wait = this.interacted ? 3.2 : 0.9;
     if (idle < wait) return;
@@ -1263,9 +1293,9 @@ export class RescueScene {
     const move = smooth((k - 0.15) / 0.55);
     const alpha = k < 0.1 ? k / 0.1 : k > 0.85 ? 1 - (k - 0.85) / 0.15 : 1;
     const press = k > 0.1 && k < 0.75 ? 1 : 0;
-    const x = this.shipX + (land.x - this.shipX) * move;
-    const y = this.waterY + this.H * 0.07;
-    const scale = clamp(this.H * 0.0013, 0.8, 1.5);
+    const x = this.ship.x + (land.x - this.ship.x) * move;
+    const y = this.waterY + this.H * 0.08;
+    const scale = clamp(this.H * 0.0014, 0.8, 1.6);
     const { ctx } = this;
     ctx.save();
     ctx.globalAlpha = alpha;

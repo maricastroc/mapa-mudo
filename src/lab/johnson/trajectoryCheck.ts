@@ -57,6 +57,8 @@ export function cumulative(points: Point[]) {
 
 const ROUTE_LENGTHS = cumulative(ROUTE);
 export const ROUTE_LENGTH = ROUTE_LENGTHS[ROUTE_LENGTHS.length - 1];
+export const ORBIT_FROM = cumulative(ASCENT)[ASCENT.length - 1] / ROUTE_LENGTH;
+export const ORBIT_TO = (cumulative(ASCENT)[ASCENT.length - 1] + cumulative(ORBIT)[ORBIT.length - 1]) / ROUTE_LENGTH;
 const DESCENT_LENGTHS = cumulative(DESCENT);
 export const DESCENT_LENGTH = DESCENT_LENGTHS[DESCENT_LENGTHS.length - 1];
 
@@ -125,10 +127,23 @@ export function toPath(points: Point[]) {
   return points.map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" ");
 }
 
-export const TIMING = { check: 2.8, pause: 0.35, fly: 2.4, settle: 0.6 };
+export const TIMING = { check: 2.2, pause: 0.25, fly: 3.4, settle: 0.8 };
 export const TOTAL_SECONDS = TIMING.check + TIMING.pause + TIMING.fly + TIMING.settle;
 
 export type DemoPhase = "idle" | "checking" | "flying" | "done";
+
+export function flightFraction(fly: number) {
+  const u = Math.max(0, Math.min(1, fly));
+  const a = 0.2;
+  const b = 0.56;
+  if (u < a) {
+    const k = u / a;
+    return ORBIT_FROM * (k * k * (3 - 2 * k) * 0.6 + k * 0.4);
+  }
+  if (u < b) return ORBIT_FROM + ((u - a) / (b - a)) * (ORBIT_TO - ORBIT_FROM);
+  const k = (u - b) / (1 - b);
+  return ORBIT_TO + (1 - Math.pow(1 - k, 1.8)) * (1 - ORBIT_TO);
+}
 
 export function phaseAt(seconds: number): { phase: DemoPhase; check: number; fly: number } {
   if (seconds < 0) return { phase: "idle", check: 0, fly: 0 };

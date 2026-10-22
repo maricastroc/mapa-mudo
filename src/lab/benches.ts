@@ -15,8 +15,6 @@ export type RevealDemoCopy = {
   cta: string;
   replay: string;
   idle: string;
-  working: string;
-  flying: string;
   closing: string;
 };
 
@@ -63,10 +61,8 @@ export const BENCHES: Bench[] = [
         label: "ESQUEMA DO VOO DE JOHN GLENN, 1962 · FORA DE ESCALA",
         cta: "Conferir a trajetória",
         replay: "Ver de novo",
-        idle: "Antes de uma cápsula voltar, alguém precisava calcular e conferir o caminho.",
-        working: "Conferindo à mão, etapa por etapa.",
-        flying: "Caminho conferido. A cápsula pode voltar.",
-        closing: "Antes de partir, John Glenn pediu que Katherine conferisse à mão as contas do computador.",
+        idle: "Antes do voo, alguém precisava conferir o caminho da cápsula.",
+        closing: "John Glenn pediu que Katherine conferisse à mão as contas do computador.",
       },
       quote: { text: "Se ela disser que estão certos, estou pronto.", by: "John Glenn, segundo Katherine" },
       photo: {
