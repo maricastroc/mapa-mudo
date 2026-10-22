@@ -6,6 +6,8 @@ import { BENCHES, benchById, type BenchId, type BenchRecord } from "./benches.ts
 import { IntroCard } from "./IntroCard.tsx";
 import { Reveal } from "./Reveal.tsx";
 import { TitleScreen } from "./TitleScreen.tsx";
+import { CurieBench } from "./curie/CurieBench.tsx";
+import { MeasureDemo } from "./curie/MeasureDemo.tsx";
 import { JohnsonBench } from "./johnson/JohnsonBench.tsx";
 import { TrajectoryCheck } from "./johnson/TrajectoryCheck.tsx";
 
@@ -74,8 +76,12 @@ export function Lab() {
   if (!bench) return null;
 
   if (view.stage === "reveal") {
-    const demo =
-      bench.id === "johnson" && bench.reveal.demo ? <TrajectoryCheck copy={bench.reveal.demo} reducedMotion={reducedMotion} /> : null;
+    const copy = bench.reveal.demo;
+    const demo = !copy ? null : bench.id === "johnson" ? (
+      <TrajectoryCheck copy={copy} reducedMotion={reducedMotion} />
+    ) : bench.id === "curie" ? (
+      <MeasureDemo copy={copy} reducedMotion={reducedMotion} />
+    ) : null;
     return <Reveal bench={bench} record={view.record} done={done} demo={demo} onNext={toTitle} onPass={pass} />;
   }
 
@@ -87,6 +93,7 @@ export function Lab() {
   return (
     <div className="absolute inset-0" key={`${view.id}-${view.run}`}>
       {bench.id === "johnson" && <JohnsonBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
+      {bench.id === "curie" && <CurieBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
       {view.stage === "intro" && <IntroCard bench={bench} onStart={() => setView({ ...view, stage: "play" })} />}
     </div>
   );

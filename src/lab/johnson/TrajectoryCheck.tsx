@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { RevealDemoCopy } from "../benches.ts";
+import { DemoFrame } from "../demo/DemoFrame.tsx";
+import { useDemoClock } from "../demo/useDemoClock.ts";
 import { INK } from "../riso/inks.ts";
 import { readMuted, Sfx, subscribeMuted } from "../sound.ts";
 import { CAPSULE_BODY, CAPSULE_SHIELD, CAPSULE_WINDOW, SHIP_DECK, SHIP_HULL, SHIP_LINES } from "./sprites.ts";
@@ -26,7 +28,6 @@ import {
   type Point,
 } from "./trajectoryCheck.ts";
 
-const START_DELAY = 0.9;
 const HAND = "var(--font-caveat), cursive";
 const MONO = "var(--font-dm-mono), ui-monospace, monospace";
 const BACK_ORBIT = toPath(orbitPath(Math.PI, 2 * Math.PI));
@@ -117,7 +118,7 @@ function CalculationCard({ t, copy }: { t: number; copy: RevealDemoCopy }) {
       <text x={mid + 34} y={y + 30} fontFamily={MONO} fontSize={9.5} letterSpacing={1.2} fill={INK.black}>
         {copy.marks.katherine}
       </text>
-      {copy.rows.map((value, i) => {
+      {(copy.rows ?? []).map((value, i) => {
         const typed = clamp01((t - (T.computing + 0.3 + i * 0.25)) / 0.2);
         const chars = Math.round(value.length * typed);
         const written = clamp01((t - (T.verify + i * 0.3)) / 0.22);
@@ -156,8 +157,8 @@ function CalculationCard({ t, copy }: { t: number; copy: RevealDemoCopy }) {
 }
 
 export function TrajectoryCheck({ copy, reducedMotion }: { copy: RevealDemoCopy; reducedMotion: boolean }) {
-  const [startedAt, setStartedAt] = useState(() => (typeof performance === "undefined" ? 0 : performance.now() + START_DELAY * 1000));
-  const [now, setNow] = useState(() => (typeof performance === "undefined" ? 0 : performance.now()));
+  const clock = useDemoClock(T.end, reducedMotion);
+  const { t, now } = clock;
   const [sfx] = useState(() => new Sfx());
   const muted = useSyncExternalStore(subscribeMuted, readMuted, () => false);
   const heard = useRef({ rows: 0, stamp: false, splash: false });
@@ -165,18 +166,6 @@ export function TrajectoryCheck({ copy, reducedMotion }: { copy: RevealDemoCopy;
   useEffect(() => {
     sfx.mute(muted);
   }, [sfx, muted]);
-
-  const t = reducedMotion ? T.end + 3 : Math.max(0, (now - startedAt) / 1000);
-  const running = t < T.end + 3;
-
-  useEffect(() => {
-    if (!running || reducedMotion) return;
-    let frame = requestAnimationFrame(function loop() {
-      setNow(performance.now());
-      frame = requestAnimationFrame(loop);
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [running, reducedMotion]);
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -198,9 +187,7 @@ export function TrajectoryCheck({ copy, reducedMotion }: { copy: RevealDemoCopy;
   const replay = () => {
     sfx.unlock();
     heard.current = { rows: 0, stamp: false, splash: false };
-    const at = performance.now();
-    setStartedAt(at);
-    setNow(at);
+    clock.replay();
   };
 
   const act = actAt(t);
@@ -219,7 +206,7 @@ export function TrajectoryCheck({ copy, reducedMotion }: { copy: RevealDemoCopy;
   const shipApproach = ease(afterSplash / 1.6);
   const capsuleScale = 0.2 + zoom * 0.04;
   const glennLabel = 1 - fadeIn(t, T.computing - 0.4, 0.4);
-  const caption = act === "challenge" ? copy.challenge : act === "computing" ? copy.computing : act === "landing" ? copy.landing : null;
+  const caption = act === "closing" ? null : copy.captions[act];
   const capsuleNode = (
     <Capsule
       point={landed ? { x: LANDING.x, y: LANDING.y + Math.sin(now / 420) * 0.5 } : capsule.point}
@@ -232,8 +219,14 @@ export function TrajectoryCheck({ copy, reducedMotion }: { copy: RevealDemoCopy;
   );
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="relative min-h-0 flex-1 overflow-hidden border-[1.5px] border-ink bg-paper shadow-[8px_8px_0_0_rgba(16,1,227,0.9)] max-[860px]:aspect-[2/1] max-[860px]:flex-none">
+    <DemoFrame
+      label={copy.label}
+      replayLabel={copy.replay}
+      canReplay={t >= T.closing}
+      onReplay={replay}
+      caption={caption}
+      closing={act === "closing" ? copy.closing : null}
+    >
         <svg
           viewBox={`${box.x.toFixed(2)} ${box.y.toFixed(2)} ${box.w.toFixed(2)} ${box.h.toFixed(2)}`}
           preserveAspectRatio="xMidYMid meet"
@@ -375,43 +368,6 @@ export function TrajectoryCheck({ copy, reducedMotion }: { copy: RevealDemoCopy;
 
           {landed && <Check x={LANDING.x - 16} y={LANDING.y - 14} size={7} pop={clamp01((afterSplash - 0.3) / 0.25)} />}
         </svg>
-
-        <p className="pointer-events-none absolute top-2 left-3 bg-paper/85 px-1 font-notation text-[clamp(9px,1.1vmin,12px)] tracking-[0.12em] text-ink-soft">{copy.label}</p>
-        {t >= T.closing && (
-          <button
-            type="button"
-            onClick={replay}
-            className="lab-rise absolute top-2 right-2 cursor-pointer border-[1.5px] border-ink bg-paper px-3 py-1.5 font-notation text-[clamp(11px,1.35vmin,14px)] tracking-[0.1em] uppercase hover:bg-ink hover:text-paper"
-          >
-            {copy.replay}
-          </button>
-        )}
-      </div>
-
-      <div
-        className={`shrink-0 max-[860px]:min-h-[150px] ${act === "closing" ? "mt-[2.6vmin]" : "mt-[2vmin] h-[clamp(52px,7vmin,80px)] overflow-hidden max-[860px]:h-auto"}`}
-        aria-live="polite"
-      >
-        {caption && (
-          <p key={caption} className="lab-rise text-[clamp(17px,2.5vmin,26px)] leading-[1.3]">
-            {caption}
-          </p>
-        )}
-        {act === "closing" && (
-          <>
-            <p className="display flex flex-wrap gap-x-[0.35em] text-[clamp(22px,3.5vmin,40px)] leading-[1.1]">
-              {copy.closing.map((beat, i) => (
-                <span key={beat} className={`lab-rise ${i === 1 ? "text-iris-blue" : ""}`} style={{ animationDelay: `${i * 260}ms` }}>
-                  {beat}
-                </span>
-              ))}
-            </p>
-            <p className="lab-rise mt-[1.6vmin] max-w-[42em] text-[clamp(16px,2.2vmin,24px)] leading-[1.42] text-pretty" style={{ animationDelay: "850ms" }}>
-              {copy.summary}
-            </p>
-          </>
-        )}
-      </div>
-    </div>
+    </DemoFrame>
   );
 }

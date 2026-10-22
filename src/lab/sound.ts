@@ -110,6 +110,12 @@ export class Sfx {
     this.tone(140, 0.03, 0.2, "square", 0.05);
   }
 
+  thud() {
+    this.tone(120, 0, 0.16, "sine", 0.09);
+    this.tone(84, 0.02, 0.2, "triangle", 0.05);
+    this.hiss(0, 0.12, 0.04, 700);
+  }
+
   fizz() {
     this.hiss(0, 0.35, 0.05, 3200);
   }
