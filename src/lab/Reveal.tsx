@@ -32,7 +32,7 @@ export function Reveal({ bench, record, done, demo, onNext, onPass }: RevealProp
 
       <div className="relative flex min-h-0 flex-col px-[clamp(20px,5vmin,72px)] pt-[clamp(18px,3.6vmin,44px)] pb-[clamp(16px,3vmin,36px)]">
         <LabProgress done={done} className="absolute top-[clamp(16px,3vmin,32px)] right-[clamp(16px,3vmin,36px)]" />
-        <header className="shrink-0 pr-[clamp(60px,9vmin,110px)]">
+        <header className="shrink-0 pr-[clamp(88px,12vmin,130px)]">
           <Eyebrow className="lab-rise">{reveal.eyebrow}</Eyebrow>
           <div className="mt-[0.6vmin] flex flex-wrap items-baseline gap-x-[2.4vmin] gap-y-1">
             <h1

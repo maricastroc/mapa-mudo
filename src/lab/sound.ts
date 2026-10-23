@@ -163,6 +163,19 @@ export class Sfx {
     this.tone(1560, 0, 0.05, "triangle", 0.014);
   }
 
+  pluck(step: number) {
+    this.tone(step % 2 ? 660 : 523.25, 0, 0.05, "triangle", 0.022);
+  }
+
+  power() {
+    [0, 2, 4, 7].forEach((n, i) => this.tone(NOTES[n] / 2, i * 0.05, 0.16, "square", 0.035));
+    this.hiss(0, 0.3, 0.04, 2600);
+  }
+
+  lose() {
+    [7, 4, 2, 0].forEach((n, i) => this.tone(NOTES[n] / 2, i * 0.14, 0.26, "triangle", 0.045));
+  }
+
   finish(score: number) {
     const steps = score >= 8 ? [0, 2, 4, 7] : [0, 2, 4];
     steps.forEach((n, i) => this.tone(NOTES[n], i * 0.11, 0.3, "square", 0.04));

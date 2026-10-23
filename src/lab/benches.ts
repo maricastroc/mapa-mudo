@@ -1,4 +1,4 @@
-export type BenchId = "curie" | "johnson" | "lutz";
+export type BenchId = "curie" | "johnson" | "lutz" | "tu";
 
 export type BenchRecord = { result: string; detail: string };
 
@@ -26,7 +26,7 @@ export type Bench = {
   available: boolean;
   room: string;
   task: string;
-  intro: { eyebrow: string; title: string; body: string; cues?: { fresh: string; seen: string } };
+  intro: { eyebrow: string; title: string; body: string; cues?: { fresh: string; seen: string }; steps?: string[] };
   reveal: {
     eyebrow: string;
     name: string;
@@ -184,6 +184,62 @@ export const BENCHES: Bench[] = [
         credit: "Bertha Lutz em 1925 · Foto: Library of Congress, domínio público",
         focus: [0.55, 0.44],
         zoom: 1.55,
+      },
+    },
+  },
+  {
+    id: "tu",
+    available: true,
+    room: "PEQUIM · 1972",
+    task: "A Cura no Labirinto",
+    intro: {
+      eyebrow: "PEQUIM · ANOS 1970",
+      title: "A Cura no Labirinto",
+      body: "Pegue todas as folhas do labirinto sem encostar nos parasitas.",
+      steps: ["Setas, WASD ou o direcional", "Pegue todas as folhas", "Fuja dos parasitas", "Frasco: eles ficam fracos por um tempo"],
+    },
+    reveal: {
+      eyebrow: "QUEM ACHOU UM REMÉDIO DENTRO DE UMA PLANTA?",
+      name: "Tu Youyou",
+      meta: "QUÍMICA FARMACÊUTICA · CHINA",
+      demo: {
+        label: "PESQUISA DA ARTEMISININA · ESQUEMA ILUSTRATIVO",
+        replay: "Ver de novo",
+        captions: {
+          plant: "Na vida real, Tu Youyou estudou receitas antigas da medicina chinesa e a planta Artemisia annua.",
+          extract: "Sua equipe extraiu a substância da planta sem aquecer demais e chegou à artemisinina.",
+          act: "No sangue, a artemisinina ataca o parasita que causa a malária.",
+        },
+        closing: {
+          beats: ["Ela estudou receitas antigas.", "Extraiu a artemisinina.", "Mudou o tratamento da malária."],
+          highlight: 1,
+          summary:
+            "Tu Youyou é uma cientista chinesa que ajudou a descobrir a artemisinina, substância extraída de uma planta e usada no tratamento da malária. Sua pesquisa transformou o combate à doença e lhe rendeu o Nobel de Medicina em 2015.",
+        },
+        marks: {
+          game: "no jogo",
+          real: "na vida real",
+          plant: "Artemisia annua",
+          book: "receita de Ge Hong, ano 340",
+          recipe: "planta em água fria, sem ferver",
+          cold: "frio",
+          extraction: "extração a frio",
+          extract: "extrato",
+          molecule: "artemisinina",
+          bond: "ponte de oxigênio",
+          year: "1972",
+          note: "o remédio é a substância, não a folha",
+          cell: "glóbulo vermelho",
+          parasite: "parasita da malária",
+          clear: "parasita eliminado",
+        },
+      },
+      photo: {
+        src: "/lab/tu-youyou.jpg",
+        alt: "Tu Youyou, de óculos e lenço amarelo e roxo, em Estocolmo, em 2015, na semana do Prêmio Nobel.",
+        credit: "Tu Youyou em 2015 · Foto: Bengt Nyman, CC BY 2.0, adaptada",
+        focus: [0.45, 0.52],
+        zoom: 1,
       },
     },
   },

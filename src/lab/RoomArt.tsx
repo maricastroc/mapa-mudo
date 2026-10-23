@@ -106,6 +106,40 @@ function Rio({ lit }: { lit: boolean }) {
   );
 }
 
+function Beijing({ lit }: { lit: boolean }) {
+  const maze = ["M268 26 h116 v74 h-116 Z", "M280 38 h30 M322 38 h50 M280 38 v24 M296 50 h48 M356 50 v26 M280 76 h40 M332 76 h40 M300 88 h60 M372 38 v50"];
+  return (
+    <g>
+      <rect x="0" y="0" width="420" height="150" fill="url(#room-dots-orange-light)" opacity={lit ? 0.5 : 0.28} />
+      <path d={maze[0]} fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
+      <rect x="270" y="28" width="112" height="70" fill="url(#room-dots-blue-light)" opacity="0.6" />
+      <path d={maze[1]} stroke="#1001e3" strokeWidth="4" strokeLinecap="round" fill="none" />
+      <circle cx="288" cy="64" r="3" fill="#ee704c" />
+      <circle cx="364" cy="82" r="3" fill="#ee704c" />
+      <path d="M40 120 h270 M54 120 v28 M296 120 v28" stroke="#292929" strokeWidth="2" />
+      <path d="M78 120 v-18 h28 v18" fill="#ee704c" stroke="#292929" strokeWidth="1.4" />
+      <path d="M92 102 C 93 86 90 70 92 52" stroke="#292929" strokeWidth="1.4" fill="none" />
+      {[60, 68, 76, 84].map((y, i) => (
+        <g key={y}>
+          <ellipse cx={92 + (i % 2 ? 9 : -9)} cy={y} rx="8" ry="2.6" fill="#1001e3" transform={`rotate(${i % 2 ? -30 : 30} ${92 + (i % 2 ? 9 : -9)} ${y})`} />
+          <ellipse cx={92 + (i % 2 ? -7 : 7)} cy={y + 4} rx="6" ry="2.2" fill="#1001e3" transform={`rotate(${i % 2 ? 30 : -30} ${92 + (i % 2 ? -7 : 7)} ${y + 4})`} />
+        </g>
+      ))}
+      <circle cx="92" cy="50" r="3" fill="#ee704c" stroke="#292929" strokeWidth="0.8" />
+      <path d="M150 120 l8 -12 v-20 h12 v20 l8 12 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.4" />
+      <path d="M152 117 l7 -10 h10 l7 10 Z" fill="url(#room-dots-blue)" />
+      <path d="M200 120 h26 v-28 h-26 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.4" />
+      <rect x="200" y="100" width="26" height="20" fill="#ee704c" opacity="0.9" />
+      <rect x="204" y="86" width="18" height="6" fill="#292929" />
+      <path d="M240 120 h40 l-6 -16 h-28 Z" fill="#f3e7c9" stroke="#292929" strokeWidth="1.3" />
+      <path d="M252 108 v8 M260 108 v8 M268 108 v8" stroke="#292929" strokeWidth="1" opacity="0.7" />
+      <circle cx="38" cy="40" r="15" fill="#f7f8f6" stroke="#292929" strokeWidth="1.3" />
+      <circle cx="38" cy="40" r="11" fill="none" stroke="#ee704c" strokeWidth="5" />
+      <circle cx="46" cy="33" r="2.6" fill="#292929" />
+    </g>
+  );
+}
+
 export function RoomArt({ id, lit }: { id: BenchId; lit: boolean }) {
   return (
     <svg viewBox="0 0 420 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" className="absolute inset-0 h-full w-full mix-blend-multiply">
@@ -113,6 +147,7 @@ export function RoomArt({ id, lit }: { id: BenchId; lit: boolean }) {
       {id === "curie" && <Paris lit={lit} />}
       {id === "johnson" && <Langley lit={lit} />}
       {id === "lutz" && <Rio lit={lit} />}
+      {id === "tu" && <Beijing lit={lit} />}
     </svg>
   );
 }

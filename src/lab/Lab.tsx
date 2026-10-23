@@ -13,6 +13,9 @@ import { TrajectoryCheck } from "./johnson/TrajectoryCheck.tsx";
 import { FrogIntroArt } from "./lutz/FrogIntroArt.tsx";
 import { IdentifyDemo } from "./lutz/IdentifyDemo.tsx";
 import { LutzBench } from "./lutz/LutzBench.tsx";
+import { CureDemo } from "./tu/CureDemo.tsx";
+import { MazeIntroArt } from "./tu/MazeIntroArt.tsx";
+import { TuBench } from "./tu/TuBench.tsx";
 
 const IDLE_MS = 90_000;
 
@@ -86,6 +89,8 @@ export function Lab() {
       <MeasureDemo copy={copy} reducedMotion={reducedMotion} />
     ) : bench.id === "lutz" ? (
       <IdentifyDemo copy={copy} reducedMotion={reducedMotion} />
+    ) : bench.id === "tu" ? (
+      <CureDemo copy={copy} reducedMotion={reducedMotion} />
     ) : null;
     return <Reveal bench={bench} record={view.record} done={done} demo={demo} onNext={toTitle} onPass={pass} />;
   }
@@ -100,10 +105,17 @@ export function Lab() {
       {bench.id === "johnson" && <JohnsonBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
       {bench.id === "curie" && <CurieBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
       {bench.id === "lutz" && <LutzBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
+      {bench.id === "tu" && <TuBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
       {view.stage === "intro" && (
         <IntroCard
           bench={bench}
-          art={bench.intro.cues ? <FrogIntroArt newLabel={bench.intro.cues.fresh} seenLabel={bench.intro.cues.seen} reducedMotion={reducedMotion} /> : null}
+          art={
+            bench.intro.cues ? (
+              <FrogIntroArt newLabel={bench.intro.cues.fresh} seenLabel={bench.intro.cues.seen} reducedMotion={reducedMotion} />
+            ) : bench.intro.steps ? (
+              <MazeIntroArt steps={bench.intro.steps} reducedMotion={reducedMotion} />
+            ) : null
+          }
           onStart={() => setView({ ...view, stage: "play" })}
         />
       )}
