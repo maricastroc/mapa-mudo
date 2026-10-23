@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import { Button } from "@/experience/ui";
 import type { Bench } from "./benches.ts";
 import { Eyebrow } from "./LabUi.tsx";
 
-export function IntroCard({ bench, onStart }: { bench: Bench; onStart: () => void }) {
+export function IntroCard({ bench, art, onStart }: { bench: Bench; art?: ReactNode; onStart: () => void }) {
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center bg-paper/55 px-4 backdrop-blur-[1.5px]" onPointerDown={onStart}>
       <div
@@ -15,6 +16,7 @@ export function IntroCard({ bench, onStart }: { bench: Bench; onStart: () => voi
           {bench.intro.title}
         </h1>
         <p className="mt-5 max-w-[30em] text-[clamp(17px,2.35vmin,24px)] leading-[1.4]">{bench.intro.body}</p>
+        {art}
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Button variant="primary" arrow autoFocus onClick={onStart}>
             Começar

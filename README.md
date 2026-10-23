@@ -25,6 +25,7 @@ Reiniciar (rodapé) e o reinício automático depois de 90 segundos sem toque co
 - 90 segundos sem toque voltam para a tela inicial e zeram as bancadas da visita.
 - Bancada de Katherine Johnson: "Resgate no mar", jogo de pegar com 10 cápsulas e 9 destroços em cerca de 27 segundos; o som pode ser desligado no canto da tela.
 - Bancada de Marie Curie (`?bench=curie`): "Qual pedra brilha?", acerte-a-toupeira com 14 pedras que brilham, pedras apagadas e cristais que só reluzem, em cerca de 25 segundos; teclas de 1 a 6 também funcionam. Foto: Fundação Nobel, 1903 (domínio público).
+- Bancada de Bertha Lutz (`?bench=lutz`): "Já vi esse sapo!", 22 sapos de 8 espécies (duas delas sósias) atravessam a mata em cerca de 39 segundos; toque só nos que ainda não estão no caderno de campo. O caderno fica fechado numa aba no canto; aberto, ele tapa parte da mata enquanto o jogo segue (tecla C também abre e fecha). Três chances: tocar num sapo já anotado gasta uma. Cada partida é conferida por jogadores simulados em `src/lab/lutz/frogPlan.ts`. Foto: Library of Congress, 1925 (domínio público).
 - Cada partida é sorteada dentro de limites de dificuldade e conferida por jogadores simulados antes de começar (`src/lab/johnson/rescuePlan.ts` e `rescueSim.ts`). Para repetir uma partida em desenvolvimento, use `?seed=` com um número, por exemplo `/lab?bench=johnson&seed=12345`. Foto: NASA, 1966 (domínio público).
 
 ## Desenvolvimento

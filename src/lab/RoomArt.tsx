@@ -70,28 +70,38 @@ function Langley({ lit }: { lit: boolean }) {
   );
 }
 
-function SaoPaulo({ lit }: { lit: boolean }) {
+function Rio({ lit }: { lit: boolean }) {
   return (
     <g>
-      <rect x="0" y="0" width="420" height="150" fill="url(#room-dots-blue-light)" opacity={lit ? 0.4 : 0.22} />
-      <rect x="292" y="16" width="100" height="74" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
-      <path d="M300 90 v-30 h10 v30 M314 90 v-46 h12 v46 M330 90 v-22 h8 v22 M342 90 v-38 h10 v38 M356 90 v-26 h12 v26 M372 90 v-34 h10 v34" fill="url(#room-dots-blue)" stroke="#292929" strokeWidth="1" />
-      <path d="M296 86 q40 -40 92 -30" stroke="#ee704c" strokeWidth="1.6" fill="none" />
-      <path d="M30 116 h300 M44 116 v30 M316 116 v30" stroke="#292929" strokeWidth="2" />
-      <path d="M70 116 l6 -38 h70 l-4 38 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
-      <path d="M84 104 q8 -14 14 -2 t14 -6 t14 4 t10 -8" stroke="#ee704c" strokeWidth="1.8" fill="none" />
-      <path d="M60 116 h96" stroke="#292929" strokeWidth="3" />
-      <rect x="176" y="100" width="44" height="16" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
-      <circle cx="210" cy="108" r="2.5" fill="#1001e3" />
-      <path d="M156 108 q8 -6 20 0" stroke="#292929" strokeWidth="1.2" fill="none" />
-      {[240, 252, 264, 276, 288].map((x, i) => (
-        <g key={x}>
-          <rect x={x} y="92" width="7" height="24" fill="#f7f8f6" stroke="#292929" strokeWidth="1.2" />
-          <rect x={x} y="88" width="7" height="5" fill={i % 2 ? "#1001e3" : "#ee704c"} />
-        </g>
+      <rect x="0" y="0" width="420" height="150" fill="url(#room-dots-blue-light)" opacity={lit ? 0.45 : 0.25} />
+      <path d="M262 92 h140 v-44 h-140 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
+      <path d="M306 48 l26 -16 l26 16 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
+      <rect x="264" y="50" width="136" height="40" fill="url(#room-dots-blue-light)" opacity="0.7" />
+      {[272, 286, 300, 352, 366, 380].map((x) => (
+        <rect key={x} x={x} y="58" width="7" height="12" fill="#f7f8f6" stroke="#292929" strokeWidth="1" />
       ))}
-      <path d="M40 20 c18 8 -8 22 10 32 s-8 22 10 32" stroke="#1001e3" strokeWidth="2" fill="none" />
-      <path d="M58 20 c-18 8 8 22 -10 32 s8 22 -10 32" stroke="#ee704c" strokeWidth="2" fill="none" />
+      {[314, 324, 334, 344].map((x) => (
+        <path key={x} d={`M${x} 92 v-36`} stroke="#292929" strokeWidth="1.6" />
+      ))}
+      <path d="M262 76 h140" stroke="#292929" strokeWidth="1" />
+      <path d="M0 150 C 20 120 40 104 70 96 C 46 112 34 128 30 150 Z" fill="url(#room-dots-blue)" stroke="#292929" strokeWidth="1.2" />
+      <path d="M0 132 C 10 106 30 86 58 76 C 38 96 22 114 16 140 Z" fill="#1001e3" opacity="0.85" stroke="#292929" strokeWidth="1.2" />
+      <path d="M60 120 h250 M74 120 v28 M296 120 v28" stroke="#292929" strokeWidth="2" />
+      <path d="M96 120 l4 -22 h48 l4 22 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.4" />
+      <path d="M152 120 l-4 -22 h48 l4 22 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.4" />
+      <path d="M156 104 h32 M157 109 h30 M158 114 h24" stroke="#292929" strokeOpacity="0.5" strokeWidth="1" />
+      <path d="M106 113 c2 -6 10 -9 18 -7 c6 1 9 4 10 7 c-6 2 -18 2 -28 0 Z" fill="#ee704c" stroke="#292929" strokeWidth="1.1" />
+      <circle cx="129" cy="104.5" r="2.3" fill="#f7f8f6" stroke="#292929" strokeWidth="0.9" />
+      <circle cx="114" cy="109" r="1.4" fill="#292929" />
+      <circle cx="120" cy="107" r="1.2" fill="#292929" />
+      <circle cx="222" cy="104" r="11" fill="#f7f8f6" fillOpacity="0.5" stroke="#292929" strokeWidth="2" />
+      <path d="M230 112 l12 10" stroke="#292929" strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M246 120 c0 -9 7 -15 15 -14 c7 1 11 6 11 14 Z" fill="#ee704c" stroke="#292929" strokeWidth="1.3" />
+      <circle cx="266" cy="108" r="3.6" fill="#f7f8f6" stroke="#292929" strokeWidth="1.1" />
+      <circle cx="266.8" cy="108.2" r="1.5" fill="#292929" />
+      <circle cx="254" cy="112" r="1.7" fill="#292929" />
+      <circle cx="259" cy="116" r="1.4" fill="#292929" />
+      <path d="M248 120 l-6 1 M270 120 l6 1" stroke="#292929" strokeWidth="1.3" strokeLinecap="round" />
     </g>
   );
 }
@@ -102,7 +112,7 @@ export function RoomArt({ id, lit }: { id: BenchId; lit: boolean }) {
       <Patterns />
       {id === "curie" && <Paris lit={lit} />}
       {id === "johnson" && <Langley lit={lit} />}
-      {id === "jaqueline" && <SaoPaulo lit={lit} />}
+      {id === "lutz" && <Rio lit={lit} />}
     </svg>
   );
 }

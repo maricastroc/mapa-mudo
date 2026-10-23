@@ -10,6 +10,9 @@ import { CurieBench } from "./curie/CurieBench.tsx";
 import { MeasureDemo } from "./curie/MeasureDemo.tsx";
 import { JohnsonBench } from "./johnson/JohnsonBench.tsx";
 import { TrajectoryCheck } from "./johnson/TrajectoryCheck.tsx";
+import { FrogIntroArt } from "./lutz/FrogIntroArt.tsx";
+import { IdentifyDemo } from "./lutz/IdentifyDemo.tsx";
+import { LutzBench } from "./lutz/LutzBench.tsx";
 
 const IDLE_MS = 90_000;
 
@@ -81,6 +84,8 @@ export function Lab() {
       <TrajectoryCheck copy={copy} reducedMotion={reducedMotion} />
     ) : bench.id === "curie" ? (
       <MeasureDemo copy={copy} reducedMotion={reducedMotion} />
+    ) : bench.id === "lutz" ? (
+      <IdentifyDemo copy={copy} reducedMotion={reducedMotion} />
     ) : null;
     return <Reveal bench={bench} record={view.record} done={done} demo={demo} onNext={toTitle} onPass={pass} />;
   }
@@ -94,7 +99,14 @@ export function Lab() {
     <div className="absolute inset-0" key={`${view.id}-${view.run}`}>
       {bench.id === "johnson" && <JohnsonBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
       {bench.id === "curie" && <CurieBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
-      {view.stage === "intro" && <IntroCard bench={bench} onStart={() => setView({ ...view, stage: "play" })} />}
+      {bench.id === "lutz" && <LutzBench active={view.stage === "play"} reducedMotion={reducedMotion} onComplete={complete} />}
+      {view.stage === "intro" && (
+        <IntroCard
+          bench={bench}
+          art={bench.intro.cues ? <FrogIntroArt newLabel={bench.intro.cues.fresh} seenLabel={bench.intro.cues.seen} reducedMotion={reducedMotion} /> : null}
+          onStart={() => setView({ ...view, stage: "play" })}
+        />
+      )}
     </div>
   );
 }

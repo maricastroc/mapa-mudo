@@ -1,4 +1,4 @@
-export type BenchId = "curie" | "johnson" | "jaqueline";
+export type BenchId = "curie" | "johnson" | "lutz";
 
 export type BenchRecord = { result: string; detail: string };
 
@@ -26,7 +26,7 @@ export type Bench = {
   available: boolean;
   room: string;
   task: string;
-  intro: { eyebrow: string; title: string; body: string };
+  intro: { eyebrow: string; title: string; body: string; cues?: { fresh: string; seen: string } };
   reveal: {
     eyebrow: string;
     name: string;
@@ -135,12 +135,57 @@ export const BENCHES: Bench[] = [
     },
   },
   {
-    id: "jaqueline",
-    available: false,
-    room: "SÃO PAULO · 2020",
-    task: "Monte o genoma",
-    intro: { eyebrow: "SÃO PAULO · 2020", title: "Monte o genoma", body: "" },
-    reveal: { eyebrow: "", name: "Jaqueline Goes de Jesus", meta: "", demo: null, photo: null },
+    id: "lutz",
+    available: true,
+    room: "MUSEU NACIONAL · RIO",
+    task: "Já vi esse sapo!",
+    intro: {
+      eyebrow: "MATA ATLÂNTICA · RIO DE JANEIRO",
+      title: "Já vi esse sapo!",
+      body: "Anote no caderno de campo cada sapo novo. Os que já estão lá, deixe passar.",
+      cues: { fresh: "Novo? Toque e anote.", seen: "Já anotado? Deixe passar." },
+    },
+    reveal: {
+      eyebrow: "QUEM SABIA QUE SAPO ERA ESSE?",
+      name: "Bertha Lutz",
+      meta: "ZOÓLOGA DO MUSEU NACIONAL · BRASIL",
+      demo: {
+        label: "PESQUISA NO MUSEU NACIONAL · ESQUEMA ILUSTRATIVO",
+        replay: "Ver de novo",
+        captions: {
+          observe: "No jogo, bastava um toque. Na vida real, Bertha observava cada detalhe do animal.",
+          compare: "Depois comparava com os exemplares guardados na coleção do museu.",
+          register: "Depois de identificar a espécie, registrava tudo: nome, local e data.",
+        },
+        closing: {
+          beats: ["Bertha observou.", "Comparou com a coleção.", "Registrou cada detalhe."],
+          highlight: 1,
+          summary:
+            "Bertha Lutz foi uma zoóloga brasileira que estudou anfíbios, como sapos, rãs e pererecas. Em 1919, entrou por concurso no Museu Nacional, no Rio de Janeiro, onde pesquisou esses animais por décadas. Ela também foi uma das líderes da luta pelo voto das mulheres no Brasil, conquistado em 1932.",
+        },
+        marks: {
+          game: "no jogo",
+          real: "na vida real",
+          eye: "olhos",
+          skin: "pintas",
+          toes: "dedos",
+          size: "3 cm",
+          collection: "COLEÇÃO",
+          match: "é esta!",
+          species: "espécie",
+          place: "local",
+          date: "data",
+          registered: "REGISTRADO",
+        },
+      },
+      photo: {
+        src: "/lab/bertha-lutz.jpg",
+        alt: "Bertha Lutz sorri sentada numa cadeira de vime, num jardim, com um vestido bordado, em 1925.",
+        credit: "Bertha Lutz em 1925 · Foto: Library of Congress, domínio público",
+        focus: [0.55, 0.44],
+        zoom: 1.55,
+      },
+    },
   },
 ];
 

@@ -120,6 +120,49 @@ export class Sfx {
     this.hiss(0, 0.35, 0.05, 3200);
   }
 
+  croak(pitch: number, gain = 0.018) {
+    this.tone(170 * pitch, 0, 0.07, "square", gain);
+    this.tone(132 * pitch, 0.09, 0.1, "square", gain);
+  }
+
+  noted(streak: number, pitch: number) {
+    this.croak(pitch, 0.04);
+    const base = Math.min(streak, NOTES.length - 3);
+    this.tone(NOTES[base], 0.24, 0.16, "square", 0.04);
+    this.tone(NOTES[base + 2], 0.31, 0.22, "square", 0.035);
+    this.tone(NOTES[base + 2] * 2, 0.31, 0.18, "triangle", 0.028);
+  }
+
+  scratch() {
+    this.hiss(0, 0.09, 0.04, 6500);
+    this.hiss(0.11, 0.08, 0.035, 5200);
+  }
+
+  boing() {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const amp = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(260, t);
+    osc.frequency.exponentialRampToValueAtTime(720, t + 0.2);
+    amp.gain.setValueAtTime(0, t);
+    amp.gain.linearRampToValueAtTime(0.05, t + 0.02);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
+    osc.connect(amp).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.3);
+  }
+
+  page() {
+    this.hiss(0, 0.07, 0.035, 4200);
+  }
+
+  tally() {
+    this.tone(1560, 0, 0.05, "triangle", 0.014);
+  }
+
   finish(score: number) {
     const steps = score >= 8 ? [0, 2, 4, 7] : [0, 2, 4];
     steps.forEach((n, i) => this.tone(NOTES[n], i * 0.11, 0.3, "square", 0.04));
