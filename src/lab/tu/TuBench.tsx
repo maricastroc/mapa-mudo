@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from "react";
-import { Button } from "@/experience/ui";
+import { Button } from "../ui.tsx";
 import type { BenchRecord } from "../benches.ts";
 import { Eyebrow, Stamp } from "../LabUi.tsx";
 import { freshSeed } from "../random.ts";

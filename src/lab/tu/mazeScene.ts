@@ -1,4 +1,4 @@
-import { createNoise, fbm } from "../../map/noise.ts";
+import { createNoise, fbm } from "../riso/noise.ts";
 import { dotPattern, halftone } from "../riso/halftone.ts";
 import { INK, type Fonts } from "../riso/inks.ts";
 import type { Sfx } from "../sound.ts";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import { useReducedMotion } from "@/experience/screen";
+import { useReducedMotion } from "./useReducedMotion.ts";
 import { BENCHES, benchById, type BenchId, type BenchRecord } from "./benches.ts";
 import { IntroCard } from "./IntroCard.tsx";
 import { Reveal } from "./Reveal.tsx";

@@ -85,7 +85,7 @@ export const BENCHES: Bench[] = [
         },
       },
       photo: {
-        src: "/lab/marie-curie.jpg",
+        src: "/photos/marie-curie.jpg",
         alt: "Retrato de perfil de Marie Curie em 1903, com o cabelo preso e uma blusa escura de gola clara listrada.",
         credit: "Marie Curie em 1903 · Foto: Fundação Nobel, domínio público",
         focus: [0.55, 0.4],
@@ -126,7 +126,7 @@ export const BENCHES: Bench[] = [
       },
       quote: { text: "Se ela disser que estão certos, estou pronto.", by: "John Glenn, segundo Katherine" },
       photo: {
-        src: "/lab/katherine-johnson.jpg",
+        src: "/photos/katherine-johnson.jpg",
         alt: "Katherine Johnson sorri em sua mesa de trabalho na NASA, com papéis de cálculo e uma calculadora, em 1966.",
         credit: "Katherine Johnson na NASA, em 1966 · Foto: NASA, domínio público",
         focus: [0.47, 0.34],
@@ -179,7 +179,7 @@ export const BENCHES: Bench[] = [
         },
       },
       photo: {
-        src: "/lab/bertha-lutz.jpg",
+        src: "/photos/bertha-lutz.jpg",
         alt: "Bertha Lutz sorri sentada numa cadeira de vime, num jardim, com um vestido bordado, em 1925.",
         credit: "Bertha Lutz em 1925 · Foto: Library of Congress, domínio público",
         focus: [0.55, 0.44],
@@ -235,7 +235,7 @@ export const BENCHES: Bench[] = [
         },
       },
       photo: {
-        src: "/lab/tu-youyou.jpg",
+        src: "/photos/tu-youyou.jpg",
         alt: "Tu Youyou, de óculos e lenço amarelo e roxo, em Estocolmo, em 2015, na semana do Prêmio Nobel.",
         credit: "Tu Youyou em 2015 · Foto: Bengt Nyman, CC BY 2.0, adaptada",
         focus: [0.45, 0.52],

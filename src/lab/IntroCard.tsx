@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Button } from "@/experience/ui";
+import { Button } from "./ui.tsx";
 import type { Bench } from "./benches.ts";
 import { Eyebrow } from "./LabUi.tsx";
 

@@ -1,4 +1,4 @@
-import { createNoise, fbm } from "../../map/noise.ts";
+import { createNoise, fbm } from "../riso/noise.ts";
 import { halftone, type HalftoneArea, type Shade } from "../riso/halftone.ts";
 import { INK } from "../riso/inks.ts";
 import type { FrogLayout } from "./frogLayout.ts";

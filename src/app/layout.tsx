@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bai_Jamjuree, DM_Mono } from "next/font/google";
+import { Bai_Jamjuree, Caveat, DM_Mono } from "next/font/google";
 import "./globals.css";
 
 const baiJamjuree = Bai_Jamjuree({
@@ -14,9 +14,15 @@ const dmMono = DM_Mono({
   subsets: ["latin"],
 });
 
+const caveat = Caveat({
+  variable: "--font-caveat",
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Diga um Nome — protótipo",
-  description: "Protótipo navegável da experiência Diga um Nome. Conteúdo fictício.",
+  title: "Elas em Jogo",
+  description: "Jogue primeiro e descubra depois a cientista por trás de cada jogo. ÍRIS · Ciência Delas.",
   icons: { icon: "/favicon.png", apple: "/favicon.png" },
 };
 
@@ -28,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${baiJamjuree.variable} ${dmMono.variable} h-full antialiased`}>
+    <html lang="pt-BR" className={`${baiJamjuree.variable} ${dmMono.variable} ${caveat.variable} h-full antialiased`}>
       <body className="h-full">{children}</body>
     </html>
   );

@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@custom-variant compact (&:where([data-layout="compact"], [data-layout="compact"] *));
-
 :root {
   --iris-blue: #1001e3;
   --iris-orange: #ee704c;
@@ -13,12 +11,6 @@
   --paper-grid: #e6ebed;
   --ink: #292929;
   --ink-soft: #4e6473;
-  --terrain-line: #a3b0b8;
-  --terrain-line-index: #6b7f8c;
-  --isobath: #a9bac5;
-  --isobath-index: #71899a;
-  --water: #cfe1ea;
-  --water-alpha: 0.75;
 
   --accent: var(--iris-orange);
   --action: var(--iris-blue);
@@ -79,58 +71,6 @@ body {
 ::selection {
   background: var(--accent);
   color: var(--ink);
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.fade-in {
-  animation: fade-in 700ms ease-out both;
-}
-
-.map-label {
-  text-shadow:
-    0 0 2px var(--paper),
-    0 0 2px var(--paper),
-    0 0 4px var(--paper),
-    0 0 6px var(--paper);
-}
-
-@keyframes settle-out {
-  60% {
-    opacity: 0;
-    max-width: 3em;
-  }
-  to {
-    opacity: 0;
-    max-width: 0;
-    margin-left: 0;
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
-.settled .fade-in {
-  animation: none;
-}
-
-.fade-out {
-  animation: fade-out 900ms ease-in both;
 }
 
 @keyframes lab-rise {
@@ -236,34 +176,6 @@ body {
 
 .lab-hand {
   font-family: var(--font-caveat), cursive;
-}
-
-@layer components {
-  .react-tooltip {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: max-content;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 150ms ease-in;
-  }
-
-  .react-tooltip.react-tooltip__show {
-    opacity: 1;
-    transition: opacity 150ms ease-out;
-  }
-
-  .react-tooltip-content-wrapper {
-    position: relative;
-    z-index: 1;
-  }
-
-  .react-tooltip-arrow {
-    position: absolute;
-    z-index: 0;
-    background: inherit;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-import { Button } from "@/experience/ui";
+import { Button } from "./ui.tsx";
 import { BENCHES, type Bench, type BenchId } from "./benches.ts";
 import { Eyebrow } from "./LabUi.tsx";
 import { RoomArt } from "./RoomArt.tsx";
