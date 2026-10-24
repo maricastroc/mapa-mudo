@@ -108,6 +108,7 @@ export class KidScene {
 
   setFonts(fonts: Fonts) {
     this.options.fonts = fonts;
+    if (this.W > 1) this.resize(this.W, this.H, this.dpr);
   }
 
   resize(W: number, H: number, dpr: number) {
@@ -122,7 +123,7 @@ export class KidScene {
     const bg = this.background.getContext("2d");
     if (bg) {
       bg.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-      paintTown(bg, this.layout);
+      paintTown(bg, this.layout, this.options.fonts);
     }
   }
 
