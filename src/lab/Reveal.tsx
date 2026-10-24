@@ -23,6 +23,17 @@ export function Reveal({ bench, record, done, demo, onNext, onPass }: RevealProp
     >
       <div className="relative overflow-hidden border-r-[1.5px] border-ink max-[860px]:border-r-0 max-[860px]:border-b-[1.5px]">
         {reveal.photo && <RisoPortrait src={reveal.photo.src} alt={reveal.photo.alt} focus={reveal.photo.focus} zoom={reveal.photo.zoom} className="lab-ink" />}
+        {!reveal.photo && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+            <p className="display text-[clamp(64px,16vmin,180px)] leading-none text-iris-blue" aria-hidden="true">
+              {reveal.name
+                .split(" ")
+                .map((w) => w[0])
+                .join("")}
+            </p>
+            <Eyebrow className="text-ink-soft">Foto em breve</Eyebrow>
+          </div>
+        )}
         {reveal.photo && (
           <p className="absolute right-0 bottom-0 left-0 bg-paper/85 px-4 py-2 font-notation text-[clamp(10px,1.25vmin,13px)] tracking-[0.04em] text-ink-soft">
             {reveal.photo.credit}
