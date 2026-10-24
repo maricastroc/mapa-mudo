@@ -93,6 +93,9 @@ export class RescueScene {
   private rescueAt = -Infinity;
   private dip = 0;
   private dipV = 0;
+  private cargoOff = 0;
+  private cargoVel = 0;
+  private lastShipV = 0;
   private lastInput = -Infinity;
   private interacted = false;
   private particles: Particle[] = [];
@@ -343,6 +346,7 @@ export class RescueScene {
 
     this.dipV += (-170 * this.dip - 13 * this.dipV) * dt;
     this.dip += this.dipV * dt;
+    this.swayCargo(dt);
     this.shake = Math.max(0, this.shake - dt * 2.5);
 
     const ship = this.ship;
@@ -423,10 +427,32 @@ export class RescueScene {
     return { x: this.round ? this.round.landingX(drop) : 0, y: this.waterY };
   }
 
-  private slotPoint(slot: number) {
+  private swayCargo(dt: number) {
+    if (this.options.reducedMotion || dt <= 0) {
+      this.cargoOff = 0;
+      this.cargoVel = 0;
+      this.lastShipV = this.ship.v;
+      return;
+    }
+    const acc = (this.ship.v - this.lastShipV) / dt;
+    this.lastShipV = this.ship.v;
+    this.cargoVel += (-300 * this.cargoOff - 11 * this.cargoVel - acc * 0.35) * dt;
+    this.cargoOff += this.cargoVel * dt;
+    const limit = this.geometry.shipLength * 0.03;
+    this.cargoOff = clamp(this.cargoOff, -limit, limit);
+  }
+
+  private slotPoint(slot: number, tilt = 0) {
+    const s = this.shipScale;
     const span = SHIP_CARGO_TO - SHIP_CARGO_FROM;
     const ux = SHIP_CARGO_FROM + ((slot + 0.5) / CAPSULE_COUNT) * span;
-    return { x: this.ship.x + ux * this.shipScale, y: this.deckY() };
+    const moving = this.options.reducedMotion ? 0 : Math.min(1, Math.abs(this.ship.v) / (this.W * 0.5));
+    const lx = ux * s + this.cargoOff * (1 + slot * 0.18);
+    const ly = (SHIP_DECK_Y - 2) * s - Math.abs(Math.sin(this.now / 55 + slot * 1.9)) * moving * this.H * 0.004;
+    const cos = Math.cos(tilt);
+    const sin = Math.sin(tilt);
+    const originY = this.waterY + this.bob() + this.dip + 2 * s;
+    return { x: this.ship.x + lx * cos - ly * sin, y: originY + lx * sin + ly * cos };
   }
 
   private rescueFx(p: Point) {
@@ -950,13 +976,14 @@ export class RescueScene {
     for (const c of this.drops) {
       if (c.state !== "rescued") continue;
       const age = this.time - c.resolvedAt;
-      const slot = this.slotPoint(c.slot);
+      const slot = this.slotPoint(c.slot, tilt);
       const k = smooth(age / 0.38);
       const hop = Math.sin(k * Math.PI) * this.H * 0.05;
       const px = c.x + (slot.x - c.x) * k;
       const py = c.y + (slot.y - c.y) * k - hop;
       const scale = this.capsuleScale + (s * 0.17 - this.capsuleScale) * k;
-      this.drawCapsule({ x: px, y: py }, Math.PI / 2 + tilt, scale, false);
+      const rock = (this.cargoOff / (this.geometry.shipLength * 0.03)) * 0.12 * k;
+      this.drawCapsule({ x: px, y: py }, Math.PI / 2 + tilt + rock, scale, false);
       if (age < 0.9) this.drawLooseChute(c, age);
     }
   }
