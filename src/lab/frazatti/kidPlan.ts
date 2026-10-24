@@ -14,7 +14,12 @@ export type Crossing = {
   duration: number;
 };
 
-export type KidPlan = { seed: number; crossings: Crossing[] };
+export type Gnat = { id: number; at: number; duration: number; dir: 1 | -1; y: number; freq: number; phase: number };
+
+export type KidPlan = { seed: number; crossings: Crossing[]; gnats: Gnat[] };
+
+export const GNAT_COUNT = 12;
+export const GNAT_FIRST_AT = 6;
 
 type Stage = { name: StageName; sick: number; healthy: number; gap: readonly [number, number]; duration: readonly [number, number]; maxOut: number };
 
@@ -168,7 +173,21 @@ export function generatePlan(seed: number): KidPlan {
       t = placed.at + rng.range(stage.gap);
     }
   }
-  return { seed, crossings };
+  return { seed, crossings, gnats: scheduleGnats(seed, planEnd(crossings)) };
+}
+
+function scheduleGnats(seed: number, end: number): Gnat[] {
+  const rng = createRandom((seed ^ 0x5bd1e995) >>> 0);
+  const span = (end - GNAT_FIRST_AT - 4) / (GNAT_COUNT - 1);
+  return Array.from({ length: GNAT_COUNT }, (_, id) => ({
+    id,
+    at: GNAT_FIRST_AT + id * span + (id === 0 ? 0 : rng.range([-0.7, 0.7])),
+    duration: rng.range([2.4, 3.2]),
+    dir: rng.sign(),
+    y: rng.range([0.1, 0.5]),
+    freq: rng.range([2.2, 3.6]),
+    phase: rng.range([0, Math.PI * 2]),
+  }));
 }
 
 export type PlanReport = { duration: number; maxOut: number; sickCount: number; firstSickAt: number; sickOverlaps: number };

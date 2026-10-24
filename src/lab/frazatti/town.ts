@@ -187,30 +187,17 @@ export function paintTown(ctx: CanvasRenderingContext2D, layout: KidLayout) {
   ctx.stroke();
 }
 
-export type Mosquito = { x: number; y: number; vx: number; vy: number; phase: number; size: number };
-
-export function mosquitoes(layout: KidLayout, count: number): Mosquito[] {
-  const rand = rngOf(77);
-  return Array.from({ length: count }, () => ({
-    x: rand() * layout.W,
-    y: layout.H * (0.08 + rand() * 0.42),
-    vx: (rand() < 0.5 ? -1 : 1) * layout.H * (0.03 + rand() * 0.04),
-    vy: 0,
-    phase: rand() * 10,
-    size: clamp(layout.H * 0.016, 9, 20),
-  }));
-}
-
-export function drawMosquito(ctx: CanvasRenderingContext2D, m: Mosquito, time: number, line: number) {
-  const flap = Math.sin(time * 38 + m.phase) * 0.35;
+export function drawMosquito(ctx: CanvasRenderingContext2D, x: number, y: number, dir: 1 | -1, size: number, time: number, phase: number, line: number, spin = 0) {
+  const flap = Math.sin(time * 38 + phase) * 0.35;
   ctx.save();
-  ctx.translate(m.x, m.y);
-  ctx.scale(m.vx < 0 ? -1 : 1, 1);
+  ctx.translate(x, y);
+  ctx.rotate(spin);
+  ctx.scale(dir, 1);
   ctx.strokeStyle = INK.black;
   ctx.fillStyle = INK.black;
   ctx.lineWidth = line * 0.9;
   ctx.lineCap = "round";
-  const s = m.size;
+  const s = size;
   ctx.beginPath();
   ctx.ellipse(0, 0, s * 0.55, s * 0.17, 0, 0, Math.PI * 2);
   ctx.fill();

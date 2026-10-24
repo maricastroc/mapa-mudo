@@ -9,7 +9,7 @@ import { readFonts } from "../riso/inks.ts";
 import { Grain } from "../riso/Grain.tsx";
 import { Sfx } from "../sound.ts";
 import { SoundButton, useMuted } from "../SoundButton.tsx";
-import { CHANCES, generatePlan, SICK_COUNT } from "./kidPlan.ts";
+import { CHANCES, GNAT_COUNT, generatePlan, SICK_COUNT } from "./kidPlan.ts";
 import { KidScene, type KidSnapshot } from "./kidScene.ts";
 
 type FrazattiBenchProps = {
@@ -35,6 +35,7 @@ function recordOf(snapshot: KidSnapshot): BenchRecord {
   const parts = [];
   if (snapshot.bestStreak >= 2) parts.push(`${snapshot.bestStreak} seguidas`);
   parts.push(wrongText(snapshot.wrong).toLowerCase());
+  if (snapshot.swatted > 0) parts.push(`${snapshot.swatted} ${snapshot.swatted === 1 ? "mosquito" : "mosquitos"}`);
   return { result: `${snapshot.cured} de ${SICK_COUNT} crianças vacinadas`, detail: parts.join(" · ") };
 }
 
@@ -62,6 +63,16 @@ function Dose({ filled }: { filled: boolean }) {
       <path d="M4 20 L8 16" stroke="#292929" strokeWidth="1.6" strokeLinecap="round" />
       <rect x="7" y="8" width="12" height="6" rx="1" transform="rotate(-45 13 11)" fill={filled ? "#ee704c" : "#f7f8f6"} stroke={filled ? "#292929" : "rgba(41,41,41,0.5)"} strokeWidth="1.6" />
       <path d="M17 4 L21 8 M15 6 L19 10" stroke={filled ? "#1001e3" : "rgba(41,41,41,0.4)"} strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function Bug() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[clamp(14px,2.1vmin,22px)] w-auto">
+      <ellipse cx="12" cy="13" rx="6.5" ry="2.6" fill="#292929" />
+      <path d="M18 13 L22 14.5 M10 15 L7 20 M13 15 L12 21 M15.5 14.8 L16 20" stroke="#292929" strokeWidth="1.5" strokeLinecap="round" />
+      <ellipse cx="11" cy="9" rx="4.2" ry="2" transform="rotate(-25 11 9)" fill="#f7f8f6" stroke="#292929" strokeWidth="1.3" />
     </svg>
   );
 }
@@ -166,13 +177,16 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
   const cured = snap?.cured ?? 0;
   const wrong = snap?.wrong ?? 0;
   const playing = active && !done && !snap?.ended;
+  const swatted = snap?.swatted ?? 0;
   const hint = !playing
     ? null
     : cured === 0 && wrong === 0
       ? "start"
       : snap?.healthyOut && snap.passed === 0 && wrong <= 1
         ? "healthy"
-        : null;
+        : snap?.gnatOut && swatted === 0
+          ? "gnat"
+          : null;
 
   return (
     <div ref={rootRef} data-seed={snap?.seed ?? undefined} className="absolute inset-0 overflow-hidden bg-paper select-none">
@@ -211,6 +225,20 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
             </span>
           </div>
         </div>
+        {swatted > 0 && (
+          <div
+            className="lab-rise flex items-center gap-[clamp(6px,1vmin,10px)] border-[1.5px] border-iris-blue bg-paper/92 px-[clamp(8px,1.2vmin,12px)] py-[clamp(4px,0.7vmin,7px)]"
+            aria-label={`Extra: ${swatted} de ${GNAT_COUNT} mosquitos`}
+          >
+            <span className="font-notation text-[clamp(11px,1.5vmin,16px)] tracking-[0.14em] text-iris-blue">EXTRA</span>
+            <Bug />
+            <span className="flex gap-[2px]" aria-hidden="true">
+              {Array.from({ length: GNAT_COUNT }, (_, i) => (
+                <span key={i} className={`block h-[clamp(10px,1.6vmin,16px)] w-[clamp(6px,0.9vmin,10px)] border border-ink ${i < swatted ? "bg-iris-blue" : "bg-paper"}`} />
+              ))}
+            </span>
+          </div>
+        )}
       </div>
 
       <p className="sr-only" aria-live="polite">
@@ -228,6 +256,12 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
         </Hint>
       )}
 
+      {hint === "gnat" && (
+        <Hint tone="ink">
+          Mosquito? <span className="font-medium text-iris-blue">Toque para espantar</span>
+        </Hint>
+      )}
+
       <SoundButton />
 
       {done && snap && (
@@ -240,6 +274,11 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
               <span className="text-accent">{snap.cured}</span> de {SICK_COUNT}
             </p>
             <p className="font-notation text-[clamp(13px,1.8vmin,18px)] tracking-[0.08em]">CRIANÇAS VACINADAS</p>
+            {snap.swatted > 0 && (
+              <p className="font-notation text-[clamp(13px,1.8vmin,18px)] tracking-[0.08em] text-iris-blue">
+                EXTRA · {snap.swatted} DE {GNAT_COUNT} MOSQUITOS
+              </p>
+            )}
             <p className={`text-[clamp(15px,2.1vmin,21px)] ${snap.wrong === 0 ? "font-medium text-accent" : "text-ink-soft"}`}>
               {snap.ended === "chances" ? "Acabaram as chances" : wrongText(snap.wrong)}
             </p>

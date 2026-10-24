@@ -3,9 +3,10 @@ import { INK, type Fonts } from "../riso/inks.ts";
 import type { Sfx } from "../sound.ts";
 import { drawKid, type Look, type Pose } from "./kidArt.ts";
 import { hitScore, kidLayout, kidSpot, type KidLayout, type KidSpot } from "./kidLayout.ts";
-import { CHANCES, onScreen, SICK_COUNT, type KidPlan } from "./kidPlan.ts";
-import { KidRound, type EndReason, type KidEvent, type RoundKid } from "./kidRound.ts";
-import { drawMosquito, mosquitoes, paintTown, type Mosquito } from "./town.ts";
+import { CHANCES, GNAT_COUNT, onScreen, SICK_COUNT, type KidPlan } from "./kidPlan.ts";
+import { KidRound, type EndReason, type KidEvent, type RoundGnat, type RoundKid } from "./kidRound.ts";
+import { gnatPos } from "./kidMosquito.ts";
+import { drawMosquito, paintTown } from "./town.ts";
 
 export type KidPhase = "idle" | "play" | "done";
 
@@ -18,6 +19,9 @@ export type KidSnapshot = {
   passed: number;
   bestStreak: number;
   ended: EndReason | null;
+  swatted: number;
+  gnatTotal: number;
+  gnatOut: boolean;
   sickOut: boolean;
   healthyOut: boolean;
   seed: number | null;
@@ -35,6 +39,7 @@ type Ring = { x: number; y: number; born: number; max: number; color: string; fr
 type Chip = { x: number; y: number; born: number; text: string; tone: "cured" | "healthy" };
 type Scribble = { x: number; y: number; born: number; text: string };
 type Shot = { kid: RoundKid; born: number };
+type Fallen = { x: number; y: number; dir: 1 | -1; born: number; phase: number };
 
 const SHOT = 0.7;
 const DONE_DELAY = 1.1;
@@ -64,7 +69,7 @@ export class KidScene {
   private options: KidOptions;
   private background: HTMLCanvasElement;
   private layout: KidLayout = kidLayout(1, 1);
-  private bugs: Mosquito[] = [];
+  private fallen: Fallen[] = [];
   private W = 1;
   private H = 1;
   private dpr = 1;
@@ -119,7 +124,6 @@ export class KidScene {
       bg.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       paintTown(bg, this.layout);
     }
-    this.bugs = this.options.reducedMotion ? [] : mosquitoes(this.layout, this.layout.portrait ? 3 : 5);
   }
 
   start(plan: KidPlan) {
@@ -153,8 +157,35 @@ export class KidScene {
     return best;
   }
 
+  private gnatSpot(gnat: RoundGnat, t = this.round!.time) {
+    return gnatPos(gnat.plan, t, this.W, this.H);
+  }
+
+  private gnatSize() {
+    return clamp(this.H * 0.042, 22, 46);
+  }
+
+  private gnatAt(x: number, y: number) {
+    const round = this.round;
+    if (!round || this.phase !== "play") return -1;
+    const reach = clamp(this.H * 0.06, 32, 56);
+    let best = -1;
+    let bestDist = Infinity;
+    round.gnats.forEach((gnat, i) => {
+      if (!round.gnatTappable(gnat)) return;
+      const now = this.gnatSpot(gnat);
+      const seen = this.gnatSpot(gnat, round.time - LATENCY);
+      const d = Math.min(Math.hypot(now.x - x, now.y - y), Math.hypot(seen.x - x, seen.y - y));
+      if (d <= reach && d < bestDist) {
+        best = i;
+        bestDist = d;
+      }
+    });
+    return best;
+  }
+
   pointerOverTarget(x: number, y: number) {
-    return this.kidAt(x, y) >= 0;
+    return this.gnatAt(x, y) >= 0 || this.kidAt(x, y) >= 0;
   }
 
   tapAt(x: number, y: number) {
@@ -162,6 +193,13 @@ export class KidScene {
     if (!round || this.phase !== "play" || round.ended) return;
     this.lastInput = this.now;
     this.interacted = true;
+    const bug = this.gnatAt(x, y);
+    if (bug >= 0) {
+      const spot = this.gnatSpot(round.gnats[bug]);
+      const swatted = round.swat(bug);
+      if (swatted) this.react(swatted, undefined, spot);
+      return;
+    }
     const index = this.kidAt(x, y);
     if (index < 0) return;
     const spot = this.spot(round.kids[index]);
@@ -182,6 +220,9 @@ export class KidScene {
       passed: round?.passed ?? 0,
       bestStreak: round?.bestStreak ?? 0,
       ended: round?.ended ?? null,
+      swatted: round?.swatted ?? 0,
+      gnatTotal: GNAT_COUNT,
+      gnatOut: !!round && !round.ended && round.gnats.some((g) => g.status === "out" && g.plan.at + 0.4 < round.time),
       sickOut: shown.some((k) => k.plan.sick),
       healthyOut: shown.some((k) => !k.plan.sick),
       seed: round?.plan.seed ?? null,
@@ -206,7 +247,7 @@ export class KidScene {
     return { x: spot.x, y: spot.y - spot.size * 0.55 };
   }
 
-  private react(event: KidEvent, at?: KidSpot) {
+  private react(event: KidEvent, at?: KidSpot, bug?: { x: number; y: number }) {
     const { sfx } = this.options;
     const round = this.round;
     if (!round) return;
@@ -223,6 +264,16 @@ export class KidScene {
         sfx.rescue(round.streak);
         this.burst(at.x, c.y, at.size, 14);
       }, 380);
+      this.emit();
+      return;
+    }
+    if (event.type === "swatted" && bug) {
+      const first = round.swatted === 1;
+      sfx.swat();
+      this.fallen.push({ x: bug.x, y: bug.y, dir: event.gnat.plan.dir, born: this.now, phase: event.gnat.plan.phase });
+      this.chips.push({ x: bug.x, y: bug.y - this.H * 0.05, born: this.now, text: first ? "Barra extra!" : "+1 extra", tone: "cured" });
+      this.rings.push({ x: bug.x, y: bug.y, born: this.now, max: 0.4, color: INK.blue, from: 8, to: this.H * 0.07, width: 3 });
+      this.burst(bug.x, bug.y, this.H * 0.06, 6);
       this.emit();
       return;
     }
@@ -313,12 +364,7 @@ export class KidScene {
 
     this.shots = this.shots.filter((s) => (this.now - s.born) / 1000 < SHOT);
 
-    for (const m of this.bugs) {
-      m.x += m.vx * dt;
-      m.y += Math.sin(this.now / 380 + m.phase) * this.H * 0.05 * dt;
-      if (m.x < -40) m.x = this.W + 30;
-      if (m.x > this.W + 40) m.x = -30;
-    }
+    this.fallen = this.fallen.filter((f) => this.now - f.born < 650);
     for (const p of this.particles) {
       p.life += dt;
       p.vy += this.H * 1.2 * dt;
@@ -370,8 +416,8 @@ export class KidScene {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.drawImage(this.background, 0, 0, this.W, this.H);
     const line = clamp(this.H * 0.0019, 1.2, 2.4);
-    for (const m of this.bugs) drawMosquito(ctx, m, this.now / 1000, line);
     this.drawKids();
+    this.drawGnats(line);
     this.drawShots();
     this.drawRings();
     this.drawParticles();
@@ -380,6 +426,24 @@ export class KidScene {
     this.drawGhostHand();
     this.drawComplete();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
+  private drawGnats(line: number) {
+    const round = this.round;
+    if (!round) return;
+    const size = this.gnatSize();
+    for (const gnat of round.gnats) {
+      if (gnat.status !== "out") continue;
+      const p = this.gnatSpot(gnat);
+      drawMosquito(this.ctx, p.x, p.y, gnat.plan.dir, size, this.now / 1000, gnat.plan.phase, line);
+    }
+    for (const f of this.fallen) {
+      const age = (this.now - f.born) / 1000;
+      this.ctx.save();
+      this.ctx.globalAlpha = 1 - smooth((age - 0.3) / 0.35);
+      drawMosquito(this.ctx, f.x + f.dir * age * size * 1.2, f.y + age * age * this.H * 0.9, f.dir, size, 0, f.phase, line, age * 9 * f.dir);
+      this.ctx.restore();
+    }
   }
 
   private drawKids() {

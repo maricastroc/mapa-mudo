@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CHANCES, generatePlan, SICK_COUNT } from "./kidPlan.ts";
+import { CHANCES, GNAT_COUNT, generatePlan, SICK_COUNT } from "./kidPlan.ts";
 import { KidRound } from "./kidRound.ts";
 
 function run(round: KidRound, until: number) {
@@ -62,4 +62,30 @@ test("curing all ten sick kids completes the game", () => {
   assert.equal(round.cured, SICK_COUNT);
   assert.equal(round.ended, "complete");
   assert.equal(round.wrong, 0);
+});
+
+test("swatting a passing mosquito counts once, and mosquitos never cost a chance", () => {
+  const round = new KidRound(generatePlan(4));
+  assert.equal(round.gnats.length, GNAT_COUNT);
+  run(round, round.plan.gnats[0].at + 0.5);
+  const i = round.gnats.findIndex((g) => round.gnatTappable(g));
+  assert.ok(i >= 0);
+  assert.equal(round.swat(i)?.type, "swatted");
+  assert.equal(round.swatted, 1);
+  assert.equal(round.swat(i), null);
+  assert.equal(round.chances, CHANCES);
+  run(round, 400);
+  assert.equal(round.swatted, 1);
+  assert.ok(round.gnats.every((g) => g.status === "swatted" || g.status === "gone"));
+});
+
+test("a plan has twelve fast mosquitos spread across the game", () => {
+  for (let seed = 1; seed <= 40; seed++) {
+    const { gnats, crossings } = generatePlan(seed);
+    const end = Math.max(...crossings.map((c) => c.at + c.duration));
+    assert.equal(gnats.length, GNAT_COUNT);
+    assert.ok(gnats.every((g) => g.duration >= 2.4 && g.duration <= 3.2));
+    assert.ok(gnats[0].at >= 5 && gnats[GNAT_COUNT - 1].at < end);
+    assert.ok(gnats.every((g, k) => k === 0 || g.at > gnats[k - 1].at + 1.5));
+  }
 });

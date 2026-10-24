@@ -1,6 +1,8 @@
-import { CHANCES, exitTime, progress, SICK_COUNT, type Crossing, type KidPlan } from "./kidPlan.ts";
+import { CHANCES, exitTime, GNAT_COUNT, progress, SICK_COUNT, type Crossing, type Gnat, type KidPlan } from "./kidPlan.ts";
 
 export type KidStatus = "waiting" | "out" | "cured" | "scared" | "missed" | "passed" | "skipped";
+export type GnatStatus = "waiting" | "out" | "swatted" | "gone";
+export type RoundGnat = { plan: Gnat; status: GnatStatus };
 export type EndReason = "done" | "complete" | "chances";
 
 export type RoundKid = {
@@ -18,12 +20,15 @@ export type KidEvent =
   | { type: "healthy"; kid: RoundKid }
   | { type: "missed"; kid: RoundKid }
   | { type: "passed"; kid: RoundKid }
+  | { type: "swatted"; gnat: RoundGnat }
   | { type: "end"; reason: EndReason };
 
 export class KidRound {
   readonly plan: KidPlan;
   time = 0;
   kids: RoundKid[];
+  gnats: RoundGnat[];
+  swatted = 0;
   chances = CHANCES;
   cured = 0;
   wrong = 0;
@@ -36,6 +41,7 @@ export class KidRound {
 
   constructor(plan: KidPlan) {
     this.plan = plan;
+    this.gnats = plan.gnats.map((g) => ({ plan: g, status: "waiting" }));
     this.kids = plan.crossings.map((c) => ({ plan: c, status: "waiting", hurryAt: null, resolvedAt: 0, curedAt: 0, scaredAt: 0 }));
   }
 
@@ -64,6 +70,10 @@ export class KidRound {
   step(dt: number): KidEvent[] {
     const events: KidEvent[] = [];
     this.time += dt;
+    for (const gnat of this.gnats) {
+      if (gnat.status === "waiting" && !this.ended && this.time >= gnat.plan.at) gnat.status = "out";
+      if (gnat.status === "out" && this.time >= gnat.plan.at + gnat.plan.duration) gnat.status = "gone";
+    }
     for (const kid of this.kids) {
       if (kid.status === "waiting" && !this.ended && this.time >= kid.plan.at) {
         kid.status = "out";
@@ -94,6 +104,22 @@ export class KidRound {
     return events;
   }
 
+  gnatTappable(gnat: RoundGnat) {
+    return !this.ended && gnat.status === "out";
+  }
+
+  swat(index: number): KidEvent | null {
+    const gnat = this.gnats[index];
+    if (!gnat || !this.gnatTappable(gnat)) return null;
+    gnat.status = "swatted";
+    this.swatted += 1;
+    return { type: "swatted", gnat };
+  }
+
+  get gnatTotal() {
+    return GNAT_COUNT;
+  }
+
   tap(index: number): KidEvent | null {
     const kid = this.kids[index];
     if (!kid || !this.tappable(kid)) return null;
@@ -119,6 +145,7 @@ export class KidRound {
   private finish(reason: EndReason): KidEvent {
     this.ended = reason;
     this.endedAt = this.time;
+    for (const gnat of this.gnats) if (gnat.status === "waiting") gnat.status = "gone";
     for (const kid of this.kids) {
       if (kid.status === "waiting") kid.status = "skipped";
       if (kid.status === "out" || kid.status === "cured" || kid.status === "scared") kid.hurryAt ??= this.time;
