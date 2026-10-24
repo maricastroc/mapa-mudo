@@ -140,6 +140,51 @@ function Beijing({ lit }: { lit: boolean }) {
   );
 }
 
+function SaoPaulo({ lit }: { lit: boolean }) {
+  return (
+    <g>
+      <rect x="0" y="0" width="420" height="150" fill="url(#room-dots-orange-light)" opacity={lit ? 0.5 : 0.28} />
+      <path d="M0 120 H420" stroke="#292929" strokeWidth="1.6" />
+      <g transform="translate(34 0)">
+      <rect x="236" y="44" width="150" height="76" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" />
+      <rect x="236" y="32" width="150" height="12" fill="#1001e3" stroke="#292929" strokeWidth="1.4" />
+      <rect x="238" y="46" width="146" height="72" fill="url(#room-dots-blue-light)" opacity="0.55" />
+      <path d="M311 56 v28 M297 70 h28" stroke="#ee704c" strokeWidth="9" />
+      <rect x="298" y="92" width="26" height="28" fill="#f7f8f6" stroke="#292929" strokeWidth="1.4" />
+      <rect x="252" y="92" width="22" height="14" fill="#dfe3f7" stroke="#292929" strokeWidth="1.2" />
+      <rect x="348" y="92" width="22" height="14" fill="#dfe3f7" stroke="#292929" strokeWidth="1.2" />
+      </g>
+      <g transform="translate(206 120)">
+        <path d="M-9 0 l1 -26 M9 0 l-1 -26" stroke="#292929" strokeWidth="5" strokeLinecap="round" />
+        <rect x="-12" y="-52" width="24" height="28" fill="#1001e3" stroke="#292929" strokeWidth="1.4" />
+        <circle cx="0" cy="-66" r="13" fill="#d9a173" stroke="#292929" strokeWidth="1.4" />
+        <path d="M-13 -68 a13 13 0 0 1 26 0 q-13 -8 -26 0" fill="#292929" />
+        <circle cx="-5" cy="-65" r="1.8" fill="#292929" />
+        <circle cx="5" cy="-65" r="1.8" fill="#292929" />
+        <circle cx="-7" cy="-72" r="1.5" fill="#c4261c" />
+        <circle cx="6" cy="-71" r="1.5" fill="#c4261c" />
+        <circle cx="0" cy="-60" r="1.5" fill="#c4261c" />
+        <path d="M-4 -57 q4 3 8 0" stroke="#292929" strokeWidth="1.3" fill="none" />
+      </g>
+      <g transform="translate(248 120)">
+        <path d="M-9 0 l1 -26 M9 0 l-1 -26" stroke="#292929" strokeWidth="5" strokeLinecap="round" />
+        <rect x="-12" y="-52" width="24" height="28" fill="#ee704c" stroke="#292929" strokeWidth="1.4" />
+        <circle cx="0" cy="-66" r="13" fill="#f2cba6" stroke="#292929" strokeWidth="1.4" />
+        <path d="M-13 -68 a13 13 0 0 1 26 0 q-13 -8 -26 0" fill="#5b3a22" />
+        <circle cx="-5" cy="-65" r="1.8" fill="#292929" />
+        <circle cx="5" cy="-65" r="1.8" fill="#292929" />
+        <path d="M-5 -60 q5 5 10 0" stroke="#292929" strokeWidth="1.3" fill="none" />
+      </g>
+      <g transform="translate(40 40)">
+        <path d="M0 0 l26 -10" stroke="#292929" strokeWidth="2.4" strokeLinecap="round" />
+        <rect x="26" y="-17" width="26" height="9" transform="rotate(-20 26 -13)" fill="#f7f8f6" stroke="#292929" strokeWidth="1.3" />
+        <rect x="28" y="-15" width="14" height="5" transform="rotate(-20 26 -13)" fill="#ee704c" />
+        <path d="M52 -22 l8 -3" stroke="#292929" strokeWidth="2.6" strokeLinecap="round" />
+      </g>
+    </g>
+  );
+}
+
 export function RoomArt({ id, lit }: { id: BenchId; lit: boolean }) {
   return (
     <svg viewBox="0 0 420 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" className="absolute inset-0 h-full w-full mix-blend-multiply">
@@ -148,6 +193,7 @@ export function RoomArt({ id, lit }: { id: BenchId; lit: boolean }) {
       {id === "johnson" && <Langley lit={lit} />}
       {id === "lutz" && <Rio lit={lit} />}
       {id === "tu" && <Beijing lit={lit} />}
+      {id === "frazatti" && <SaoPaulo lit={lit} />}
     </svg>
   );
 }

@@ -1,4 +1,4 @@
-export type BenchId = "curie" | "johnson" | "lutz" | "tu";
+export type BenchId = "curie" | "johnson" | "lutz" | "tu" | "frazatti";
 
 export type BenchRecord = { result: string; detail: string };
 
@@ -240,6 +240,56 @@ export const BENCHES: Bench[] = [
         credit: "Tu Youyou em 2015 · Foto: Bengt Nyman, CC BY 2.0, adaptada",
         focus: [0.45, 0.52],
         zoom: 1,
+      },
+    },
+  },
+  {
+    id: "frazatti",
+    available: true,
+    room: "BUTANTAN · SÃO PAULO",
+    task: "Quem está com dengue?",
+    intro: {
+      eyebrow: "SÃO PAULO · BRASIL",
+      title: "Quem está com dengue?",
+      body: "Vacine as crianças com sintomas. As saudáveis, deixe passar.",
+      cues: { fresh: "Com sintomas? Toque e vacine.", seen: "Saudável? Deixe passar." },
+      steps: ["Febre forte", "Manchas na pele", "Dores no corpo", "Enjoo"],
+    },
+    reveal: {
+      eyebrow: "QUEM CRIOU A VACINA DE UMA DOSE SÓ?",
+      name: "Neuza Frazatti",
+      meta: "PESQUISADORA DO INSTITUTO BUTANTAN · BRASIL",
+      demo: {
+        label: "VACINA BUTANTAN-DV · ESQUEMA ILUSTRATIVO",
+        replay: "Ver de novo",
+        captions: {
+          virus: "Na vida real, o vírus da dengue tem quatro tipos. Qualquer um pode causar a doença.",
+          vaccine: "A vacina leva os quatro vírus, enfraquecidos, numa dose só.",
+          protect: "O corpo aprende a se defender e fica protegido dos quatro tipos.",
+        },
+        closing: {
+          beats: ["Eram quatro vírus.", "Neuza fez uma dose só.", "O corpo aprendeu a se defender."],
+          highlight: 1,
+          summary:
+            "Neuza Frazatti é pesquisadora do Instituto Butantan, em São Paulo, onde trabalha desde 1978. Ela liderou a equipe que desenvolveu a Butantan-DV, uma vacina brasileira contra a dengue que protege dos quatro tipos do vírus com uma única dose. Foram cerca de 16 anos de trabalho até a vacina chegar ao uso.",
+        },
+        marks: {
+          dengue: "vírus da dengue",
+          type: "tipo",
+          weak: "vírus enfraquecidos",
+          single: "1 dose",
+          one: "uma só picada",
+          body: "corpo",
+          defence: "defesas",
+          protected: "protegido dos 4 tipos",
+        },
+      },
+      photo: {
+        src: "/photos/neuza-frazatti.jpg",
+        alt: "Neuza Frazatti sorri sentada à sua mesa de trabalho, de óculos e blazer claro, com um caderno aberto à frente.",
+        credit: "Neuza Frazatti · Foto: Instituto Butantan, adaptada",
+        focus: [0.5, 0.36],
+        zoom: 1.5,
       },
     },
   },
