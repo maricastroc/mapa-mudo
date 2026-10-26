@@ -124,14 +124,14 @@ function Hud({ snap }: { snap: MazeSnapshot | null }) {
         </span>
       </div>
       <div
-        className={`flex items-center gap-2 border-[1.5px] px-[clamp(8px,1.2vmin,14px)] py-[clamp(5px,0.9vmin,10px)] ${fright > 0 ? "border-accent bg-[#fde3d9] shadow-[4px_4px_0_0_rgba(238,112,76,1)]" : "border-ink bg-paper/92"}`}
+        className={`flex items-center gap-2 border-[1.5px] px-[clamp(8px,1.2vmin,14px)] py-[clamp(5px,0.9vmin,10px)] ${fright > 0 ? "border-iris-orange bg-[#fde3d9] shadow-[4px_4px_0_0_rgba(238,112,76,1)]" : "border-ink bg-paper/92"}`}
         aria-label={fright > 0 ? "Artemisinina ativa" : "Artemisinina: pegue um frasco"}
       >
         <Vial level={fright} warning={warning} />
         <div className="flex min-w-0 flex-1 flex-col gap-1 portrait:hidden">
           <span className="font-notation text-[clamp(10px,1.4vmin,15px)] tracking-[0.1em]">{fright > 0 ? "ARTEMISININA ATIVA" : "PEGUE UM FRASCO"}</span>
           <div className="h-[clamp(5px,0.8vmin,8px)] border-[1.2px] border-ink bg-paper">
-            <div className={`h-full bg-accent ${warning ? "animate-pulse" : ""}`} style={{ width: `${fright * 100}%` }} />
+            <div className={`h-full bg-iris-orange ${warning ? "animate-pulse" : ""}`} style={{ width: `${fright * 100}%` }} />
           </div>
         </div>
       </div>
@@ -161,7 +161,7 @@ function DPad({ onSteer, pressed }: { onSteer: (dir: Dir) => void; pressed: Dir 
       }}
       onClick={(e) => e.preventDefault()}
       className={`${area} flex touch-none items-center justify-center border-[1.5px] border-ink transition-transform select-none active:translate-x-[2px] active:translate-y-[2px] ${
-        pressed === dir ? "bg-iris-blue text-paper shadow-none" : "bg-paper text-ink shadow-[4px_4px_0_0_rgba(16,1,227,0.9)]"
+        pressed === dir ? "bg-action text-on-action shadow-none" : "bg-paper text-ink shadow-[4px_4px_0_0_var(--frame)]"
       }`}
     >
       <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[45%]">
@@ -312,7 +312,7 @@ export function TuBench({ active, reducedMotion, onComplete }: TuBenchProps) {
       <aside className="relative z-10 flex shrink-0 flex-col gap-[clamp(8px,1.6vmin,18px)] p-[clamp(10px,2.4vmin,32px)] portrait:gap-2 portrait:px-3 portrait:pt-3 portrait:pb-1 landscape:w-[clamp(210px,26vw,420px)]">
         <header className="border-[1.5px] border-ink bg-paper/92 px-[clamp(8px,1.2vmin,14px)] py-[clamp(6px,1vmin,10px)] portrait:flex portrait:items-baseline portrait:justify-between portrait:gap-3">
           <Eyebrow className="portrait:hidden">Pequim · anos 1970</Eyebrow>
-          <h1 className="display mt-1 text-[clamp(26px,4.6vmin,56px)] leading-[0.95] text-iris-blue portrait:mt-0 portrait:text-[clamp(22px,6.4vw,34px)]">A Cura no Labirinto</h1>
+          <h1 className="display mt-1 text-[clamp(26px,4.6vmin,56px)] leading-[0.95] text-title portrait:mt-0 portrait:text-[clamp(22px,6.4vw,34px)]">A Cura no Labirinto</h1>
         </header>
         <Hud snap={snap} />
         <p className="hidden font-notation text-[clamp(11px,1.4vmin,14px)] leading-snug tracking-[0.06em] text-ink-soft landscape:block">
@@ -324,7 +324,7 @@ export function TuBench({ active, reducedMotion, onComplete }: TuBenchProps) {
         <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 block h-full w-full" />
         <p className="sr-only">Labirinto. Use as setas, WASD, o direcional ou deslize o dedo para andar.</p>
         {playing && !snap?.steered && (
-          <p className="lab-rise pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 border-[1.5px] border-ink bg-paper px-3 py-1.5 text-center font-notation text-[clamp(12px,1.8vmin,17px)] tracking-[0.05em] whitespace-nowrap shadow-[4px_4px_0_0_rgba(238,112,76,1)]">
+          <p className="lab-rise pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 border-[1.5px] border-ink bg-paper px-3 py-1.5 text-center font-notation text-[clamp(12px,1.8vmin,17px)] tracking-[0.05em] whitespace-nowrap shadow-[4px_4px_0_0_var(--accent)]">
             <span className="pointer-coarse:hidden">Use as setas ou WASD</span>
             <span className="hidden pointer-coarse:inline">Toque nas setas ou deslize o dedo</span>
           </p>
@@ -342,7 +342,7 @@ export function TuBench({ active, reducedMotion, onComplete }: TuBenchProps) {
               ["←", "↓", "→"],
             ].flatMap((row, r) =>
               row.map((k, c) => (
-                <span key={`${r}-${c}`} className={`flex size-[clamp(34px,4.6vmin,48px)] items-center justify-center ${k ? "border-[1.5px] border-ink bg-paper shadow-[3px_3px_0_0_rgba(16,1,227,0.9)]" : ""}`}>
+                <span key={`${r}-${c}`} className={`flex size-[clamp(34px,4.6vmin,48px)] items-center justify-center ${k ? "border-[1.5px] border-ink bg-paper shadow-[3px_3px_0_0_var(--frame)]" : ""}`}>
                   {k}
                 </span>
               )),
@@ -356,7 +356,7 @@ export function TuBench({ active, reducedMotion, onComplete }: TuBenchProps) {
 
       {done && snap && (
         <div className="absolute inset-x-0 top-[clamp(90px,22vh,280px)] z-20 flex justify-center px-4">
-          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_rgba(238,112,76,1)]">
+          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_var(--accent)]">
             <Stamp className="absolute -top-[clamp(26px,4vmin,40px)] text-[clamp(20px,3.2vmin,36px)] whitespace-nowrap" tilt={-5}>
               {verdict(snap)}
             </Stamp>

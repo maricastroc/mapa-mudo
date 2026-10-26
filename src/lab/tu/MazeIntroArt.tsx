@@ -120,7 +120,7 @@ export function MazeIntroArt({ steps, reducedMotion }: { steps: string[]; reduce
   return (
     <div className="mt-5 grid grid-cols-2 gap-[clamp(8px,1.6vmin,16px)]" aria-hidden="true">
       {steps.map((label, i) => {
-        const tone = i === 3 ? "border-accent" : i === 2 ? "border-ink" : "border-iris-blue";
+        const tone = i === 3 ? "border-iris-orange" : i === 2 ? "border-ink" : "border-iris-blue";
         return (
         <figure key={label} className={`border-[1.5px] bg-paper ${tone}`}>
           <canvas

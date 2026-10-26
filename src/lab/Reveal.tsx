@@ -37,7 +37,7 @@ export function Reveal({ bench, record, done, demo, onNext, onPass }: RevealProp
           <div className="mt-[0.6vmin] flex flex-wrap items-baseline gap-x-[2.4vmin] gap-y-1">
             <h1
               id="reveal-title"
-              className="display lab-rise text-[clamp(56px,10.5vmin,136px)] leading-[0.86] tracking-[-0.045em] text-iris-blue"
+              className="display lab-rise text-[clamp(56px,10.5vmin,136px)] leading-[0.86] tracking-[-0.045em] text-title-alt"
               style={{ animationDelay: "120ms" }}
             >
               Foi ela.

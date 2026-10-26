@@ -47,12 +47,12 @@ export function TitleScreen({ done, onStart, onOpen }: TitleScreenProps) {
     <section className="graph-paper absolute inset-0 grid grid-cols-[minmax(0,44fr)_minmax(0,56fr)] overflow-y-auto max-[860px]:grid-cols-1">
       <div className="flex flex-col justify-center px-[clamp(22px,7vmin,110px)] py-[clamp(24px,6vmin,80px)]">
         <Eyebrow className="lab-rise">Ciência Delas · Feira do Conhecimento 2026</Eyebrow>
-        <h1 className="display lab-rise mt-[2vmin] text-[clamp(72px,16vmin,210px)] leading-[0.84] tracking-[-0.05em] text-iris-blue" style={{ animationDelay: "100ms" }}>
+        <h1 className="display lab-rise mt-[2vmin] text-[clamp(72px,16vmin,210px)] leading-[0.84] tracking-[-0.05em] text-title" style={{ animationDelay: "100ms" }}>
           Elas
           <br />
           em Jogo
         </h1>
-        <p className="display lab-rise mt-[3.4vmin] text-[clamp(24px,4.4vmin,52px)] leading-[1.05] text-iris-blue" style={{ animationDelay: "220ms" }}>
+        <p className="display lab-rise mt-[3.4vmin] text-[clamp(24px,4.4vmin,52px)] leading-[1.05] text-title-alt" style={{ animationDelay: "220ms" }}>
           Laboratório de descobertas
         </p>
         <p className="lab-rise mt-[3vmin] max-w-[26em] font-notation text-[clamp(15px,2.2vmin,22px)] leading-[1.45] text-balance" style={{ animationDelay: "340ms" }}>
@@ -72,10 +72,10 @@ export function TitleScreen({ done, onStart, onOpen }: TitleScreenProps) {
         <div className="lab-rise relative flex w-full max-w-[760px] flex-col" style={{ animationDelay: "200ms" }}>
           <svg viewBox="0 0 400 70" preserveAspectRatio="none" aria-hidden="true" className="block h-[clamp(44px,8vmin,90px)] w-full">
             <path d="M6 69 L200 4 L394 69 Z" fill="#f7f8f6" stroke="#292929" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-            <path d="M60 50 L200 10 L340 50" fill="none" stroke="#1001e3" strokeOpacity="0.5" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+            <path d="M60 50 L200 10 L340 50" fill="none" style={{ stroke: "var(--frame)" }} strokeOpacity="0.7" strokeWidth="1" vectorEffect="non-scaling-stroke" />
             <rect x="300" y="14" width="20" height="30" fill="#292929" />
           </svg>
-          <div className="relative flex flex-1 flex-col border-[1.5px] border-ink bg-paper shadow-[12px_12px_0_0_rgba(16,1,227,0.9)]">
+          <div className="relative flex flex-1 flex-col border-[1.5px] border-ink bg-paper shadow-[12px_12px_0_0_var(--frame)]">
             {BENCHES.map((b) => (
               <Room key={b.id} bench={b} done={done.has(b.id)} onOpen={onOpen} />
             ))}

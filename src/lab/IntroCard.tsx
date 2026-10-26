@@ -9,10 +9,10 @@ export function IntroCard({ bench, art, onStart }: { bench: Bench; art?: ReactNo
       <div
         role="dialog"
         aria-labelledby="bench-intro-title"
-        className="lab-rise relative w-full max-w-[min(680px,92vw)] border-[1.5px] border-ink bg-paper px-[clamp(22px,4.5vmin,52px)] py-[clamp(22px,4.2vmin,48px)] shadow-[10px_10px_0_0_rgba(16,1,227,0.9)]"
+        className="lab-rise relative w-full max-w-[min(680px,92vw)] border-[1.5px] border-ink bg-paper px-[clamp(22px,4.5vmin,52px)] py-[clamp(22px,4.2vmin,48px)] shadow-[10px_10px_0_0_var(--frame)]"
       >
         <Eyebrow className="text-ink-soft">{bench.intro.eyebrow}</Eyebrow>
-        <h1 id="bench-intro-title" className="display mt-3 text-[clamp(34px,6vmin,68px)] leading-[0.98] text-iris-blue">
+        <h1 id="bench-intro-title" className="display mt-3 text-[clamp(34px,6vmin,68px)] leading-[0.98] text-title">
           {bench.intro.title}
         </h1>
         <p className="mt-5 max-w-[30em] text-[clamp(17px,2.35vmin,24px)] leading-[1.4]">{bench.intro.body}</p>

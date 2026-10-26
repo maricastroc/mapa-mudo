@@ -213,7 +213,7 @@ export function FrogIntroArt({ newLabel, seenLabel, reducedMotion }: { newLabel:
     <div className="mt-5 grid grid-cols-2 gap-[clamp(10px,2vmin,20px)] max-[420px]:grid-cols-1" aria-hidden="true">
       {(
         [
-          [newRef, newLabel, "border-accent"],
+          [newRef, newLabel, "border-iris-orange"],
           [seenRef, seenLabel, "border-iris-blue"],
         ] as const
       ).map(([ref, label, tone]) => (

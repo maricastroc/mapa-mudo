@@ -189,7 +189,7 @@ export function LutzBench({ active, reducedMotion, onComplete }: LutzBenchProps)
       <div className="pointer-events-none absolute top-[clamp(10px,2.4vmin,30px)] left-[clamp(8px,2.4vmin,36px)] flex flex-col items-start gap-[clamp(6px,1vmin,10px)] max-[640px]:right-[clamp(8px,2.4vmin,36px)]">
         <header className="self-stretch border-[1.5px] border-ink bg-paper/92 px-[clamp(8px,1.2vmin,14px)] py-[clamp(6px,1vmin,10px)]">
           <Eyebrow>Mata Atlântica · Rio de Janeiro</Eyebrow>
-          <h1 className="display mt-1 text-[clamp(28px,5vmin,60px)] leading-none text-iris-blue">Já vi esse sapo!</h1>
+          <h1 className="display mt-1 text-[clamp(28px,5vmin,60px)] leading-none text-title">Já vi esse sapo!</h1>
         </header>
         <div className="flex items-center gap-[clamp(6px,1vmin,10px)] border-[1.5px] border-ink bg-paper/92 px-[clamp(8px,1.2vmin,12px)] py-[clamp(4px,0.7vmin,7px)]" aria-label={`${snap?.chances ?? CHANCES} chances`}>
           <span className="font-notation text-[clamp(11px,1.5vmin,16px)] tracking-[0.14em]">CHANCES</span>
@@ -218,7 +218,7 @@ export function LutzBench({ active, reducedMotion, onComplete }: LutzBenchProps)
 
       {hint === "start" && (
         <Hint>
-          Sapo <span className="font-medium text-accent">novo</span>? Toque para anotar no caderno
+          Sapo <span className="font-medium text-iris-orange">novo</span>? Toque para anotar no caderno
         </Hint>
       )}
       {hint === "seen" && (
@@ -232,7 +232,7 @@ export function LutzBench({ active, reducedMotion, onComplete }: LutzBenchProps)
 
       {done && snap && (
         <div className="absolute inset-x-0 top-[clamp(90px,24vh,300px)] z-20 flex justify-center px-4">
-          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_rgba(238,112,76,1)]">
+          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_var(--accent)]">
             <Stamp className="absolute -top-[clamp(26px,4vmin,40px)] text-[clamp(20px,3.2vmin,36px)] whitespace-nowrap" tilt={-5}>
               {verdict(snap.registered, snap.wrong)}
             </Stamp>

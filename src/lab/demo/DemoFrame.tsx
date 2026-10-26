@@ -14,7 +14,7 @@ type DemoFrameProps = {
 export function DemoFrame({ label, replayLabel, canReplay, onReplay, caption, closing, children }: DemoFrameProps) {
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="relative min-h-0 flex-1 overflow-hidden border-[1.5px] border-ink bg-paper shadow-[8px_8px_0_0_rgba(16,1,227,0.9)] max-[860px]:aspect-[2/1] max-[860px]:flex-none">
+      <div className="relative min-h-0 flex-1 overflow-hidden border-[1.5px] border-ink bg-paper shadow-[8px_8px_0_0_var(--frame)] max-[860px]:aspect-[2/1] max-[860px]:flex-none">
         {children}
         <p className="pointer-events-none absolute top-2 left-3 bg-paper/85 px-1 font-notation text-[clamp(9px,1.1vmin,12px)] tracking-[0.12em] text-ink-soft">{label}</p>
         {canReplay && (
@@ -41,7 +41,7 @@ export function DemoFrame({ label, replayLabel, canReplay, onReplay, caption, cl
           <>
             <p className="display flex flex-wrap gap-x-[0.35em] text-[clamp(22px,3.5vmin,40px)] leading-[1.1]">
               {closing.beats.map((beat, i) => (
-                <span key={beat} className={`lab-rise ${i === closing.highlight ? "text-iris-blue" : ""}`} style={{ animationDelay: `${i * 260}ms` }}>
+                <span key={beat} className={`lab-rise ${i === closing.highlight ? "text-title-alt" : ""}`} style={{ animationDelay: `${i * 260}ms` }}>
                   {beat}
                 </span>
               ))}

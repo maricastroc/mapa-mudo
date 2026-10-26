@@ -52,7 +52,7 @@ function StonePip({ outcome }: { outcome: StoneOutcome }) {
   const motion = outcome === "found" ? "lab-stamp" : outcome === "missed" ? "lab-shake" : "";
   return (
     <span className="relative inline-flex">
-      {outcome === "found" && <span className="lab-ping absolute inset-[-30%] rounded-full border-2 border-accent" aria-hidden="true" />}
+      {outcome === "found" && <span className="lab-ping absolute inset-[-30%] rounded-full border-2 border-iris-orange" aria-hidden="true" />}
       <svg viewBox="0 0 24 20" aria-hidden="true" className={`h-[clamp(14px,2.1vmin,24px)] w-auto ${motion}`} style={{ ["--stamp-tilt" as string]: "0deg" }}>
         <path
           d="M4 14 Q2 8 7 5 Q11 2 16 4 Q22 6 21 12 Q20 17 13 17 Q6 18 4 14 Z"
@@ -201,7 +201,7 @@ export function CurieBench({ active, reducedMotion, onComplete }: CurieBenchProp
 
       <header className="pointer-events-none absolute top-[clamp(10px,2.4vmin,30px)] left-[clamp(8px,2.4vmin,36px)] bg-paper/90 px-[clamp(8px,1.2vmin,14px)] py-[clamp(6px,1vmin,10px)]">
         <Eyebrow>Paris · 1898</Eyebrow>
-        <h1 className="display mt-1 text-[clamp(28px,5vmin,60px)] leading-none text-iris-blue">Qual pedra brilha?</h1>
+        <h1 className="display mt-1 text-[clamp(28px,5vmin,60px)] leading-none text-title">Qual pedra brilha?</h1>
       </header>
 
       <div
@@ -232,13 +232,13 @@ export function CurieBench({ active, reducedMotion, onComplete }: CurieBenchProp
 
       {hint === "start" && (
         <Hint>
-          Toque nas pedras que <span className="font-medium text-accent">brilham</span>
+          Toque nas pedras que <span className="font-medium text-iris-orange">brilham</span>
         </Hint>
       )}
       {hint === "plain" && <Hint tone="ink">Pedra apagada: deixe passar</Hint>}
       {hint === "crystal" && (
         <Hint tone="ink">
-          Só vale o brilho <span className="font-medium text-accent">laranja</span>
+          Só vale o brilho <span className="font-medium text-iris-orange">laranja</span>
         </Hint>
       )}
 
@@ -246,7 +246,7 @@ export function CurieBench({ active, reducedMotion, onComplete }: CurieBenchProp
 
       {done && snap && (
         <div className="absolute inset-x-0 top-[clamp(90px,17vh,220px)] z-20 flex justify-center px-4">
-          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_rgba(238,112,76,1)]">
+          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_var(--accent)]">
             <Stamp className="absolute -top-[clamp(26px,4vmin,40px)] text-[clamp(20px,3.2vmin,36px)]" tilt={-5}>
               {verdict(snap.found, snap.wrong)}
             </Stamp>

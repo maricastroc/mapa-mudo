@@ -12,9 +12,12 @@
   --ink: #292929;
   --ink-soft: #4e6473;
 
+  --title: var(--ink);
+  --title-alt: var(--iris-orange);
   --accent: var(--iris-orange);
-  --action: var(--iris-blue);
-  --on-action: #ffffff;
+  --action: var(--ink);
+  --on-action: var(--paper);
+  --frame: var(--iris-orange);
   --focus-ring: var(--iris-blue);
   --action-radius: 0px;
 
@@ -27,10 +30,14 @@
   --color-paper: var(--paper);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
+  --color-title: var(--title);
+  --color-title-alt: var(--title-alt);
+  --color-frame: var(--frame);
   --color-accent: var(--accent);
   --color-action: var(--action);
   --color-on-action: var(--on-action);
   --color-iris-blue: var(--iris-blue);
+  --color-iris-orange: var(--iris-orange);
   --font-primary: var(--font-primary);
   --font-notation: var(--font-notation);
   --radius-action: var(--action-radius);
@@ -69,7 +76,7 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
+  background: var(--iris-orange);
   color: var(--ink);
 }
 

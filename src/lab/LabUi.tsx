@@ -16,7 +16,7 @@ export function LabProgress({ done, className }: { done: ReadonlySet<BenchId>; c
         {BENCHES.map((b) => (
           <span
             key={b.id}
-            className={`block size-[clamp(14px,2vmin,22px)] border-[1.5px] ${done.has(b.id) ? "border-accent bg-accent" : "border-iris-blue bg-paper"}`}
+            className={`block size-[clamp(14px,2vmin,22px)] border-[1.5px] ${done.has(b.id) ? "border-accent bg-accent" : "border-title bg-paper"}`}
           />
         ))}
       </div>

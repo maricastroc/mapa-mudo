@@ -53,7 +53,7 @@ function CapsulePip({ outcome }: { outcome: Outcome }) {
   const motion = outcome === "rescued" ? "lab-stamp" : outcome === "missed" ? "lab-shake" : "";
   return (
     <span className="relative inline-flex">
-      {outcome === "rescued" && <span className="lab-ping absolute inset-[-30%] rounded-full border-2 border-accent" aria-hidden="true" />}
+      {outcome === "rescued" && <span className="lab-ping absolute inset-[-30%] rounded-full border-2 border-iris-orange" aria-hidden="true" />}
       <svg viewBox="0 0 20 24" aria-hidden="true" className={`h-[clamp(18px,2.6vmin,30px)] w-auto ${motion}`} style={{ ["--stamp-tilt" as string]: "0deg" }}>
         <path d="M3 22 L6.5 8 L13.5 8 L17 22 Z M7.5 8 L7.5 4 L12.5 4 L12.5 8 M9 4 L9 1.5 L11 1.5 L11 4" fill={fill} stroke={stroke} strokeWidth="1.4" strokeLinejoin="round" />
         {outcome === "missed" && <path d="M4 4 L16 20 M16 4 L4 20" stroke="#1001e3" strokeWidth="1.8" />}
@@ -196,7 +196,7 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
 
       <header className="pointer-events-none absolute top-[clamp(10px,2.4vmin,30px)] left-[clamp(8px,2.4vmin,36px)] bg-paper/90 px-[clamp(8px,1.2vmin,14px)] py-[clamp(6px,1vmin,10px)]">
         <Eyebrow>NASA · anos 1960</Eyebrow>
-        <h1 className="display mt-1 text-[clamp(28px,5vmin,60px)] leading-none text-iris-blue">Resgate no mar</h1>
+        <h1 className="display mt-1 text-[clamp(28px,5vmin,60px)] leading-none text-title">Resgate no mar</h1>
       </header>
 
       <div
@@ -227,13 +227,13 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
 
       {active && !done && resolved === 0 && (
         <p className="pointer-events-none absolute bottom-[clamp(16px,3.6vmin,44px)] left-1/2 -translate-x-1/2 border-[1.5px] border-ink bg-paper px-4 py-2 font-notation text-[clamp(13px,1.9vmin,19px)] tracking-[0.06em] whitespace-nowrap shadow-[4px_4px_0_0_rgba(238,112,76,1)]">
-          Leve o navio até o <span className="font-medium text-accent">×</span>
+          Leve o navio até o <span className="font-medium text-iris-orange">×</span>
         </p>
       )}
 
       {active && !done && snap?.debrisSeen === 1 && (
         <p className="lab-rise pointer-events-none absolute bottom-[clamp(16px,3.6vmin,44px)] left-1/2 -translate-x-1/2 border-[1.5px] border-ink bg-paper px-4 py-2 font-notation text-[clamp(13px,1.9vmin,19px)] tracking-[0.06em] whitespace-nowrap shadow-[4px_4px_0_0_rgba(41,41,41,1)]">
-          Desvie do que cai <span className="font-medium text-accent">pegando fogo</span>
+          Desvie do que cai <span className="font-medium text-iris-orange">pegando fogo</span>
         </p>
       )}
 
@@ -249,7 +249,7 @@ export function JohnsonBench({ active, reducedMotion, onComplete }: JohnsonBench
 
       {done && snap && (
         <div className="absolute inset-x-0 top-[clamp(90px,17vh,220px)] z-20 flex justify-center px-4">
-          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_rgba(238,112,76,1)]">
+          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_var(--accent)]">
             <Stamp className="absolute -top-[clamp(26px,4vmin,40px)] bg-paper text-[clamp(20px,3.2vmin,36px)]" tilt={-5}>
               {verdict(snap.rescued, snap.damage)}
             </Stamp>
