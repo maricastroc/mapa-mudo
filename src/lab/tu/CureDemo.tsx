@@ -57,7 +57,7 @@ function Label({ x, y, text, opacity, anchor = "middle", color = INK.black, size
   );
 }
 
-function Sprig({ x, y, scale, flowers = true }: { x: number; y: number; scale: number; flowers?: boolean }) {
+export function Sprig({ x, y, scale, flowers = true }: { x: number; y: number; scale: number; flowers?: boolean }) {
   const branches = [
     { y: -40, dir: -1, len: 34 },
     { y: -62, dir: 1, len: 30 },

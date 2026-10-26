@@ -4,6 +4,15 @@ export class Sfx {
   private ctx: AudioContext | null = null;
   private noise: AudioBuffer | null = null;
   private muted = false;
+  private last = new Map<string, number>();
+
+  allow(key: string, gap: number) {
+    const now = typeof performance === "undefined" ? 0 : performance.now();
+    const before = this.last.get(key) ?? -Infinity;
+    if (now - before < gap) return false;
+    this.last.set(key, now);
+    return true;
+  }
 
   mute(muted: boolean) {
     this.muted = muted;
@@ -40,18 +49,22 @@ export class Sfx {
     osc.stop(t + length + 0.05);
   }
 
-  private hiss(at: number, length: number, gain: number, cutoff: number) {
-    const ctx = this.audio();
-    if (!ctx) return;
+  private noiseBuffer(ctx: AudioContext) {
     if (!this.noise) {
       const buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
       this.noise = buffer;
     }
+    return this.noise;
+  }
+
+  private hiss(at: number, length: number, gain: number, cutoff: number) {
+    const ctx = this.audio();
+    if (!ctx) return;
     const t = ctx.currentTime + at;
     const src = ctx.createBufferSource();
-    src.buffer = this.noise;
+    src.buffer = this.noiseBuffer(ctx);
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
     filter.frequency.setValueAtTime(cutoff, t);
@@ -62,6 +75,133 @@ export class Sfx {
     src.connect(filter).connect(amp).connect(ctx.destination);
     src.start(t);
     src.stop(t + length + 0.05);
+  }
+
+  private burst(at: number, length: number, gain: number, type: BiquadFilterType, freq: number, q = 1, sweep = 1) {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime + at;
+    const src = ctx.createBufferSource();
+    src.buffer = this.noiseBuffer(ctx);
+    src.loop = true;
+    const filter = ctx.createBiquadFilter();
+    filter.type = type;
+    filter.Q.value = q;
+    filter.frequency.setValueAtTime(freq, t);
+    if (sweep !== 1) filter.frequency.exponentialRampToValueAtTime(freq * sweep, t + length);
+    const amp = ctx.createGain();
+    amp.gain.setValueAtTime(0.0001, t);
+    amp.gain.exponentialRampToValueAtTime(gain, t + Math.min(0.01, length / 4));
+    amp.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    src.connect(filter).connect(amp).connect(ctx.destination);
+    src.start(t, Math.random() * 0.5);
+    src.stop(t + length + 0.05);
+  }
+
+  private glide(from: number, to: number, at: number, length: number, type: OscillatorType, gain: number) {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime + at;
+    const osc = ctx.createOscillator();
+    const amp = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(from, t);
+    osc.frequency.exponentialRampToValueAtTime(to, t + length);
+    amp.gain.setValueAtTime(0.0001, t);
+    amp.gain.exponentialRampToValueAtTime(gain, t + 0.015);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    osc.connect(amp).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + length + 0.05);
+  }
+
+  press() {
+    if (!this.allow("press", 45)) return;
+    this.burst(0, 0.03, 0.05, "highpass", 3200);
+    this.tone(1250, 0, 0.035, "square", 0.012);
+    this.burst(0.05, 0.025, 0.03, "highpass", 2400);
+  }
+
+  hover() {
+    if (!this.allow("hover", 140)) return;
+    this.tone(2600, 0, 0.04, "sine", 0.007);
+  }
+
+  zap(on: boolean) {
+    this.burst(0, 0.12, 0.05, "bandpass", 3800, 4);
+    this.glide(on ? 180 : 420, on ? 420 : 140, 0.02, 0.3, "square", 0.012);
+  }
+
+  tink(at: number, step: number) {
+    this.tone(1800 + step * 140, at, 0.06, "triangle", 0.014);
+    this.burst(at, 0.02, 0.02, "highpass", 5000);
+  }
+
+  toot() {
+    if (!this.allow("toot", 400)) return;
+    this.glide(880, 920, 0, 0.18, "square", 0.018);
+    this.glide(660, 700, 0.22, 0.26, "square", 0.018);
+    this.burst(0.05, 0.2, 0.03, "lowpass", 1400);
+  }
+
+  winch(down: boolean) {
+    for (let i = 0; i < 6; i++) this.burst(i * 0.07, 0.015, 0.035, "bandpass", down ? 1500 - i * 80 : 1100 + i * 90, 3);
+  }
+
+  flip() {
+    this.burst(0, 0.05, 0.04, "bandpass", 2800, 1);
+    this.burst(0.06, 0.08, 0.03, "bandpass", 2200, 1);
+  }
+
+  lever(on: boolean) {
+    this.burst(0, 0.06, 0.08, "lowpass", 900);
+    this.tone(95, 0, 0.12, "square", 0.04);
+    if (on) this.glide(70, 140, 0.08, 0.5, "sawtooth", 0.012);
+    else this.glide(140, 55, 0.08, 0.6, "sawtooth", 0.012);
+  }
+
+  drawer(open: boolean) {
+    this.burst(0, 0.22, 0.05, "lowpass", open ? 700 : 500, 1, open ? 0.6 : 1.4);
+    this.tone(open ? 160 : 120, 0.2, 0.06, "triangle", 0.035);
+  }
+
+  paper() {
+    this.burst(0, 0.07, 0.035, "bandpass", 3400, 0.8);
+    this.burst(0.09, 0.09, 0.03, "bandpass", 2600, 0.8);
+  }
+
+  geiger(count: number) {
+    if (!this.allow("geiger", 250)) return;
+    for (let i = 0; i < count; i++) this.burst(Math.random() * 0.55, 0.008, 0.09, "highpass", 2500);
+  }
+
+  chalk() {
+    for (let i = 0; i < 5; i++) this.burst(i * 0.075 + Math.random() * 0.02, 0.06, 0.025, "bandpass", 2300 + Math.random() * 600, 3);
+  }
+
+  drip(step = 0) {
+    this.glide(620 + step * 60, 1400 + step * 90, 0, 0.09, "sine", 0.05);
+  }
+
+  bubbles() {
+    for (let i = 0; i < 4; i++) this.glide(380 + Math.random() * 300, 900 + Math.random() * 400, 0.06 * i + Math.random() * 0.04, 0.06, "sine", 0.025);
+  }
+
+  water() {
+    for (let i = 0; i < 6; i++) this.glide(1100 + Math.random() * 700, 2200 + Math.random() * 600, 0.08 * i + Math.random() * 0.05, 0.05, "sine", 0.018);
+  }
+
+  thunk() {
+    this.tone(110, 0, 0.14, "sine", 0.07);
+    this.burst(0, 0.05, 0.04, "lowpass", 600);
+  }
+
+  hum() {
+    this.glide(110, 118, 0, 0.7, "sawtooth", 0.006);
+  }
+
+  chime() {
+    [4, 6, 7].forEach((n, i) => this.tone(NOTES[n] * 2, i * 0.09, 0.4, "triangle", 0.022));
   }
 
   chute() {

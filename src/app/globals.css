@@ -185,7 +185,668 @@ body {
   font-family: var(--font-caveat), cursive;
 }
 
+.lab-art :is(path, line, rect, circle, ellipse, polygon, polyline):not(.lab-keep *) {
+  vector-effect: non-scaling-stroke;
+}
+
+.lab-scroller {
+  scrollbar-width: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.lab-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.lab-scroller[data-dragging] {
+  cursor: grabbing;
+}
+
+.lab-scroller[data-dragging] * {
+  cursor: grabbing !important;
+}
+
+.lab-scroller :is(button, a) {
+  cursor: pointer;
+}
+
+.lab-view {
+  --fade-l: clamp(56px, 9%, 140px);
+  --fade-r: clamp(28px, 4%, 64px);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0, 0, 0, 0.35) calc(var(--fade-l) * 0.45), #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, rgba(0, 0, 0, 0.35) calc(var(--fade-l) * 0.45), #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+}
+
+.lab-window[data-end="true"] .lab-view {
+  --fade-r: clamp(14px, 2%, 32px);
+}
+
+.lab-decor {
+  opacity: 0.7;
+}
+
+.lab-obj {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition:
+    transform 260ms cubic-bezier(0.3, 1.5, 0.5, 1),
+    filter 200ms ease;
+}
+
+.lab-obj[data-hot="true"] {
+  transform: translateY(-3px);
+  filter: drop-shadow(2.5px 2.5px 0 rgba(238, 112, 76, 0.95));
+}
+
+.lab-obj[data-down="true"] {
+  transform: translateY(0) scale(0.97, 0.94);
+  filter: drop-shadow(1px 1px 0 rgba(238, 112, 76, 0.95));
+  transition-duration: 70ms;
+}
+
+.lab-lamp-day,
+.lab-lamp-night {
+  transition: opacity 280ms ease;
+}
+
+.lab-art[data-lit="true"] .lab-lamp-day {
+  opacity: 0.75;
+}
+
+.lab-bulb {
+  transition: fill 200ms ease;
+}
+
+.lab-art[data-lit="true"] .lab-bulb {
+  fill: var(--iris-orange);
+}
+
+.lab-night-shade,
+.lab-sky-night,
+.lab-fg-night {
+  background: var(--ink);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.lab-window[data-night="on"] :is(.lab-night-shade, .lab-sky-night, .lab-fg-night) {
+  opacity: 0.68;
+}
+
+.lab-lamp-night,
+.lab-street-cone {
+  fill: #ffe6d6;
+}
+
+.lab-window[data-night="on"] .lab-art .lab-lamp-day {
+  opacity: 0;
+}
+
+.lab-window[data-night="on"] .lab-art .lab-bulb {
+  fill: var(--iris-orange);
+  transition-delay: calc(var(--lamp-delay, 0ms) + 150ms);
+}
+
+.lab-window[data-night="on"] .lab-glow .lab-lamp-night {
+  opacity: 0.22;
+  transition: opacity 260ms ease calc(var(--lamp-delay, 0ms) + 150ms);
+  animation: lab-lamp-on 420ms ease calc(var(--lamp-delay, 0ms) + 150ms) both;
+}
+
+.lab-window[data-night="on"] .lab-ui[data-lit="true"] .lab-lamp-night {
+  opacity: 0.34;
+}
+
+.lab-window[data-night="on"] .lab-street-cone {
+  opacity: 0.32;
+  transition: opacity 300ms ease 60ms;
+}
+
+@keyframes lab-lamp-on {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.3;
+  }
+  45% {
+    opacity: 0.05;
+  }
+  70% {
+    opacity: 0.26;
+  }
+  100% {
+    opacity: 0.22;
+  }
+}
+
+.lab-night-only {
+  opacity: 0;
+  transition: opacity 900ms ease 250ms;
+}
+
+.lab-window[data-night="on"] .lab-night-only {
+  opacity: 1;
+  transition-delay: calc(var(--lamp-delay, 0ms) + 400ms);
+}
+
+@keyframes lab-power {
+  0% {
+    opacity: 0;
+    transform: translateX(0) scale(0.6);
+  }
+  6% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  94% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(var(--run)) scale(0.7);
+  }
+}
+
+.lab-power {
+  width: calc(var(--lab-s) * 11px);
+  height: calc(var(--lab-s) * 11px);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--iris-orange);
+  box-shadow:
+    0 0 0 calc(var(--lab-s) * 4px) rgba(238, 112, 76, 0.28),
+    0 0 0 calc(var(--lab-s) * 9px) rgba(238, 112, 76, 0.12);
+  animation: lab-power 1.55s cubic-bezier(0.45, 0.05, 0.55, 0.95) both;
+}
+
+.lab-needle {
+  transition: transform 700ms cubic-bezier(0.25, 1.6, 0.45, 1);
+}
+
+@keyframes lab-twitch {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(16deg);
+  }
+  45% {
+    transform: rotate(-6deg);
+  }
+  70% {
+    transform: rotate(9deg);
+  }
+}
+
+.lab-art[data-call="true"] .lab-call-twitch {
+  animation: lab-twitch 900ms ease-in-out infinite;
+}
+
+@keyframes lab-dash {
+  to {
+    stroke-dashoffset: -36;
+  }
+}
+
+.lab-art[data-call="true"] .lab-call-dash {
+  animation: lab-dash 1.1s linear infinite;
+}
+
+.lab-call-croak,
+.lab-call-bubbles {
+  opacity: 0;
+}
+
+@keyframes lab-croak {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  35%,
+  60% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.lab-call-croak {
+  transform-box: fill-box;
+  transform-origin: 30% 60%;
+}
+
+.lab-art[data-call="true"] .lab-call-croak {
+  animation: lab-croak 1.2s ease-in-out infinite;
+}
+
+@keyframes lab-rise-bubble {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-26px);
+  }
+}
+
+.lab-art[data-call="true"] .lab-call-bubbles circle {
+  animation: lab-rise-bubble 1.1s ease-in infinite;
+}
+
+.lab-art[data-call="true"] .lab-call-bubbles {
+  opacity: 1;
+}
+
+@keyframes lab-led {
+  0%,
+  100% {
+    fill: var(--iris-orange);
+  }
+  50% {
+    fill: var(--paper);
+  }
+}
+
+.lab-art[data-call="true"] .lab-call-led {
+  animation: lab-led 600ms steps(1) infinite;
+}
+
+@keyframes lab-vial {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+}
+
+.lab-vial {
+  animation: lab-vial 420ms ease-out both;
+}
+
+@keyframes lab-dash-run {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.lab-feed {
+  stroke-dasharray: 6 5;
+  animation: lab-dash-run 900ms linear infinite;
+  transition: opacity 300ms ease;
+}
+
+.lab-window[data-night="on"] .lab-feed {
+  opacity: 0.15;
+  animation: none;
+}
+
+.lab-cart-lamp {
+  transition: fill 300ms ease;
+}
+
+.lab-window[data-night="on"] .lab-cart-lamp {
+  fill: var(--iris-orange);
+}
+
+.lab-drawer {
+  transition: transform 380ms cubic-bezier(0.3, 1.35, 0.5, 1);
+}
+
+@keyframes lab-confetti {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(140px) rotate(320deg);
+  }
+}
+
+.lab-confetti {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lab-confetti 1.6s ease-in both;
+}
+
+.lab-plaque {
+  transform: rotate(-1.2deg);
+  transform-origin: 50% -20px;
+  box-shadow: 3px 3px 0 0 rgba(41, 41, 41, 0.9);
+  transition:
+    transform 420ms cubic-bezier(0.3, 1.6, 0.45, 1),
+    box-shadow 200ms ease;
+}
+
+.lab-plaque:not(:disabled):hover,
+.lab-plaque:not(:disabled):focus-visible {
+  transform: rotate(0.3deg) translateY(-3px);
+  box-shadow: 6px 6px 0 0 var(--frame);
+}
+
+.lab-plaque:not(:disabled):active {
+  transform: rotate(0deg) translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--frame);
+  transition-duration: 80ms;
+}
+
+.lab-plaque-strings {
+  top: calc(var(--lab-s) * -18px - 1.5px);
+  height: calc(var(--lab-s) * 18px);
+  background:
+    linear-gradient(var(--ink), var(--ink)) left / 1.2px 100% no-repeat,
+    linear-gradient(var(--ink), var(--ink)) right / 1.2px 100% no-repeat;
+}
+
+@keyframes lab-spark {
+  0%,
+  72%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  82% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+.lab-spark {
+  animation: lab-spark 3.2s ease-in-out infinite;
+}
+
+.lab-hotspot:hover .lab-spark,
+.lab-hotspot:focus-visible .lab-spark {
+  opacity: 1;
+  animation: none;
+}
+
+.lab-edge {
+  display: flex;
+  width: clamp(38px, 3.4vw, 48px);
+  height: clamp(38px, 3.4vw, 48px);
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 0 var(--frame);
+  cursor: pointer;
+  transition:
+    opacity 260ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.lab-edge:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.lab-edge:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--frame);
+}
+
+.lab-cart-button:hover {
+  background: rgba(238, 112, 76, 0.14);
+}
+
+@keyframes lab-toot {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-30%, -18px);
+  }
+}
+
+.lab-toot {
+  animation: lab-toot 1.1s ease-out both;
+}
+
+.lab-track {
+  transition: transform 560ms cubic-bezier(0.55, 0, 0.75, 0.3);
+}
+
+.lab-enter-veil {
+  background: var(--paper);
+  opacity: 0;
+  transition: opacity 360ms ease-in 200ms;
+}
+
+.lab-window[data-entering="true"] .lab-enter-veil {
+  opacity: 1;
+}
+
+.lab-map {
+  background: var(--paper);
+}
+
+.lab-map-col {
+  transition: background-color 160ms ease;
+}
+
+.lab-map-col:hover {
+  background: #fbe2d8;
+}
+
+.lab-map-interactive {
+  background: #ebe9e2;
+}
+
+.lab-map-site {
+  background: repeating-linear-gradient(45deg, rgba(41, 41, 41, 0.28) 0 1px, transparent 1px 7px), var(--paper);
+}
+
+.lab-map-construction {
+  background: repeating-linear-gradient(-45deg, var(--iris-orange) 0 5px, var(--paper) 5px 10px);
+}
+
+.lab-map-ground {
+  background: linear-gradient(transparent calc(100% - 1.2px), rgba(41, 41, 41, 0.4) 0) var(--paper);
+}
+
+.lab-lens {
+  border: 2.5px solid var(--iris-orange);
+  background: rgba(238, 112, 76, 0.1);
+  box-shadow: 0 0 0 1.5px var(--paper);
+  transition: background-color 160ms ease;
+}
+
+.lab-lens:hover,
+.lab-lens:active {
+  background: rgba(238, 112, 76, 0.2);
+}
+
+.lab-lens-grip {
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  width: 22px;
+  height: 9px;
+  transform: translateX(-50%);
+  border: 1.5px solid var(--ink);
+  background: repeating-linear-gradient(90deg, var(--ink) 0 1.5px, var(--iris-orange) 1.5px 5px);
+}
+
+@keyframes lab-unexplored {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+.lab-unexplored {
+  animation: lab-unexplored 2.4s ease-in-out infinite;
+}
+
+@keyframes lab-hint {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+}
+
+.lab-hint {
+  animation:
+    lab-rise 600ms ease-out 1200ms both,
+    lab-hint 1.4s ease-in-out 2000ms 3;
+}
+
+@keyframes lab-ring {
+  from {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+.lab-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lab-ring 700ms ease-out both;
+}
+
+@keyframes lab-bubble {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-34px);
+  }
+}
+
+.lab-bubble {
+  animation: lab-bubble 900ms ease-in both;
+}
+
+@keyframes lab-mist {
+  from {
+    opacity: 0.9;
+    transform: translate(0, 0) scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-24px, -30px) scale(1.5);
+  }
+}
+
+.lab-mist {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lab-mist 1.1s ease-out both;
+}
+
+@keyframes lab-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.lab-pop {
+  animation: lab-pop 520ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+@keyframes lab-flicker {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes lab-plane {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(-8deg);
+  }
+  8% {
+    opacity: 1;
+  }
+  35% {
+    transform: translate(calc(var(--fly) * 0.33), -30px) rotate(4deg);
+  }
+  70% {
+    transform: translate(calc(var(--fly) * 0.7), 10px) rotate(-4deg);
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--fly), -20px) rotate(6deg);
+  }
+}
+
+.lab-plane {
+  animation: lab-plane 5s ease-in-out both;
+}
+
+@keyframes lab-card {
+  from {
+    opacity: 0;
+    transform: translateY(10px) rotate(-3deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-1deg);
+  }
+}
+
+.lab-card {
+  transform: rotate(-1deg);
+  animation: lab-card 380ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .lab-track {
+    transition: none;
+  }
+
   *,
   *::before,
   *::after {

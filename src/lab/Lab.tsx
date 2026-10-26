@@ -6,6 +6,7 @@ import { BENCHES, benchById, type BenchId, type BenchRecord } from "./benches.ts
 import { IntroCard } from "./IntroCard.tsx";
 import { Reveal } from "./Reveal.tsx";
 import { TitleScreen } from "./TitleScreen.tsx";
+import { forgetLab } from "./home/labMemory.ts";
 import { CurieBench } from "./curie/CurieBench.tsx";
 import { MeasureDemo } from "./curie/MeasureDemo.tsx";
 import { JohnsonBench } from "./johnson/JohnsonBench.tsx";
@@ -44,6 +45,7 @@ export function Lab() {
   const requested = useRequestedBench();
   const [chosen, setView] = useState<View | null>(null);
   const [done, setDone] = useState<ReadonlySet<BenchId>>(() => new Set());
+  const [turn, setTurn] = useState(0);
   const view: View = chosen ?? (requested ? { kind: "bench", id: requested, stage: "intro", record: null, run: 0 } : { kind: "title" });
 
   const open = useCallback((id: BenchId) => {
@@ -53,6 +55,8 @@ export function Lab() {
   const toTitle = useCallback(() => setView({ kind: "title" }), []);
 
   const pass = useCallback(() => {
+    forgetLab();
+    setTurn((t) => t + 1);
     setDone(new Set());
     setView({ kind: "title" });
   }, []);
@@ -78,7 +82,7 @@ export function Lab() {
   };
 
   if (view.kind === "title") {
-    return <TitleScreen done={done} onStart={startNext} onOpen={open} />;
+    return <TitleScreen key={turn} done={done} onStart={startNext} onOpen={open} />;
   }
 
   const bench = benchById(view.id);

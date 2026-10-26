@@ -16,7 +16,7 @@ function SoundIcon({ muted }: { muted: boolean }) {
   );
 }
 
-export function SoundButton() {
+export function SoundButton({ inline = false }: { inline?: boolean }) {
   const muted = useMuted();
   return (
     <button
@@ -24,7 +24,7 @@ export function SoundButton() {
       onClick={() => setMuted(!muted)}
       aria-pressed={!muted}
       aria-label={muted ? "Ligar o som" : "Desligar o som"}
-      className="absolute right-[clamp(14px,3vmin,40px)] bottom-[clamp(14px,3vmin,40px)] z-10 flex size-[52px] cursor-pointer items-center justify-center border-[1.5px] border-ink bg-paper text-ink hover:bg-ink hover:text-paper"
+      className={`${inline ? "relative size-[44px] shrink-0" : "absolute right-[clamp(14px,3vmin,40px)] bottom-[clamp(14px,3vmin,40px)] z-10 size-[52px]"} flex cursor-pointer items-center justify-center border-[1.5px] border-ink bg-paper text-ink hover:bg-ink hover:text-paper`}
     >
       <SoundIcon muted={muted} />
     </button>

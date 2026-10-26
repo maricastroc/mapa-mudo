@@ -26,6 +26,7 @@ export type Bench = {
   available: boolean;
   room: string;
   task: string;
+  teaser?: string;
   intro: { eyebrow: string; title: string; body: string; cues?: { fresh: string; seen: string }; steps?: string[] };
   reveal: {
     eyebrow: string;
@@ -43,6 +44,7 @@ export const BENCHES: Bench[] = [
     available: true,
     room: "PARIS · 1898",
     task: "Qual pedra brilha?",
+    teaser: "Minerais que emitem energia",
     intro: {
       eyebrow: "PARIS · 1898",
       title: "Qual pedra brilha?",
@@ -98,6 +100,7 @@ export const BENCHES: Bench[] = [
     available: true,
     room: "LANGLEY · 1962",
     task: "Resgate no mar",
+    teaser: "Uma volta ao redor da Terra",
     intro: {
       eyebrow: "NASA · ANOS 1960",
       title: "Resgate no mar",
@@ -139,6 +142,7 @@ export const BENCHES: Bench[] = [
     available: true,
     room: "MUSEU NACIONAL · RIO",
     task: "Já vi esse sapo!",
+    teaser: "Uma coleção de anfíbios",
     intro: {
       eyebrow: "MATA ATLÂNTICA · RIO DE JANEIRO",
       title: "Já vi esse sapo!",
@@ -192,6 +196,7 @@ export const BENCHES: Bench[] = [
     available: true,
     room: "PEQUIM · 1972",
     task: "A Cura no Labirinto",
+    teaser: "Remédio tirado de uma planta",
     intro: {
       eyebrow: "PEQUIM · ANOS 1970",
       title: "A Cura no Labirinto",
@@ -248,6 +253,7 @@ export const BENCHES: Bench[] = [
     available: true,
     room: "BUTANTAN · SÃO PAULO",
     task: "Quem está com dengue?",
+    teaser: "Uma vacina de uma dose só",
     intro: {
       eyebrow: "SÃO PAULO · BRASIL",
       title: "Quem está com dengue?",
