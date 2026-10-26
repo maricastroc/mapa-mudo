@@ -133,6 +133,18 @@ export class Sfx {
     this.tone(NOTES[base + 2] * 2, 0.31, 0.18, "triangle", 0.028);
   }
 
+  swat() {
+    this.hiss(0, 0.07, 0.07, 3600);
+    this.tone(520, 0, 0.12, "square", 0.04);
+    this.tone(260, 0.05, 0.14, "triangle", 0.04);
+  }
+
+  jab() {
+    this.hiss(0, 0.09, 0.05, 5200);
+    this.tone(980, 0.02, 0.05, "square", 0.03);
+    this.tone(700, 0.1, 0.06, "triangle", 0.03);
+  }
+
   scratch() {
     this.hiss(0, 0.09, 0.04, 6500);
     this.hiss(0.11, 0.08, 0.035, 5200);
