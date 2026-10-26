@@ -25,7 +25,7 @@ export function Reveal({ bench, record, done, demo, onNext, onPass }: RevealProp
         {reveal.photo && <RisoPortrait src={reveal.photo.src} alt={reveal.photo.alt} focus={reveal.photo.focus} zoom={reveal.photo.zoom} className="lab-ink" />}
         {!reveal.photo && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
-            <p className="display text-[clamp(64px,16vmin,180px)] leading-none text-iris-blue" aria-hidden="true">
+            <p className="display text-[clamp(64px,16vmin,180px)] leading-none text-title-alt" aria-hidden="true">
               {reveal.name
                 .split(" ")
                 .map((w) => w[0])

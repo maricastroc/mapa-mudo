@@ -168,7 +168,7 @@ export function DengueIntroArt({ sickLabel, wellLabel, symptoms, reducedMotion }
       <div className="grid grid-cols-2 gap-[clamp(10px,2vmin,20px)] max-[420px]:grid-cols-1">
         {(
           [
-            [sickRef, sickLabel, "border-accent"],
+            [sickRef, sickLabel, "border-iris-orange"],
             [wellRef, wellLabel, "border-iris-blue"],
           ] as const
         ).map(([ref, label, tone]) => (

@@ -204,7 +204,7 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
       <div className="pointer-events-none absolute top-[clamp(10px,2.4vmin,30px)] left-[clamp(8px,2.4vmin,36px)] flex flex-col items-start gap-[clamp(6px,1vmin,10px)] max-[640px]:right-[clamp(8px,2.4vmin,36px)]">
         <header className="self-stretch border-[1.5px] border-ink bg-paper/92 px-[clamp(8px,1.2vmin,14px)] py-[clamp(6px,1vmin,10px)]">
           <Eyebrow>São Paulo · Brasil</Eyebrow>
-          <h1 className="display mt-1 text-[clamp(26px,4.6vmin,56px)] leading-none text-iris-blue">Quem está com dengue?</h1>
+          <h1 className="display mt-1 text-[clamp(26px,4.6vmin,56px)] leading-none text-title">Quem está com dengue?</h1>
         </header>
         <div className="flex flex-wrap items-center gap-x-[clamp(10px,1.8vmin,20px)] gap-y-1 border-[1.5px] border-ink bg-paper/92 px-[clamp(8px,1.2vmin,12px)] py-[clamp(4px,0.7vmin,7px)]">
           <div className="flex items-center gap-[clamp(6px,1vmin,10px)]" aria-label={`${snap?.chances ?? CHANCES} chances`}>
@@ -247,7 +247,7 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
 
       {hint === "start" && (
         <Hint>
-          Criança <span className="font-medium text-accent">com sintomas</span>? Toque para vacinar
+          Criança <span className="font-medium text-iris-orange">com sintomas</span>? Toque para vacinar
         </Hint>
       )}
       {hint === "healthy" && (
@@ -266,7 +266,7 @@ export function FrazattiBench({ active, reducedMotion, onComplete }: FrazattiBen
 
       {done && snap && (
         <div className="absolute inset-x-0 top-[clamp(90px,24vh,300px)] z-20 flex justify-center px-4">
-          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_rgba(238,112,76,1)]">
+          <div className="lab-rise relative flex flex-col items-center gap-3 border-[1.5px] border-ink bg-paper px-[clamp(20px,4vmin,48px)] py-[clamp(16px,3vmin,32px)] text-center shadow-[8px_8px_0_0_var(--accent)]">
             <Stamp className="absolute -top-[clamp(26px,4vmin,40px)] text-[clamp(20px,3.2vmin,36px)] whitespace-nowrap" tilt={-5}>
               {verdict(snap.cured, snap.wrong)}
             </Stamp>
