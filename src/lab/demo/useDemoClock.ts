@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const START_DELAY = 0.9;
 const AFTER_END = 3;
+const PACE = 0.5;
 
 function clockNow() {
   return typeof performance === "undefined" ? 0 : performance.now();
@@ -12,7 +13,7 @@ function clockNow() {
 export function useDemoClock(end: number, reducedMotion: boolean) {
   const [startedAt, setStartedAt] = useState(() => clockNow() + START_DELAY * 1000);
   const [now, setNow] = useState(clockNow);
-  const t = reducedMotion ? end + AFTER_END : Math.max(0, (now - startedAt) / 1000);
+  const t = reducedMotion ? end + AFTER_END : Math.max(0, ((now - startedAt) / 1000) * PACE);
   const running = t < end + AFTER_END;
 
   useEffect(() => {
