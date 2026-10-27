@@ -3,6 +3,7 @@ import { BENCHES } from "../benches.ts";
 import { INK } from "../riso/inks.ts";
 import { flecks, formatDate, PAGE, serialLabel, titleFor, type Box, type CertificateData } from "./certificate.ts";
 import { fitName, textWidth, tidyName, type NameBox } from "./name.ts";
+import { PartnerLogos } from "./PartnerLogos.tsx";
 import type { Plate } from "./plate.ts";
 import { qrMatrix, qrPath } from "./qr.ts";
 import { verifyUrl } from "./seal.ts";
@@ -63,9 +64,9 @@ function Specks({ seed }: { seed: number }) {
 
 function Masthead({ data, plate }: { data: CertificateData; plate: Plate }) {
   const index = BENCHES.findIndex((b) => b.id === data.bench);
-  const size = 15;
-  const gap = 6;
-  const startX = RIGHT - BENCHES.length * size - (BENCHES.length - 1) * gap;
+  const size = 11;
+  const gap = 4;
+  const squaresX = 702;
   return (
     <g>
       <Display x={MARGIN - 2} y={104} size={36} track={-0.025}>
@@ -78,6 +79,21 @@ function Masthead({ data, plate }: { data: CertificateData; plate: Plate }) {
       <Mono x={520} y={98} size={11.5} track={0.16} fontWeight={500}>
         ARQUIVO DE RECORDES
       </Mono>
+      {BENCHES.map((b, i) => (
+        <rect
+          key={b.id}
+          x={squaresX + i * (size + gap)}
+          y={88}
+          width={size}
+          height={size}
+          fill={i === index ? INK.orange : INK.paper}
+          stroke={i === index ? INK.orange : INK.black}
+          strokeWidth={1.3}
+        />
+      ))}
+      <Mono x={squaresX + BENCHES.length * (size + gap) + 6} y={98} size={11.5} track={0.16}>
+        {`${index + 1} DE ${BENCHES.length}`}
+      </Mono>
       <Mono x={520} y={116} size={11.5} track={0.16} fill={SOFT}>
         {`${serialLabel(data.serial)} · ${plate.game.room}`}
       </Mono>
@@ -87,21 +103,7 @@ function Masthead({ data, plate }: { data: CertificateData; plate: Plate }) {
         </Mono>
       )}
 
-      {BENCHES.map((b, i) => (
-        <rect
-          key={b.id}
-          x={startX + i * (size + gap)}
-          y={84}
-          width={size}
-          height={size}
-          fill={i === index ? INK.orange : INK.paper}
-          stroke={i === index ? INK.orange : INK.black}
-          strokeWidth={1.5}
-        />
-      ))}
-      <Mono x={RIGHT} y={128} size={11.5} track={0.16} textAnchor="end">
-        {`COLEÇÃO · ${index + 1} DE ${BENCHES.length}`}
-      </Mono>
+      <PartnerLogos right={RIGHT} middle={106} height={42} gap={24} />
 
       <line x1={MARGIN} y1={152} x2={RIGHT} y2={152} stroke={INK.black} strokeWidth={2.6} />
       <line x1={MARGIN} y1={158} x2={RIGHT} y2={158} stroke={INK.black} strokeWidth={0.8} />

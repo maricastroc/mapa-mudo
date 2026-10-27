@@ -70,6 +70,13 @@ export async function certificateMarkup(svg: SVGSVGElement, width: number, heigh
   clone.setAttribute("width", String(width));
   clone.setAttribute("height", String(height));
   clone.removeAttribute("class");
+  await Promise.all(
+    Array.from(clone.querySelectorAll("image")).map(async (image) => {
+      const href = image.getAttribute("href");
+      if (!href || href.startsWith("data:")) return;
+      image.setAttribute("href", await toDataUrl(new URL(href, window.location.href).href));
+    }),
+  );
   const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
   style.textContent = css;
   clone.insertBefore(style, clone.firstChild);
