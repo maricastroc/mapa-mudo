@@ -8,6 +8,7 @@ export type Plate = {
   scientist: { name: string; line: string; photo: BenchPhoto; credit: string };
   game: { name: string; room: string; unit: string };
   stamp: string;
+  demo: CertificateData;
   describe: (data: CertificateData) => string;
   Art: (props: PlateArtProps) => ReactNode;
 };

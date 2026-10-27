@@ -412,6 +412,19 @@ export const johnsonPlate: Plate = {
   },
   game: { name: bench.task, room: bench.room, unit: "resgates" },
   stamp: "CONFERIDO",
+  demo: {
+    bench: "johnson",
+    name: "Maria Eduarda Silva",
+    position: 1,
+    score: { value: 9, of: 10, unit: "resgates" },
+    stats: [
+      { label: "SEGUIDOS", value: "6" },
+      { label: "PANCADAS", value: "0" },
+    ],
+    achievedAt: "2026-10-26T15:42:00",
+    serial: 0,
+    demo: true,
+  },
   describe: (data) => `${data.position}º lugar no ranking do dia de ${bench.task}. ${data.score.value}${data.score.of ? ` de ${data.score.of}` : ""} ${data.score.unit}.`,
   Art: JohnsonArt,
 };
